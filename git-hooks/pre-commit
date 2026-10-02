@@ -1,0 +1,54 @@
+#!/bin/bash
+# Shared git pre-commit hook: block staged content that leaks private data or
+# contains U+FFFD replacement characters (AI edits of Chinese text can write
+# them silently). Checks the staged version of each file, not the work tree.
+#
+# Install per repository:
+#   ln -s ~/agent-system/git-hooks/pre-commit .git/hooks/pre-commit
+# Project-specific patterns (real usernames, hostnames): one extended regex per
+# line in .git/privacy-patterns; blank lines and lines starting with # are
+# skipped. That file lives inside .git, so it is never committed.
+# Compatible with macOS bash 3.2.
+
+export LC_ALL=C
+
+ip='(^|[^0-9.])(10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|192\.168\.[0-9]{1,3}\.[0-9]{1,3})([^0-9]|$)'
+home='/(Users|home)/[A-Za-z0-9_][A-Za-z0-9_.-]+'
+fffd=$'\xef\xbf\xbd'
+
+extra=
+patterns_file="$(git rev-parse --git-dir)/privacy-patterns"
+if [ -f "$patterns_file" ]; then
+    extra=$(grep -vE '^[[:space:]]*(#|$)' "$patterns_file" | paste -sd '|' -)
+fi
+
+found=0
+report() {  # report <label> <file> <grep output>
+    found=1
+    printf '%s\n' "$3" | sed "s|^|  [$1] $2:|" >&2
+}
+
+while IFS= read -r -d '' f; do
+    content=$(git show ":$f" 2>/dev/null) || continue
+    # Skip binary files.
+    printf '%s' "$content" | grep -qI . || continue
+
+    hits=$(printf '%s\n' "$content" | grep -nE "$ip")
+    [ -n "$hits" ] && report "private IP" "$f" "$hits"
+    hits=$(printf '%s\n' "$content" | grep -nE "$home")
+    [ -n "$hits" ] && report "home path" "$f" "$hits"
+    hits=$(printf '%s\n' "$content" | grep -nF "$fffd")
+    [ -n "$hits" ] && report "U+FFFD" "$f" "$hits"
+    if [ -n "$extra" ]; then
+        hits=$(printf '%s\n' "$content" | grep -nE "$extra")
+        [ -n "$hits" ] && report "privacy-patterns" "$f" "$hits"
+    fi
+done < <(git diff --cached --name-only -z --diff-filter=ACMR)
+
+if [ "$found" = 1 ]; then
+    echo >&2
+    echo "pre-commit: blocked. Replace real values with placeholders (<host>, <user>)," >&2
+    echo "fix U+FFFD using Unicode code points, then stage again." >&2
+    exit 1
+fi
+exit 0

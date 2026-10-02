@@ -1,0 +1,49 @@
+#!/bin/bash
+# Link the agent system into Claude Code and Codex. Safe to rerun: existing
+# correct links are left alone, and an existing file that is not our link is
+# never overwritten (the script reports it and continues).
+#   ~/.claude/CLAUDE.md          -> RULE.md
+#   ~/.codex/AGENTS.md           -> RULE.md
+#   ~/.claude/skills/<name>      -> claude/skills/<name>
+# The SessionStart hook in ~/.claude/settings.json is not edited here; the
+# script checks for it and prints the snippet to add if it is missing.
+# Compatible with macOS bash 3.2.
+
+root=$(cd "$(dirname "$0")/.." && pwd -P)
+status=0
+
+link() {  # link <target> <link path>
+    local target=$1 path=$2
+    if [ -L "$path" ] && [ "$(readlink "$path")" = "$target" ]; then
+        echo "ok      $path"
+    elif [ -e "$path" ] || [ -L "$path" ]; then
+        echo "SKIP    $path exists and is not a link to $target; move it away and rerun"
+        status=1
+    else
+        mkdir -p "$(dirname "$path")"
+        ln -s "$target" "$path" && echo "linked  $path -> $target"
+    fi
+}
+
+link "$root/RULE.md" "$HOME/.claude/CLAUDE.md"
+link "$root/RULE.md" "$HOME/.codex/AGENTS.md"
+for skill in "$root"/claude/skills/*/; do
+    name=$(basename "$skill")
+    link "$root/claude/skills/$name" "$HOME/.claude/skills/$name"
+done
+
+hook="$root/claude/hooks/session-start.sh"
+if grep -qF "$hook" "$HOME/.claude/settings.json" 2>/dev/null; then
+    echo "ok      SessionStart hook in ~/.claude/settings.json"
+else
+    status=1
+    cat <<EOF
+MISSING SessionStart hook. Add this to ~/.claude/settings.json:
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "$hook" } ] }
+    ]
+  }
+EOF
+fi
+exit $status

@@ -1,0 +1,57 @@
+#!/bin/bash
+# Create a new code project from templates/code, or add the missing pieces to
+# an existing directory. Never overwrites an existing file.
+#   new-project <dir> [project name]
+# Compatible with macOS bash 3.2.
+
+set -u
+root=$(cd "$(dirname "$0")/.." && pwd -P)
+tpl="$root/templates/code"
+
+if [ $# -lt 1 ]; then
+    echo "usage: new-project <dir> [project name]" >&2
+    exit 2
+fi
+dir=$1
+name=${2:-$(basename "$dir")}
+today=$(date +%Y-%m-%d)
+
+mkdir -p "$dir/docs" && cd "$dir" || exit 1
+
+put() {  # put <template file> <dest>
+    if [ -e "$2" ] || [ -L "$2" ]; then
+        echo "kept    $2 (already exists)"
+    else
+        sed -e "s/<项目名>/$name/g" -e "s/更新：YYYY-MM-DD/更新：$today/g" "$tpl/$1" > "$2"
+        echo "created $2"
+    fi
+}
+
+put AGENTS.md AGENTS.md
+put docs/project-notes.md docs/project-notes.md
+put docs/decisions.md docs/decisions.md
+put docs/pitfalls.md docs/pitfalls.md
+put docs/log.md docs/log.md
+put gitignore .gitignore
+[ -e private-notes.md ] || { : > private-notes.md; echo "created private-notes.md"; }
+[ -e README.md ] || { printf '# %s\n' "$name" > README.md; echo "created README.md"; }
+if [ ! -e CLAUDE.md ] && [ ! -L CLAUDE.md ]; then
+    ln -s AGENTS.md CLAUDE.md && echo "linked  CLAUDE.md -> AGENTS.md"
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git init -q && echo "git init"
+fi
+hooks_dir=$(git rev-parse --git-path hooks)
+if [ ! -e "$hooks_dir/pre-commit" ]; then
+    mkdir -p "$hooks_dir"
+    ln -s "$root/git-hooks/pre-commit" "$hooks_dir/pre-commit" && echo "linked  pre-commit hook"
+else
+    echo "kept    $hooks_dir/pre-commit (already exists)"
+fi
+
+if git check-ignore -q private-notes.md; then
+    echo "ok      private-notes.md is ignored"
+else
+    echo "WARNING private-notes.md is NOT ignored; check .gitignore" >&2
+fi
