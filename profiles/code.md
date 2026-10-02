@@ -28,7 +28,8 @@ RULE.md 第 4 节。
 结论写回文档）、`docs/` 下的独立指南、`README.<lang>.md`、`LICENSE`。
 
 新项目用 `~/agent-system/bin/new-project <dir>` 初始化（模板在
-`~/agent-system/templates/code/`）。
+`~/agent-system/templates/code/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器
+文件夹（agent-system D-10）。
 
 ### 按读取频率分文件
 

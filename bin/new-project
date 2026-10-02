@@ -40,6 +40,14 @@ if [ ! -e CLAUDE.md ] && [ ! -L CLAUDE.md ]; then
 fi
 
 # Project materials live next to the project dir, outside git (RULE.md §4).
+# They assume one container folder per project, named P0NN_<name> (D-10);
+# without one, ../materials would be shared with sibling projects.
+container=$(basename "$(cd .. && pwd -P)")
+case $container in
+    P[0-9][0-9][0-9]_*) ;;
+    *) echo "WARNING container folder '$container' is not named P0NN_<name> (D-10);" \
+            "../materials may be shared with other projects" >&2 ;;
+esac
 for sub in refs inbox scratch; do
     if [ ! -d "../materials/$sub" ]; then
         mkdir -p "../materials/$sub" && echo "created ../materials/$sub"

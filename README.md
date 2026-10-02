@@ -18,7 +18,7 @@
 | 文件 | 作用 |
 |---|---|
 | `bin/install` | 建立上面的全局链接和技能链接，检查 SessionStart hook；可重复运行 |
-| `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，装 pre-commit hook；不覆盖已有文件 |
+| `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，建 `../materials/`，装 pre-commit hook；不覆盖已有文件。`<dir>` 写成 `P0NN_名称/<project>`（D-10），容器文件夹名不符时提示 |
 | `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态 |
 | `claude/skills/pickup`、`claude/skills/wrap` | `/pickup` 开场复述，`/wrap` 收尾记录 |
 | `git-hooks/pre-commit` | 拦截私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词 |
@@ -30,6 +30,9 @@
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
 - 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
   agent 临时产出），不进 git；想让 agent 用某份资料就在任务里点名。约定见 RULE.md 第 4 节。
+- 项目容器文件夹：在用的项目命名为 `P0NN_名称`，归档不改（D-10）。改名时一并迁移
+  `~/.claude/projects/` 下的目录、`~/.claude.json` 的项目键和 `~/.codex/config.toml` 的
+  信任条目，做法见 D-7；改名前退出该文件夹里的所有会话。
 - 审查：在 Codex 里说“按 ~/agent-system/review.md 审查当前未提交的改动”。
 
 ## 修改本仓库

@@ -49,7 +49,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   `~/.claude`、`~/.codex` 的链接、SessionStart hook 和各项目的 pre-commit 链接都要跟着处理。
 - 影响：无改动。以后若要移动，按 B 或 C 处理上面列出的链接。
 
-### D-5 项目容器文件夹命名为 P0NN_名称（2026-10-03，用户决定）
+### D-5 项目容器文件夹命名为 P0NN_名称（2026-10-03，用户决定）（已被 D-6 替代）
 
 - 背景：存放各项目的目录下，项目容器文件夹原来命名为 `Proj.0NN_名称`。
 - 选项：A 保持 `Proj.0NN_名称` / B 改为 `P0NN_名称`
@@ -58,3 +58,57 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：RULE.md 第 4 节的示例改为 `P0NN_名称/`。新项目用 `bin/new-project` 时，容器
   文件夹按此命名。已有文件夹的改名不在本仓库里做；Claude Code 与 Codex 按路径保存的
   会话历史、memory 和信任设置要随之迁移，在所有相关会话退出后执行。
+
+### D-6 项目容器文件夹保持 Proj.0NN_名称（2026-10-03，用户决定）（已被 D-10 替代）
+
+- 背景：按 D-5 把已有文件夹改为 `P0NN_名称` 后，用户回滚了改名，文件夹仍是
+  `Proj.0NN_名称`。
+- 选项：A 保持 `Proj.0NN_名称` / B 按 D-5 改为 `P0NN_名称`
+- 选择：A，替代 D-5
+- 理由：用户决定不改名。
+- 影响：RULE.md 第 4 节的示例恢复为 D-5 之前的 `Proj.x/`。改名计划文件和改名时的配置
+  备份已删除；文件夹、`~/.claude/projects/`、`~/.claude.json`、`~/.codex/config.toml`
+  已核对为原状。
+
+### D-7 CodaPace 的容器文件夹改为 P011_CodaPace（2026-10-03，用户决定）
+
+- 背景：D-6 决定所有容器文件夹保持 `Proj.0NN_名称`；随后用户要求单独把 CodaPace 改名。
+- 选项：A 维持 D-6 / B 只改 CodaPace，其余项目不变
+- 选择：B，修改 D-6 中 CodaPace 一项
+- 理由：用户决定。
+- 影响：容器文件夹 `Proj.011_CodaPace` 改为 `P011_CodaPace`；`~/.claude/projects/` 下两个
+  对应目录、`~/.claude.json` 的两个项目键随之改名（Codex 配置里没有该项目）。其余项目和
+  RULE.md 的示例不变，因此容器文件夹命名暂时不统一。`codapace bak/` 里的旧审查报告仍写着
+  更早的旧路径，属于历史记录，未改。
+
+### D-8 meshlink 的容器文件夹改为 P012_meshlink（2026-10-03，用户决定）
+
+- 背景：D-7 之后，用户要求 `Proj.012_meshlink` 同样改名。
+- 选项：A 保持 `Proj.012_meshlink` / B 按 D-7 的做法改为 `P012_meshlink`
+- 选择：B，修改 D-6 中 meshlink 一项
+- 理由：用户决定。
+- 影响：容器文件夹改名；`~/.claude/projects/` 下两个对应目录、`~/.claude.json` 的两个项目键、
+  `~/.codex/config.toml` 的项目信任条目随之改名。`Proj.012_ATCS` 的旧条目对应的文件夹已不存在，
+  未动。meshlink 的 pre-commit 链接指向 `~/agent-system`，不受影响。
+
+### D-9 Yuancheng.io 的容器文件夹改为 P013_Yuancheng.io（2026-10-03，用户决定）
+
+- 背景：D-8 之后，用户要求 `Proj.013_Yuancheng.io` 同样改名。
+- 选项：A 保持 `Proj.013_Yuancheng.io` / B 按 D-7 的做法改为 `P013_Yuancheng.io`
+- 选择：B，修改 D-6 中 Yuancheng.io 一项
+- 理由：用户决定。
+- 影响：容器文件夹改名；`~/.claude/projects/` 下两个对应目录、`~/.claude.json` 的两个项目键
+  随之改名（Codex 配置里没有该项目）。仓库内只有 `.astro/dev.log` 含旧路径，是开发服务器
+  日志，未改。改名时 Astro 开发服务器未在运行。
+
+### D-10 在用项目的容器文件夹命名为 P0NN_名称，归档不改（2026-10-03，用户决定）
+
+- 背景：D-7、D-8、D-9 把在用的三个项目逐个改为 `P0NN_名称`；用户同时把其他项目移进了
+  `00_Archieve/` 和 `Other/`。D-6 只剩归档里的旧文件夹仍适用，RULE.md 的示例与实际不符。
+- 选项：A 维持 D-6，逐个例外 / B 在用项目统一 `P0NN_名称`，归档和 `Other/` 里的文件夹不改
+- 选择：B，替代 D-6，并合并 D-7、D-8、D-9 的结果
+- 理由：用户决定；规则与目录现状一致。
+- 影响：RULE.md 第 4 节的示例改为 `P0NN_名称/`。新项目用 `bin/new-project` 时，容器文件夹
+  按此命名，容器文件夹名不符时 `bin/new-project` 给出警告（不阻止）；README 与
+  profiles/code.md 写明 `<dir>` 的形式。以后改名按 D-7 的做法迁移 `~/.claude/projects/`、
+  `~/.claude.json` 和 `~/.codex/config.toml` 中按路径保存的数据，README 日常用法有一句提示。
