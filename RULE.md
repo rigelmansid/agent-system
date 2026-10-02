@@ -110,7 +110,7 @@ Profile：项目 `AGENTS.md` 开头的 `<!-- profile: code -->` 表示该项目�
   不擅自启动应由用户管理的常驻进程。
 - 不把临时文件、生成物、实验输出写进项目目录，写到下一条的 `scratch/`。
 - 项目资料放在与项目目录同级的 `materials/`（每个项目一个容器文件夹，例如
-  `Proj.x/<project>/` 旁的 `Proj.x/materials/`），不进 git：
+  `P0NN_名称/<project>/` 旁的 `P0NN_名称/materials/`），不进 git：
   `refs/` 参考资料，`inbox/` 待整理，`scratch/` agent 的临时产出。agent 只在任务需要
   或用户点名时读 `refs/`、`inbox/`，只往 `scratch/` 写；收尾时说明 `scratch/` 里哪些
   可以删。整理 `inbox/` 时，每份资料要么整理进项目文档（脱敏），要么移到 `refs/`，
