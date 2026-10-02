@@ -1,7 +1,7 @@
 # agent-system
 
 我和 AI agent（Claude Code 为主，Codex 用于审查和非代码任务）协作的规则与工具。
-私有仓库，不推送到公开远端。
+私有仓库，远端是 GitHub 私有仓库 `rigelmansid/agent-system`（D-3），不公开。
 
 ## 三层规则
 
@@ -34,3 +34,4 @@
 
 改规则就改这里，所有项目同时生效。改完后在一个项目里开新会话确认 hook 输出正常。
 新增 profile（例如非代码项目）时放进 `profiles/`，并在 RULE.md 的 Profile 一段登记。
+规则的取舍当场记进 [decisions.md](decisions.md)（D-n），提交正文写 `Why: D-n`。
