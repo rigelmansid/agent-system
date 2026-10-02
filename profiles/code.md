@@ -21,6 +21,9 @@
     └── log.md             # 冷：阶段记录与验证记录，只追加
 ```
 
+项目目录旁还有一个不入库的 `../materials/`（`refs/`、`inbox/`、`scratch/`），约定见
+RULE.md 第 4 节。
+
 按需再加，不预先建空目录：`scripts/`、`src/`、`tests/`、`experiments/`（一次性实验，
 结论写回文档）、`docs/` 下的独立指南、`README.<lang>.md`、`LICENSE`。
 

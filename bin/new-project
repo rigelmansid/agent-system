@@ -39,6 +39,14 @@ if [ ! -e CLAUDE.md ] && [ ! -L CLAUDE.md ]; then
     ln -s AGENTS.md CLAUDE.md && echo "linked  CLAUDE.md -> AGENTS.md"
 fi
 
+# Project materials live next to the project dir, outside git (RULE.md §4).
+for sub in refs inbox scratch; do
+    if [ ! -d "../materials/$sub" ]; then
+        mkdir -p "../materials/$sub" && echo "created ../materials/$sub"
+    fi
+done
+echo "note    materials: $(cd ../materials && pwd -P)"
+
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     git init -q && echo "git init"
 fi

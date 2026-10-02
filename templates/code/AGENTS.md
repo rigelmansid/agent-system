@@ -49,4 +49,8 @@ verification records). Do not copy project content into this file.
 - `private-notes.md` is git-ignored and holds real hosts, usernames and
   personal config. Never copy its content into tracked files, commit messages
   or PRs; use placeholders such as `<host>` and `<user>`.
+- Reference material, unsorted notes and scratch output live outside the
+  repository in the maintainer's `../materials/` (`refs/`, `inbox/`,
+  `scratch/`), which may not exist on other machines. Never write scratch
+  files or generated output into the repository; use `../materials/scratch/`.
 - <Branch, remote and identity rules.>

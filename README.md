@@ -28,6 +28,8 @@
 - 开新对话：hook 自动注入状态；说“继续”或 `/pickup`，agent 复述后再动手。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n）；看不懂某个操作时问“依据是哪条”。
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
+- 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
+  agent 临时产出），不进 git；想让 agent 用某份资料就在任务里点名。约定见 RULE.md 第 4 节。
 - 审查：在 Codex 里说“按 ~/agent-system/review.md 审查当前未提交的改动”。
 
 ## 修改本仓库

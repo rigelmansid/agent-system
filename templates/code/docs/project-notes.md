@@ -30,6 +30,7 @@
 | [docs/pitfalls.md](pitfalls.md) | 踩过的坑 |
 | [docs/log.md](log.md) | 阶段记录与验证记录 |
 | `private-notes.md`（不入库） | 真实地址、用户名、个人配置 |
+| `../materials/`（仓库外） | 参考资料 `refs/`、待整理 `inbox/`、临时产出 `scratch/` |
 
 最新快照：……
 
