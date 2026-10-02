@@ -20,12 +20,12 @@
 | `bin/install` | 建立上面的全局链接和技能链接，检查 SessionStart hook；可重复运行 |
 | `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，装 pre-commit hook；不覆盖已有文件 |
 | `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态 |
-| `claude/skills/resume`、`claude/skills/wrap` | `/resume` 开场复述，`/wrap` 收尾记录 |
+| `claude/skills/pickup`、`claude/skills/wrap` | `/pickup` 开场复述，`/wrap` 收尾记录 |
 | `git-hooks/pre-commit` | 拦截私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词 |
 
 ## 日常用法
 
-- 开新对话：hook 自动注入状态；说“继续”或 `/resume`，agent 复述后再动手。
+- 开新对话：hook 自动注入状态；说“继续”或 `/pickup`，agent 复述后再动手。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n）；看不懂某个操作时问“依据是哪条”。
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
 - 审查：在 Codex 里说“按 ~/agent-system/review.md 审查当前未提交的改动”。

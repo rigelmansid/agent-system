@@ -1,9 +1,9 @@
 ---
-name: resume
-description: 开新对话时恢复项目状态：读 AGENTS.md、project-notes 的「进行中」与待办、最近的决策和 git 状态，向用户复述后再动手。用户说“继续”“接着做”“恢复一下”或输入 /resume 时使用。
+name: pickup
+description: 开新对话时恢复项目状态：读 AGENTS.md、project-notes 的「进行中」与待办、最近的决策和 git 状态，向用户复述后再动手。用户说“继续”“接着做”“恢复一下”或输入 /pickup 时使用。（不叫 resume：Claude Code 内置的 /resume 会覆盖同名技能。）
 ---
 
-# /resume：恢复项目状态
+# /pickup：恢复项目状态
 
 按 `~/agent-system/RULE.md` 第 1.1 节执行。只读，不修改任何文件。
 
@@ -32,5 +32,5 @@ description: 开新对话时恢复项目状态：读 AGENTS.md、project-notes �
 我打算先做：……
 ```
 
-用户带着具体任务调用时（`/resume 做 X`），“我打算先做”按用户的任务写，并指出它和
+用户带着具体任务调用时（`/pickup 做 X`），“我打算先做”按用户的任务写，并指出它和
 「进行中」的下一步是否冲突。
