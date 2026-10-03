@@ -129,6 +129,13 @@ check "existing empty file: exit 1" 1 $?
 check "existing empty file not overwritten" 0 "$(wc -c < "$d/docs/log.md" | tr -d ' ')"
 "$root/bin/new-project" "$T/P001_np/px" "$(printf 'a\nb')" >/dev/null 2>&1
 check "control character rejected" 2 $?
+check "rejected name creates nothing" no "$([ -e "$T/P001_np/px" ] && echo yes || echo no)"
+mkdir -p "$T/P001_np/Dotted"
+(cd "$T/P001_np/Dotted" && "$root/bin/new-project" . >/dev/null 2>&1)
+check "dir '.': name from directory (D-20)" "# Dotted 开发与维护记录" \
+    "$(head -1 "$T/P001_np/Dotted/docs/project-notes.md")"
+(cd "$T/P001_np" && "$root/bin/new-project" Slashed/ >/dev/null 2>&1)
+check "trailing slash: name from directory" "# Slashed" "$(cat "$T/P001_np/Slashed/README.md")"
 
 # ------------------------------------------------------------- session-start
 section "claude/hooks/session-start.sh"

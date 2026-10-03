@@ -237,3 +237,13 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：`claude/hooks/session-start.sh`、`tests/run.sh`（新增 7 项，共 91 项）、README。
   2026-10-03 对真实项目运行 hook：meshlink 的 project-notes 有 612 行，触发超长提醒（属实，
   未改动该项目）；blog 无提醒。
+
+### D-20 new-project 的默认项目名取自解析后的目录（2026-10-03，agent 选择）
+
+- 背景：准备给 CodaPace 补结构时发现，在项目目录里运行 `new-project .` 时，默认项目名是
+  `basename .`，即 `.`，生成的标题是 `# . 开发与维护记录`。
+- 选项：A 文档里要求总是写项目名 / B 进入目录后用 `basename "$PWD"` 取默认名
+- 选择：B；显式给出的项目名仍在创建任何目录之前校验
+- 理由：在项目目录里直接 `new-project .` 是最自然的用法。
+- 影响：`bin/new-project`；`tests/run.sh` 新增 3 项（`.`、末尾斜杠、被拒绝的名称不创建目录），
+  共 94 项。2026-10-03：当前版本全过；对 8784c32 运行时 `.` 一项失败。

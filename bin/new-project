@@ -3,6 +3,7 @@
 # an existing directory. Never overwrites an existing file. Exits non-zero if
 # any file could not be created or an existing one is empty.
 #   new-project <dir> [project name]
+# The name defaults to the directory's own name, so "new-project ." works.
 # Compatible with macOS bash 3.2.
 
 set -u
@@ -13,17 +14,24 @@ if [ $# -lt 1 ]; then
     echo "usage: new-project <dir> [project name]" >&2
     exit 2
 fi
+check_name() {
+    case $1 in
+        ''|*[[:cntrl:]]*) echo "new-project: project name is empty or has control characters" >&2
+                          exit 2 ;;
+    esac
+}
 dir=$1
-name=${2:-$(basename "$dir")}
-case $name in
-    ''|*[[:cntrl:]]*) echo "new-project: project name is empty or has control characters" >&2
-                      exit 2 ;;
-esac
+# Check an explicit name before creating anything.
+[ $# -ge 2 ] && check_name "$2"
 today=$(date +%Y-%m-%d)
 now=$(date '+%Y-%m-%d %H:%M')
 status=0
 
 mkdir -p "$dir/docs" && cd "$dir" || exit 1
+# Take the default from the resolved directory, not the argument: basename of
+# "." or "../x/" would give "." or a trailing-slash surprise (D-20).
+name=${2:-$(basename "$PWD")}
+check_name "$name"
 
 # Replace placeholders literally, so the name may contain / & \ (D-13).
 fill() {  # fill <template file>
