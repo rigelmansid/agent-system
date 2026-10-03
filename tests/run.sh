@@ -98,6 +98,9 @@ done
 printf 'ok\nbad((' > "$patterns"
 try_commit "unrelated"; check "invalid last line without newline" block "$result"
 rm -f "$patterns"
+try_commit "$(seq 1 300000)"
+check "large file: passes without Broken pipe" "pass:0" \
+    "$result:$(printf '%s\n' "$commit_out" | grep -c 'Broken pipe')"
 
 # --------------------------------------------------------------- new-project
 section "bin/new-project"

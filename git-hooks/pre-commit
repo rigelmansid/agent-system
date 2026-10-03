@@ -59,8 +59,9 @@ report_hidden() {  # report_hidden <label> <file> <grep -n output>
 
 while IFS= read -r -d '' f; do
     content=$(git show ":$f" 2>/dev/null) || continue
-    # Skip binary files.
-    printf '%s' "$content" | grep -qI . || continue
+    # Skip binary files. grep -q stops at the first match, so on a large file
+    # printf hits a closed pipe; silence that harmless error.
+    printf '%s' "$content" 2>/dev/null | grep -qI . || continue
 
     hits=$(printf '%s\n' "$content" | grep -nE "$ip")
     [ -n "$hits" ] && report "private IP" "$f" "$hits"
