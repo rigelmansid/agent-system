@@ -9,8 +9,8 @@ description: 开新对话时恢复项目状态：读 AGENTS.md、project-notes �
 
 ## 步骤
 
-1. 读项目 `AGENTS.md`；若开头有 `<!-- profile: code -->`，再读
-   `~/agent-system/profiles/code.md`（本会话已读过就跳过）。
+1. 读项目 `AGENTS.md`；若开头有 `<!-- profile: <名称> -->`，再读
+   `~/agent-system/profiles/<名称>.md`（本会话已读过就跳过；文件不存在时在输出里指出）。
 2. 读 `docs/project-notes.md` 的「进行中」区块和待办章节。SessionStart hook 已注入
    的内容不必重复读取，但要核对它和文件当前内容一致。
 3. 「进行中」里引用的决策编号，到 `docs/decisions.md` 读对应条目；再看最后 3 条决策，

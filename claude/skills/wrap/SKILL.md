@@ -5,8 +5,9 @@ description: 收尾一个工作单元：补齐决策记录、覆盖更新 projec
 
 # /wrap：收尾
 
-按 `~/agent-system/RULE.md` 第 1.4 节执行；代码项目同时按
-`~/agent-system/profiles/code.md` 第 3 节。不提交、不推送，除非用户在这次调用里明确要求。
+按 `~/agent-system/RULE.md` 第 1.4 节执行；项目 `AGENTS.md` 声明了
+`<!-- profile: <名称> -->` 时，同时按 `~/agent-system/profiles/<名称>.md` 的「收尾时的文档
+更新」一节。不提交、不推送，除非用户在这次调用里明确要求。
 
 ## 步骤
 
@@ -17,8 +18,9 @@ description: 收尾一个工作单元：补齐决策记录、覆盖更新 projec
    写“agent 选择”，并在汇报里请用户确认。
 3. **覆盖「进行中」**：按 RULE.md 第 3 节的格式重写整个区块，用当前时间。“下一步”要
    具体到新会话可以直接执行；“不要重复”写本次已经做过、再做会出问题或浪费时间的事。
-4. **其余记录**：按项目 `AGENTS.md` 和 profile 的文档规则更新（代码项目：`log.md`
-   阶段记录、验证记录、待办、当前状态、新的坑）。项目规则与 profile 不同时以项目为准。
+4. **其余记录**：按项目 `AGENTS.md` 和 profile 的文档规则更新（例如 code profile：
+   `log.md` 阶段记录、验证记录、待办、当前状态、新的坑）。项目规则与 profile 不同时以
+   项目为准。
 5. **检查**：改过的中文文件没有 U+FFFD（`grep -nI $'\xef\xbf\xbd' <文件>`）；新增的
    相对链接有效；没有把 `private-notes.md` 的内容写进入库文件。
 

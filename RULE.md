@@ -6,8 +6,9 @@
 优先级：用户当次的明确指示 > 项目 `AGENTS.md` > 适用的 profile > 本文件。
 发现冲突时说出冲突来源，按优先级高的执行。
 
-Profile：项目 `AGENTS.md` 开头的 `<!-- profile: code -->` 表示该项目同时适用
-`~/agent-system/profiles/code.md`，开始工作前读它。没有声明时只适用本文件。
+Profile：项目 `AGENTS.md` 开头的 `<!-- profile: <名称> -->` 表示该项目同时适用
+`~/agent-system/profiles/<名称>.md`，开始工作前读它；文件不存在时告诉用户。没有声明时
+只适用本文件。现有 profile：`code`（代码项目）。
 
 ---
 
