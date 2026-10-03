@@ -190,6 +190,23 @@ seq 601 > "$s/docs/project-notes.md"
 check "project-notes over 600 lines: warned" 1 \
     "$(CLAUDE_PROJECT_DIR="$s" "$hook" | grep -c 'project-notes.md 有 601 行')"
 
+# Codex style (D-25): no CLAUDE_PROJECT_DIR, cwd is the session cwd (maybe a
+# subdirectory), and a JSON object arrives on stdin.
+codex_in='{"session_id":"t","cwd":"x","hook_event_name":"SessionStart","source":"startup"}'
+p="$T/P001_np/p4"
+mkdir -p "$p/sub/deeper"
+out=$(cd "$p" && printf '%s' "$codex_in" | env -u CLAUDE_PROJECT_DIR "$hook"); rc=$?
+check "codex at project root: exit 0" 0 $rc
+check "codex at project root: 进行中 injected" 1 "$(printf '%s\n' "$out" | grep -c '^## 进行中')"
+out=$(cd "$p/sub/deeper" && printf '%s' "$codex_in" | env -u CLAUDE_PROJECT_DIR "$hook")
+check "codex in subdirectory: uses git root" 1 "$(printf '%s\n' "$out" | grep -c '^## 进行中')"
+check "codex in subdirectory: restate asked" 1 "$(printf '%s\n' "$out" | grep -c '复述')"
+out=$(cd "$T/ss/plain" && printf '%s' "$codex_in" | env -u CLAUDE_PROJECT_DIR "$hook")
+check "codex in plain repo: git state only" "1:0" \
+    "$(printf '%s\n' "$out" | grep -c '^git 分支'):$(printf '%s\n' "$out" | grep -c '复述')"
+out=$(cd "$T/ss/empty" && printf '%s' "$codex_in" | env -u CLAUDE_PROJECT_DIR "$hook")
+check "codex outside git: no output" "" "$out"
+
 # ------------------------------------------------------------------- install
 section "bin/install"
 "$root/bin/install" >/dev/null 2>&1
@@ -199,11 +216,25 @@ check "codex AGENTS.md linked" "$root/RULE.md" "$(readlink "$HOME/.codex/AGENTS.
 for s in "$root"/claude/skills/*/; do
     s=$(basename "$s")
     check "skill $s linked" "$root/claude/skills/$s" "$(readlink "$HOME/.claude/skills/$s")"
+    check "codex skill $s linked (D-25)" "$root/claude/skills/$s" "$(readlink "$HOME/.agents/skills/$s")"
 done
+codex_hooks="$HOME/.codex/hooks.json"
+check "codex hooks.json created" 1 "$(grep -cF "\"command\": \"$hook\"" "$codex_hooks")"
+if command -v python3 >/dev/null 2>&1; then
+    python3 -m json.tool "$codex_hooks" >/dev/null 2>&1
+    check "codex hooks.json is valid JSON" 0 $?
+fi
 printf '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"%s"}]}]}}\n' \
     "$hook" > "$HOME/.claude/settings.json"
 "$root/bin/install" >/dev/null 2>&1
 check "rerun with hook config: exit 0" 0 $?
+printf '{"hooks":{}}\n' > "$codex_hooks"
+"$root/bin/install" >/dev/null 2>&1
+check "existing codex hooks.json without ours: exit 1" 1 $?
+check "existing codex hooks.json not edited" '{"hooks":{}}' "$(cat "$codex_hooks")"
+rm "$codex_hooks"
+"$root/bin/install" >/dev/null 2>&1
+check "codex hooks.json recreated when absent: exit 0" 0 $?
 rm "$HOME/.codex/AGENTS.md" && echo mine > "$HOME/.codex/AGENTS.md"
 "$root/bin/install" >/dev/null 2>&1
 check "existing file: exit 1" 1 $?

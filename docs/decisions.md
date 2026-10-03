@@ -191,7 +191,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   指向 RULE.md、README.md 的相对链接改为 `../`；新增 `docs/project-notes.md`（进行中与
   待办）；README“修改本仓库”的链接与说明相应修改。
 
-### D-19 审查修复第 9 条的取舍（2026-10-03，用户决定）
+### D-19 审查修复第 9 条的取舍（2026-10-03，用户决定）（Codex 一项已被 D-24 修正）
 
 - 背景：审查和自查剩下 6 个小问题：install 不自动改 settings.json、缺换电脑步骤、模板链接
   在模板目录里解析不到、hook 不提示过时与超长、profile 不自动加载、Codex 没有 hook。
@@ -255,3 +255,34 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：`bin/new-project` 在创建任何目录前检查目标目录名（已存在的取解析后的名字，否则取
   参数的 basename）；`tests/run.sh` 新增 4 项，共 98 项。2026-10-03：当前版本全过；对修改前的
   脚本运行时这 4 项失败；在真实的 `P011_CodaPace/` 里运行被拒绝，目录内容不变。
+
+### D-24 Codex 支持 SessionStart hook，修正 D-19 的前提（2026-10-04，用户决定）
+
+- 背景：D-19 写“Codex 没有 SessionStart hook，开场靠 RULE.md 1.1”，没有查文档。2026-10-04 核对
+  Codex 官方文档（learn.chatgpt.com/docs/hooks）：hook 默认开启，有 SessionStart、Stop 等事件，
+  配置在 `~/.codex/hooks.json`，纯文本 stdout 作为上下文交给模型；非托管 hook 要先在 `/hooks`
+  里信任（按 hook 内容的哈希记录，改动后要重新信任）。本机 Codex 为 0.159.3。
+- 选项：A 只改说法 / B 改说法，并把 hook 和技能接到 Codex（用户要求的第 2 条，见后续决策）
+- 选择：先 A，随后做 B
+- 理由：用户要求先修正错误说法。
+- 影响：README 工具表、RULE.md 1.1 的说法改为两个工具都有 hook；D-19 标题注明 Codex 一项
+  已被本条修正。
+
+### D-25 把 SessionStart hook 和技能接到 Codex（2026-10-04，用户决定）
+
+- 背景：D-24 确认 Codex 支持 hook 和技能，但本仓库只把 RULE.md 链接给了 Codex。Codex 的技能
+  目录是 `~/.agents/skills/`，SKILL.md 格式与 Claude Code 相同（developers.openai.com/codex/skills，
+  只看了搜索摘要）；hook 在 `~/.codex/hooks.json`，在会话 cwd 中运行，不提供
+  `CLAUDE_PROJECT_DIR`。
+- 选项：hooks.json 的处理：A 和 settings.json 一样只检查、打印片段 / B 不存在时新建，已存在
+  只检查
+- 选择：B；技能同时链接到 `~/.agents/skills/`；hook 脚本在没有 `CLAUDE_PROJECT_DIR` 且 cwd
+  不是 agent 项目时，回退到 git 根目录
+- 理由：用户要求接上 Codex。`hooks.json` 只放 hook、不含凭据，新建没有覆盖风险；已有的仍
+  不改，与 D-19 一致。Codex 可能从子目录启动，只看 cwd 会漏掉项目状态。
+- 影响：`bin/install`、`claude/hooks/session-start.sh`、`tests/run.sh`（新增 13 项，共 111 项）、
+  README 工具表与新电脑步骤（加“在 Codex `/hooks` 里信任”）。2026-10-04 验证：测试全过，对
+  HEAD 版本有 7 项失败；在本机真实运行 install，新建 `~/.agents/skills/` 两个链接和
+  `~/.codex/hooks.json`（JSON 有效），Claude 一侧各项仍为 ok；4 个真实项目的 Claude 侧 hook
+  输出与修改前逐字相同；在 CodaPace 子目录模拟 Codex 调用能注入「进行中」。未验证：Codex
+  里真实信任并运行 hook、`$pickup` 能被发现（需要用户在 Codex 里操作）。
