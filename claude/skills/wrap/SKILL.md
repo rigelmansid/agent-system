@@ -1,6 +1,7 @@
 ---
 name: wrap
-description: 收尾一个工作单元：补齐决策记录、覆盖更新 project-notes 的「进行中」、按项目规则更新阶段记录与待办，然后给出四段汇报。用户说“收尾”“今天到这”“记一下下次继续”或输入 /wrap 时使用。
+description: Wrap up a unit of work by recording missing decisions, rewriting the 进行中 block in docs/project-notes.md, updating the log and todo list per the project's rules, then giving a four-part report. Runs only when the user types /wrap.
+disable-model-invocation: true
 ---
 
 # /wrap：收尾

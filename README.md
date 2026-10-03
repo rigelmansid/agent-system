@@ -22,13 +22,15 @@
 | `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。只**检查** `settings.json` 里的 SessionStart hook，缺少时打印要粘贴的片段，不自动修改该文件（D-19）。Codex 只链接 RULE.md（D-27） |
 | `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，建 `../materials/`，装 pre-commit hook；不覆盖已有文件。`<dir>` 写成 `P0NN_名称/<project>`（D-10），容器文件夹名不符时提示 |
 | `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态；没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态（D-15）。「进行中」之后有提交没更新它、或 AGENTS.md 超过约 200 行、project-notes 超过约 600 行时加一行提醒（D-19）。纯文本输出，只进模型上下文（D-28）；只给 Claude Code 用（D-27） |
-| `claude/skills/wrap` | `/wrap` 收尾记录。开场不需要技能：hook 注入状态，RULE.md 1.1 要求先复述（D-30） |
+| `claude/skills/pickup`、`wrap`、`adopt` | `/pickup` 重新读取并显示项目状态，只读不动手，开场或对话中途都可用（D-33）；`/wrap` 收尾记录；`/adopt` 把已有项目补成标准结构（D-34）。三个命令都只在用户输入时运行（D-35） |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（只报行号，D-11）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面四个脚本的回归测试，在临时目录和假 HOME 中运行，约 6 秒（D-17） |
 
 ## 日常用法
 
-- 开新对话：hook 自动注入状态；说“继续”，agent 复述后再动手。
+- 看状态：`/pickup`，开场或对话中途都可以，只显示不动手。hook 在开场把「进行中」注入
+  给模型，但不显示给用户。
+- 接着做：说“继续”，agent 先复述再按「进行中」的下一步执行。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n）；看不懂某个操作时问“依据是哪条”。
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
 - 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
@@ -47,12 +49,10 @@
   一行显示 `ok private-notes.md is ignored` 即成功。进入该目录开 Claude，说“继续”，按模板
   的下一步填写项目概况；AGENTS.md 的占位符在有了真实命令和规则后再填。
 - **已有内容的项目**：先放进 `P0NN_名称/` 容器（要移动时按 D-10 迁移按路径保存的数据）。
-  在项目目录开 Claude，说“按 agent-system 把这个项目补成标准结构，先给我迁移方案”。
-  agent 会：确认工作区干净 → 旧笔记先 `git mv` 为 `docs/project-notes.md` 再运行
-  `new-project .`（D-21，已有文件只保留不覆盖）→ 处理输出里的 `WARNING`（常见：旧
-  `.gitignore` 缺 `private-notes.md`）→ 给出内容迁移方案，确认后拆进 AGENTS.md、decisions、
-  pitfalls、log → 提交前做隐私扫描（公开仓库推送前全量检查，profiles/code.md 第 6 节）→
-  跑原有测试、开新会话确认注入了「进行中」。CodaPace 是按这个流程迁移的（CodaPace D-1）。
+  在项目目录开 Claude，输入 `/adopt`：先检查并给出迁移方案，确认后再执行，步骤见
+  [claude/skills/adopt](claude/skills/adopt/SKILL.md)（D-34）。CodaPace 是按这个流程迁移的。
+- **不要在这些项目里用内置的 `/init`**：它会生成或改写 CLAUDE.md，而这里的 CLAUDE.md 是
+  指向 AGENTS.md 的软链接，会不会改坏 AGENTS.md 或替换掉软链接没有验证过。补结构用 `/adopt`。
 
 ## 在新电脑上安装
 
