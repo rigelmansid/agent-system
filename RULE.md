@@ -19,7 +19,7 @@ Profile：项目 `AGENTS.md` 开头的 `<!-- profile: <名称> -->` 表示该项
 ### 1.1 开场
 
 1. 读项目 `AGENTS.md`，再读 `docs/project-notes.md` 的「进行中」与待办。
-   （Claude Code 与 Codex 的 SessionStart hook 会自动注入「进行中」与 git 状态；没注入时
+   （Claude Code 的 SessionStart hook 会自动注入「进行中」与 git 状态；没注入时
    自己读。）
 2. 动手前用 3–5 行向用户复述：上次停在哪、相关的决策编号、等待用户确认的事、
    打算先做的一步。用户确认或补充后再开始。

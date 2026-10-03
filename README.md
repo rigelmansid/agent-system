@@ -1,7 +1,10 @@
 # agent-system
 
-我和 AI agent（Claude Code 为主，Codex 用于审查和非代码任务）协作的规则与工具。
+我和 AI agent（Claude Code 为主，Codex 用于代码审查和一次性的非代码任务）协作的规则与工具。
 私有仓库，远端是 GitHub 私有仓库（D-3，地址用 `git remote -v` 查看），不公开。
+
+原则：简洁、简约、高效，不过度自动化。自动化在长期使用中遇到反复出现的问题时再加，
+不在初期预先建（D-27）。
 
 ## 三层规则
 
@@ -17,10 +20,10 @@
 
 | 文件 | 作用 |
 |---|---|
-| `bin/install` | 建立上面的全局链接，技能同时链接到 `~/.claude/skills/` 和 Codex 的 `~/.agents/skills/`；可重复运行，已有的非链接文件不覆盖。SessionStart hook：只**检查** `~/.claude/settings.json`，缺少时打印要粘贴的片段（D-19）；`~/.codex/hooks.json` 不存在时新建，已存在时只检查（D-25） |
+| `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。只**检查** `settings.json` 里的 SessionStart hook，缺少时打印要粘贴的片段，不自动修改该文件（D-19）。Codex 只链接 RULE.md（D-27） |
 | `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，建 `../materials/`，装 pre-commit hook；不覆盖已有文件。`<dir>` 写成 `P0NN_名称/<project>`（D-10），容器文件夹名不符时提示 |
-| `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态；没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态（D-15）。「进行中」之后有提交没更新它、或 AGENTS.md 超过约 200 行、project-notes 超过约 600 行时加一行提醒（D-19）。Codex 也支持 SessionStart hook（D-24） |
-| `claude/skills/pickup`、`claude/skills/wrap` | `/pickup` 开场复述，`/wrap` 收尾记录；Codex 里用 `$pickup`、`$wrap` |
+| `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态；没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态（D-15）。「进行中」之后有提交没更新它、或 AGENTS.md 超过约 200 行、project-notes 超过约 600 行时加一行提醒（D-19）。纯文本输出，只进模型上下文（D-28）；只给 Claude Code 用（D-27） |
+| `claude/skills/pickup`、`claude/skills/wrap` | `/pickup` 开场复述，`/wrap` 收尾记录 |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（只报行号，D-11）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面四个脚本的回归测试，在临时目录和假 HOME 中运行，约 6 秒（D-17） |
 
@@ -43,15 +46,12 @@
 3. 运行 `~/agent-system/bin/install`。出现 `SKIP` 时把那个文件移走再运行。
 4. 按 install 打印的片段，把 SessionStart hook 合并进 `~/.claude/settings.json`，再运行一次
    install，全部显示 `ok`。
-5. 打开 Codex，在 `/hooks` 里信任新的 SessionStart hook（Codex 按内容哈希记录信任，hook
-   脚本路径或 `hooks.json` 改动后要重新信任，D-25）。
-6. 重建本机才有的东西（都不随 clone 过来）：
+5. 重建本机才有的东西（都不随 clone 过来）：
    - 本仓库的 `.git/privacy-patterns`（D-12）；
    - 各项目：clone 后运行 `bin/new-project <项目目录>` 装上 pre-commit hook（只补缺的，
      不覆盖），并重建该项目的 `.git/privacy-patterns`；
    - 各项目的 `private-notes.md` 和 `../materials/`，从旧电脑自行同步。
-7. 运行 `tests/run.sh`，再在一个项目里分别开 Claude Code 和 Codex 会话，说“继续”，确认
-   agent 先复述「进行中」。
+6. 运行 `tests/run.sh`，再在一个项目里开新会话，说“继续”，确认 agent 先复述「进行中」。
 
 ## 修改本仓库
 

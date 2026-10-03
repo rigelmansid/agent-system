@@ -5,13 +5,8 @@
 #   ~/.claude/CLAUDE.md          -> RULE.md
 #   ~/.codex/AGENTS.md           -> RULE.md
 #   ~/.claude/skills/<name>      -> claude/skills/<name>
-#   ~/.agents/skills/<name>      -> claude/skills/<name>   (Codex, D-25)
-# SessionStart hook:
-#   ~/.claude/settings.json is never edited (it holds credentials); the script
-#   checks for the hook and prints the snippet to add if it is missing.
-#   ~/.codex/hooks.json is created when absent (it holds only hooks); an
-#   existing one is never edited, only checked. Codex then asks the user to
-#   trust the hook in /hooks before it runs.
+# The SessionStart hook in ~/.claude/settings.json is not edited here; the
+# script checks for it and prints the snippet to add if it is missing.
 # Compatible with macOS bash 3.2.
 
 root=$(cd "$(dirname "$0")/.." && pwd -P)
@@ -35,7 +30,6 @@ link "$root/RULE.md" "$HOME/.codex/AGENTS.md"
 for skill in "$root"/claude/skills/*/; do
     name=$(basename "$skill")
     link "$root/claude/skills/$name" "$HOME/.claude/skills/$name"
-    link "$root/claude/skills/$name" "$HOME/.agents/skills/$name"
 done
 
 hook="$root/claude/hooks/session-start.sh"
@@ -51,38 +45,5 @@ MISSING SessionStart hook. Add this to ~/.claude/settings.json:
     ]
   }
 EOF
-fi
-
-codex_hooks="$HOME/.codex/hooks.json"
-codex_snippet() {
-    cat <<EOF
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$hook",
-            "statusMessage": "Loading project state",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  }
-}
-EOF
-}
-if grep -qF "$hook" "$codex_hooks" 2>/dev/null; then
-    echo "ok      SessionStart hook in ~/.codex/hooks.json (trust it in Codex /hooks)"
-elif [ -e "$codex_hooks" ] || [ -L "$codex_hooks" ]; then
-    status=1
-    echo "MISSING SessionStart hook. Merge this into the existing ~/.codex/hooks.json:"
-    codex_snippet | sed 's/^/  /'
-else
-    mkdir -p "$(dirname "$codex_hooks")"
-    codex_snippet > "$codex_hooks" && echo "created $codex_hooks"
-    echo "note    open Codex and trust the new hook in /hooks; until then it is skipped"
 fi
 exit $status

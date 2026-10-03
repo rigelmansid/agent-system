@@ -5,26 +5,22 @@
 
 ## 进行中
 
-更新：2026-10-04 00:58
-- 任务：按与最新做法的对比逐项改进；第 1 条（修正 Codex 说法，D-24）、第 2 条（接上
-  Codex 的 hook 与技能，D-25）已合成一个提交
-- 停在：本机已真实运行 install；Codex 里信任 hook、`$pickup` 可见性尚未实测；4 个提交未推送
-- 本次决策：D-24、D-25
-- 待用户确认：Codex 实测结果；是否推送
-- 下一步：1. 用户在 Codex `/hooks` 信任 hook，说“继续”看是否复述，输入 `$` 看技能
-  2. 从待办挑对比的第 3–7 条
-- 不要重复：install 已在本机真实运行过；不要改写 git 历史（D-12）；测试用 `tests/run.sh`，
-  不要在真实项目里试提交
+更新：2026-10-04 01:48
+- 任务：无，上一个工作单元：定下原则“简洁、不过度自动化”，Codex 只链接 RULE.md（D-27）；
+  hook 退回纯文本，保留 LC_ALL=C 修复（D-28）
+- 停在：D-26 至 D-28 已合成一个提交；本机已删 `~/.agents/` 和 `~/.codex/hooks.json`；
+  5 个提交未推送
+- 本次决策：D-26、D-27、D-28
+- 待用户确认：是否推送
+- 下一步：1. 用户明确同意后推送 2. 按 D-27 原则从待办挑下一项
+- 不要重复：不要再给 Codex 装 hook 或技能（D-27）；不要改写 git 历史（D-12）；测试用
+  `tests/run.sh`，不要在真实项目里试提交
 
 ## 待办
 
-- [ ] 对比改进第 3 条：hook 改为 JSON 输出，用 `systemMessage` 给用户看一行摘要、`sessionTitle`
-- [ ] 对比改进第 4 条：改为 plugin 分发（技能、hook、`bin/new-project`）；RULE.md 仍用软链接，
-  plugin 不加载 CLAUDE.md
-- [ ] 对比改进第 5 条：RULE.md 瘦身，Claude 一侧用 `@` 导入或 `~/.claude/rules/` 加载 profile
-- [ ] 对比改进第 6 条：规则写明 auto memory 与仓库文档的分工、多会话只由一个会话写 decisions.md
-- [ ] 对比改进第 7 条：评估 Stop hook 提醒更新「进行中」（防止反复阻止）
+- [ ] RULE.md 瘦身，profile 改为 `@` 导入（对比第 5 条，符合“简洁”）
+- [ ] 规则写明 auto memory 与仓库文档的分工、多会话只由一个会话写 decisions.md（对比第 6 条）
 - [ ] meshlink 的 `docs/project-notes.md` 有 612 行，超过约 600 行的上限，需拆分（D-19 发现）
-- [ ] 非代码项目的 profile（`profiles/<名称>.md` + `templates/<名称>/`，new-project 加
-  `--profile`）；动手前先问用户项目类型、是否用 git
-- 搁置：模板 AGENTS.md 用 `@` 导入 profile（D-19；对比第 5 条会重新评估）
+- [ ] 非代码项目的 profile：先确认是否还需要（D-27：Codex 的非代码任务是一次性的）
+- 搁置（D-27，用到再说）：plugin 分发（对比第 4 条）；Stop hook 提醒更新「进行中」（对比
+  第 7 条）

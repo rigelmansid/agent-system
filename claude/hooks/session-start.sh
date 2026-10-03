@@ -1,18 +1,17 @@
 #!/bin/bash
-# SessionStart hook for Claude Code and Codex (D-25): print the project's work
-# state so a new, cleared or compacted session starts with it in context.
-# Plain stdout becomes context in both tools. Read-only and always exits 0. An
-# agent project (AGENTS.md or docs/project-notes.md) gets the full snapshot
-# and the restate instruction; a plain git repository gets only the git state
-# (D-15); anything else gets nothing. Compatible with macOS bash 3.2.
+# Claude Code SessionStart hook: print the project's work state so a new,
+# cleared or compacted session starts with it in context. stdout becomes
+# context. Read-only and always exits 0. An agent project (AGENTS.md or
+# docs/project-notes.md) gets the full snapshot and the restate instruction;
+# a plain git repository gets only the git state (D-15); anything else gets
+# nothing. Plain text on purpose (D-28); not installed for Codex (D-27).
+# Compatible with macOS bash 3.2.
 
-# Claude Code sets CLAUDE_PROJECT_DIR. Codex runs the hook in the session cwd,
-# which may be a subdirectory, so fall back to the git root when the cwd is
-# not itself an agent project.
+# Work on bytes: in a UTF-8 locale awk aborts on an invalid byte in the notes
+# and the whole 进行中 block is lost (D-28). The patterns are literal bytes.
+export LC_ALL=C
+
 dir=${CLAUDE_PROJECT_DIR:-$PWD}
-if [ -z "${CLAUDE_PROJECT_DIR:-}" ] && [ ! -f AGENTS.md ] && [ ! -f docs/project-notes.md ]; then
-    top=$(git rev-parse --show-toplevel 2>/dev/null) && [ -n "$top" ] && dir=$top
-fi
 block=
 cd "$dir" 2>/dev/null || exit 0
 

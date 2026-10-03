@@ -268,7 +268,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：README 工具表、RULE.md 1.1 的说法改为两个工具都有 hook；D-19 标题注明 Codex 一项
   已被本条修正。
 
-### D-25 把 SessionStart hook 和技能接到 Codex（2026-10-04，用户决定）
+### D-25 把 SessionStart hook 和技能接到 Codex（2026-10-04，用户决定）（已被 D-27 替代）
 
 - 背景：D-24 确认 Codex 支持 hook 和技能，但本仓库只把 RULE.md 链接给了 Codex。Codex 的技能
   目录是 `~/.agents/skills/`，SKILL.md 格式与 Claude Code 相同（developers.openai.com/codex/skills，
@@ -286,3 +286,56 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   `~/.codex/hooks.json`（JSON 有效），Claude 一侧各项仍为 ok；4 个真实项目的 Claude 侧 hook
   输出与修改前逐字相同；在 CodaPace 子目录模拟 Codex 调用能注入「进行中」。未验证：Codex
   里真实信任并运行 hook、`$pickup` 能被发现（需要用户在 Codex 里操作）。
+
+### D-26 SessionStart hook 改为 JSON 输出，给用户显示一行摘要，不设会话标题（2026-10-04，用户决定）（已被 D-28 替代）
+
+- 背景：hook 的纯文本输出只进模型上下文，用户在界面上看不到。两个工具都支持 JSON 输出的
+  `systemMessage`（Claude 显示给用户；Codex 显示为警告样式）和
+  `hookSpecificOutput.additionalContext`。Claude 还支持 `sessionTitle`，效果同 `/rename`，在
+  resume 时也会覆盖用户起的名字；Codex 文档没有这个字段。JSON 无效时 Claude 会丢弃全部输出，
+  比纯文本更脆弱。
+- 选项：A 保持纯文本 / B JSON，加摘要 / C JSON，加摘要和 `sessionTitle`；摘要只在 Claude 显示
+  还是两边都显示
+- 选择：B，两边都显示；只在 agent 项目里显示摘要，普通 git 仓库不显示
+- 理由：用户同意 agent 的建议。`sessionTitle` 收益小，可能覆盖用户的会话名，在 Codex 里行为
+  未知。
+- 影响：`claude/hooks/session-start.sh` 先收集数据，再分别生成上下文和摘要，用 iconv、tr、sed
+  严格转义成 JSON（不依赖 jq）；摘要里的“下一步”按字节截断后用 iconv 去掉被切开的字符。
+  测试中发现旧版在 UTF-8 环境下遇到 project-notes 里的无效字节时，awk 报错，「进行中」整块
+  丢失；hook 改为 `LC_ALL=C` 按字节处理。`tests/run.sh` 用包装脚本解码 JSON、校验每次输出
+  都是有效 JSON，新增 9 项，共 120 项。2026-10-04 验证：连跑 3 次全过；对 HEAD 版本 12 项失败；
+  4 个真实项目的上下文与修改前逐字相同，摘要内容正确。未验证：在 Claude Code 和 Codex 的
+  新会话里实际看到摘要（需要用户开新会话）。
+
+### D-27 仓库原则：简洁、不过度自动化；Codex 只链接 RULE.md（2026-10-04，用户决定）
+
+- 背景：D-25 按 README“Codex 用于审查和非代码任务”的字面意思，把 hook 和技能接到了 Codex，
+  事先没有问清用法。用户说明：Codex 只用于代码审查和一次性的非代码任务（在 Mac 上控制
+  Windows 建模等），不需要跨会话交接；对本仓库的愿景是简洁、简约、高效，不过度自动化，
+  自动化在长期使用中逐步加，不在初期预先建。
+- 选项：A Codex 只链接 RULE.md，撤掉 D-25 / B 保留 D-25，只在 Codex 不显示摘要 / C 给 Codex
+  一份单独精简的全局规则
+- 选择：A；并把上面的愿景定为本仓库的原则
+- 理由：用户决定。审查时 review.md 已要求读 AGENTS.md、决策和 diff，hook 和技能对一次性
+  任务没有用处，却要多一步信任和一份维护。
+- 影响：替代 D-25 和 D-26 中 Codex 的部分。`bin/install` 恢复为 48bdbd2 的版本；
+  `session-start.sh` 去掉没有 `CLAUDE_PROJECT_DIR` 时回退到 git 根目录的逻辑；`tests/run.sh`
+  去掉 Codex 的用例，加一项确认 install 不再为 Codex 建技能和 hook；README 开头写明原则，
+  工具表和新电脑步骤去掉 Codex 部分；RULE.md 1.1 只写 Claude Code 的 hook。本机删除 D-25
+  创建的 `~/.agents/`（只有两个技能链接）和 `~/.codex/hooks.json`（删前确认是 install 写的
+  原样）。D-24 的事实更正保留。以后的改进按此原则取舍：对比清单里的 plugin 分发、Stop hook
+  先不做，等实际使用中出现需要再说。
+
+### D-28 SessionStart hook 退回纯文本，只保留 LC_ALL=C 修复（2026-10-04，用户决定）
+
+- 背景：D-26 为了在开场给用户显示一行摘要，在 hook 里加了约 60 行 JSON 转义（iconv、tr、sed、
+  按字节截断）。按 D-27 的原则，这一项偏重。D-26 的测试顺带发现一个旧 bug：UTF-8 环境下
+  project-notes 有无效字节时，awk 报错，「进行中」整块丢失。
+- 选项：A 保留 JSON 摘要 / B 退回纯文本，保留 `LC_ALL=C` 修复
+- 选择：B，替代 D-26（D-26 未提交）
+- 理由：用户决定。摘要是锦上添花，转义代码是长期维护负担；bug 修复只要一行。
+- 影响：`claude/hooks/session-start.sh` 恢复为 48bdbd2 的纯文本版本，加 `export LC_ALL=C`
+  和注释；`tests/run.sh` 去掉 JSON 包装与摘要用例，加 2 项无效字节回归测试，共 101 项；README
+  工具表写明纯文本输出。2026-10-04 验证：测试全过；对 1ad7235 运行时这 2 项和 D-27 的 1 项
+  失败；4 个真实项目在 UTF-8 环境下的输出与 48bdbd2 版本逐字相同。用户开场看不到摘要，
+  要看状态就让 agent 复述或用 /pickup。
