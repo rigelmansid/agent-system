@@ -8,12 +8,8 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 
 ### D-1 开场技能叫 /pickup，不叫 /resume（2026-10-03，补记）（已被 D-30 替代）
 
-- 背景：开场恢复状态的技能最初命名为 `resume`。
-- 选项：A 保留 `resume` / B 改名 `pickup`
-- 选择：B
-- 理由：Claude Code 内置的 `/resume` 命令会覆盖同名技能，输入 `/resume` 调不到技能。
-- 影响：`claude/skills/resume/` 改为 `claude/skills/pickup/`，README 同步；
-  `~/.claude/skills/pickup` 链接到新目录。
+已精简（按 D-22，2026-10-04）：技能已在 D-30 删除。仍适用的教训：技能不要和 Claude Code
+内置命令同名（如 `/resume`），否则调不到。原文见提交 `c0ece00`。
 
 ### D-2 项目资料放在项目目录旁的 materials/（2026-10-03，用户决定）
 
@@ -270,42 +266,15 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 
 ### D-25 把 SessionStart hook 和技能接到 Codex（2026-10-04，用户决定）（已被 D-27 替代）
 
-- 背景：D-24 确认 Codex 支持 hook 和技能，但本仓库只把 RULE.md 链接给了 Codex。Codex 的技能
-  目录是 `~/.agents/skills/`，SKILL.md 格式与 Claude Code 相同（developers.openai.com/codex/skills，
-  只看了搜索摘要）；hook 在 `~/.codex/hooks.json`，在会话 cwd 中运行，不提供
-  `CLAUDE_PROJECT_DIR`。
-- 选项：hooks.json 的处理：A 和 settings.json 一样只检查、打印片段 / B 不存在时新建，已存在
-  只检查
-- 选择：B；技能同时链接到 `~/.agents/skills/`；hook 脚本在没有 `CLAUDE_PROJECT_DIR` 且 cwd
-  不是 agent 项目时，回退到 git 根目录
-- 理由：用户要求接上 Codex。`hooks.json` 只放 hook、不含凭据，新建没有覆盖风险；已有的仍
-  不改，与 D-19 一致。Codex 可能从子目录启动，只看 cwd 会漏掉项目状态。
-- 影响：`bin/install`、`claude/hooks/session-start.sh`、`tests/run.sh`（新增 13 项，共 111 项）、
-  README 工具表与新电脑步骤（加“在 Codex `/hooks` 里信任”）。2026-10-04 验证：测试全过，对
-  HEAD 版本有 7 项失败；在本机真实运行 install，新建 `~/.agents/skills/` 两个链接和
-  `~/.codex/hooks.json`（JSON 有效），Claude 一侧各项仍为 ok；4 个真实项目的 Claude 侧 hook
-  输出与修改前逐字相同；在 CodaPace 子目录模拟 Codex 调用能注入「进行中」。未验证：Codex
-  里真实信任并运行 hook、`$pickup` 能被发现（需要用户在 Codex 里操作）。
+已精简（按 D-22，2026-10-04）：已由 D-27 撤回。以后若再接 Codex 可参考：技能目录
+`~/.agents/skills/`（格式同 Claude Code），hook 在 `~/.codex/hooks.json`、在会话 cwd 运行、
+不提供 `CLAUDE_PROJECT_DIR`。原文见提交 `c0ece00`。
 
 ### D-26 SessionStart hook 改为 JSON 输出，给用户显示一行摘要，不设会话标题（2026-10-04，用户决定）（已被 D-28 替代）
 
-- 背景：hook 的纯文本输出只进模型上下文，用户在界面上看不到。两个工具都支持 JSON 输出的
-  `systemMessage`（Claude 显示给用户；Codex 显示为警告样式）和
-  `hookSpecificOutput.additionalContext`。Claude 还支持 `sessionTitle`，效果同 `/rename`，在
-  resume 时也会覆盖用户起的名字；Codex 文档没有这个字段。JSON 无效时 Claude 会丢弃全部输出，
-  比纯文本更脆弱。
-- 选项：A 保持纯文本 / B JSON，加摘要 / C JSON，加摘要和 `sessionTitle`；摘要只在 Claude 显示
-  还是两边都显示
-- 选择：B，两边都显示；只在 agent 项目里显示摘要，普通 git 仓库不显示
-- 理由：用户同意 agent 的建议。`sessionTitle` 收益小，可能覆盖用户的会话名，在 Codex 里行为
-  未知。
-- 影响：`claude/hooks/session-start.sh` 先收集数据，再分别生成上下文和摘要，用 iconv、tr、sed
-  严格转义成 JSON（不依赖 jq）；摘要里的“下一步”按字节截断后用 iconv 去掉被切开的字符。
-  测试中发现旧版在 UTF-8 环境下遇到 project-notes 里的无效字节时，awk 报错，「进行中」整块
-  丢失；hook 改为 `LC_ALL=C` 按字节处理。`tests/run.sh` 用包装脚本解码 JSON、校验每次输出
-  都是有效 JSON，新增 9 项，共 120 项。2026-10-04 验证：连跑 3 次全过；对 HEAD 版本 12 项失败；
-  4 个真实项目的上下文与修改前逐字相同，摘要内容正确。未验证：在 Claude Code 和 Codex 的
-  新会话里实际看到摘要（需要用户开新会话）。
+已精简（按 D-22，2026-10-04）：未提交即由 D-28 退回纯文本，保留其中的 `LC_ALL=C` 修复。
+以后若想让用户看到开场摘要可参考：JSON 的 `systemMessage` 显示给用户；JSON 无效时 Claude
+会丢弃全部输出；`sessionTitle` 在 resume 时会覆盖用户起的会话名。原文见提交 `c0ece00`。
 
 ### D-27 仓库原则：简洁、不过度自动化；Codex 只链接 RULE.md（2026-10-04，用户决定）
 

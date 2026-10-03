@@ -39,6 +39,22 @@
   信任条目，做法见 D-10；改名前退出该文件夹里的所有会话。
 - 审查：在 Codex 里说“按 ~/agent-system/review.md 审查当前未提交的改动”。
 
+## 建新项目 / 迁移已有项目
+
+`new-project` 是脚本，要写完整路径；在 Claude 里前面加 `!`。路径写到容器文件夹下面一层
+的项目目录（D-10），写成容器文件夹本身会被拒绝（D-23）。
+
+- **空的新项目**：运行 `~/agent-system/bin/new-project ~/<项目目录>/P0NN_名称/名称`，最后
+  一行显示 `ok private-notes.md is ignored` 即成功。进入该目录开 Claude，说“继续”，按模板
+  的下一步填写项目概况；AGENTS.md 的占位符在有了真实命令和规则后再填。
+- **已有内容的项目**：先放进 `P0NN_名称/` 容器（要移动时按 D-10 迁移按路径保存的数据）。
+  在项目目录开 Claude，说“按 agent-system 把这个项目补成标准结构，先给我迁移方案”。
+  agent 会：确认工作区干净 → 旧笔记先 `git mv` 为 `docs/project-notes.md` 再运行
+  `new-project .`（D-21，已有文件只保留不覆盖）→ 处理输出里的 `WARNING`（常见：旧
+  `.gitignore` 缺 `private-notes.md`）→ 给出内容迁移方案，确认后拆进 AGENTS.md、decisions、
+  pitfalls、log → 提交前做隐私扫描（公开仓库推送前全量检查，profiles/code.md 第 6 节）→
+  跑原有测试、开新会话确认注入了「进行中」。CodaPace 是按这个流程迁移的（CodaPace D-1）。
+
 ## 在新电脑上安装
 
 1. 装好 Claude Code 和 Codex，配置好各自的登录或 API（不在本仓库）。
