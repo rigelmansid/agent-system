@@ -23,13 +23,13 @@
 | `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。只**检查** `settings.json` 里的 SessionStart hook，缺少时打印要粘贴的片段，不自动修改该文件（D-19）。Codex 只链接 RULE.md（D-27） |
 | `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，建 `../materials/`，装 pre-commit hook；不覆盖已有文件。`<dir>` 写成 `P0NN_名称/<project>`（D-10），容器文件夹名不符时提示 |
 | `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态；没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态（D-15）。「进行中」之后有提交没更新它、或 AGENTS.md 超过约 200 行、project-notes 超过约 600 行时加一行提醒（D-19）。纯文本输出，只进模型上下文（D-28）；只给 Claude Code 用（D-27） |
-| `claude/skills/pickup`、`claude/skills/wrap` | `/pickup` 开场复述，`/wrap` 收尾记录 |
+| `claude/skills/wrap` | `/wrap` 收尾记录。开场不需要技能：hook 注入状态，RULE.md 1.1 要求先复述（D-30） |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（只报行号，D-11）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面四个脚本的回归测试，在临时目录和假 HOME 中运行，约 6 秒（D-17） |
 
 ## 日常用法
 
-- 开新对话：hook 自动注入状态；说“继续”或 `/pickup`，agent 复述后再动手。
+- 开新对话：hook 自动注入状态；说“继续”，agent 复述后再动手。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n）；看不懂某个操作时问“依据是哪条”。
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
 - 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
