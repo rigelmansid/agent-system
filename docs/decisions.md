@@ -51,67 +51,39 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 
 ### D-5 项目容器文件夹命名为 P0NN_名称（2026-10-03，用户决定）（已被 D-6 替代）
 
-- 背景：存放各项目的目录下，项目容器文件夹原来命名为 `Proj.0NN_名称`。
-- 选项：A 保持 `Proj.0NN_名称` / B 改为 `P0NN_名称`
-- 选择：B，已有的文件夹一并改名
-- 理由：用户的命名偏好。
-- 影响：RULE.md 第 4 节的示例改为 `P0NN_名称/`。新项目用 `bin/new-project` 时，容器
-  文件夹按此命名。已有文件夹的改名不在本仓库里做；Claude Code 与 Codex 按路径保存的
-  会话历史、memory 和信任设置要随之迁移，在所有相关会话退出后执行。
+已精简（D-22）：命名先后经 D-6、D-10 改定，结论见 D-10。原文见提交 `bdc281a`。
 
 ### D-6 项目容器文件夹保持 Proj.0NN_名称（2026-10-03，用户决定）（已被 D-10 替代）
 
-- 背景：按 D-5 把已有文件夹改为 `P0NN_名称` 后，用户回滚了改名，文件夹仍是
-  `Proj.0NN_名称`。
-- 选项：A 保持 `Proj.0NN_名称` / B 按 D-5 改为 `P0NN_名称`
-- 选择：A，替代 D-5
-- 理由：用户决定不改名。
-- 影响：RULE.md 第 4 节的示例恢复为 D-5 之前的 `Proj.x/`。改名计划文件和改名时的配置
-  备份已删除；文件夹、`~/.claude/projects/`、`~/.claude.json`、`~/.codex/config.toml`
-  已核对为原状。
+已精简（D-22）：结论见 D-10。原文见提交 `bdc281a`。
 
-### D-7 CodaPace 的容器文件夹改为 P011_CodaPace（2026-10-03，用户决定）
+### D-7 CodaPace 的容器文件夹改为 P011_CodaPace（2026-10-03，用户决定）（已并入 D-10）
 
-- 背景：D-6 决定所有容器文件夹保持 `Proj.0NN_名称`；随后用户要求单独把 CodaPace 改名。
-- 选项：A 维持 D-6 / B 只改 CodaPace，其余项目不变
-- 选择：B，修改 D-6 中 CodaPace 一项
-- 理由：用户决定。
-- 影响：容器文件夹 `Proj.011_CodaPace` 改为 `P011_CodaPace`；`~/.claude/projects/` 下两个
-  对应目录、`~/.claude.json` 的两个项目键随之改名（Codex 配置里没有该项目）。其余项目和
-  RULE.md 的示例不变，因此容器文件夹命名暂时不统一。`codapace bak/` 里的旧审查报告仍写着
-  更早的旧路径，属于历史记录，未改。
+已精简（D-22）：单个项目的改名操作，结果与改名做法见 D-10。原文见提交 `bdc281a`。
 
-### D-8 meshlink 的容器文件夹改为 P012_meshlink（2026-10-03，用户决定）
+### D-8 meshlink 的容器文件夹改为 P012_meshlink（2026-10-03，用户决定）（已并入 D-10）
 
-- 背景：D-7 之后，用户要求 `Proj.012_meshlink` 同样改名。
-- 选项：A 保持 `Proj.012_meshlink` / B 按 D-7 的做法改为 `P012_meshlink`
-- 选择：B，修改 D-6 中 meshlink 一项
-- 理由：用户决定。
-- 影响：容器文件夹改名；`~/.claude/projects/` 下两个对应目录、`~/.claude.json` 的两个项目键、
-  `~/.codex/config.toml` 的项目信任条目随之改名。`Proj.012_ATCS` 的旧条目对应的文件夹已不存在，
-  未动。meshlink 的 pre-commit 链接指向 `~/agent-system`，不受影响。
+已精简（D-22）：同 D-7。原文见提交 `bdc281a`。
 
-### D-9 Yuancheng.io 的容器文件夹改为 P013_Yuancheng.io（2026-10-03，用户决定）
+### D-9 Yuancheng.io 的容器文件夹改为 P013_Yuancheng.io（2026-10-03，用户决定）（已并入 D-10）
 
-- 背景：D-8 之后，用户要求 `Proj.013_Yuancheng.io` 同样改名。
-- 选项：A 保持 `Proj.013_Yuancheng.io` / B 按 D-7 的做法改为 `P013_Yuancheng.io`
-- 选择：B，修改 D-6 中 Yuancheng.io 一项
-- 理由：用户决定。
-- 影响：容器文件夹改名；`~/.claude/projects/` 下两个对应目录、`~/.claude.json` 的两个项目键
-  随之改名（Codex 配置里没有该项目）。仓库内只有 `.astro/dev.log` 含旧路径，是开发服务器
-  日志，未改。改名时 Astro 开发服务器未在运行。
+已精简（D-22）：同 D-7。原文见提交 `bdc281a`。
 
 ### D-10 在用项目的容器文件夹命名为 P0NN_名称，归档不改（2026-10-03，用户决定）
 
-- 背景：D-7、D-8、D-9 把在用的三个项目逐个改为 `P0NN_名称`；用户同时把其他项目移进了
-  `00_Archieve/` 和 `Other/`。D-6 只剩归档里的旧文件夹仍适用，RULE.md 的示例与实际不符。
-- 选项：A 维持 D-6，逐个例外 / B 在用项目统一 `P0NN_名称`，归档和 `Other/` 里的文件夹不改
-- 选择：B，替代 D-6，并合并 D-7、D-8、D-9 的结果
+- 背景：项目容器文件夹原来命名为 `Proj.0NN_名称`。用户先决定统一改为 `P0NN_名称`（D-5），
+  又回滚（D-6），随后把在用的 CodaPace、meshlink、Yuancheng.io 逐个改名（D-7 至 D-9），
+  其他项目移进了 `00_Archieve/` 和 `Other/`。
+- 选项：A 保持 `Proj.0NN_名称`，逐个例外 / B 在用项目统一 `P0NN_名称`，归档和 `Other/`
+  里的文件夹不改
+- 选择：B，替代 D-5、D-6，合并 D-7 至 D-9
 - 理由：用户决定；规则与目录现状一致。
-- 影响：RULE.md 第 4 节的示例改为 `P0NN_名称/`。新项目用 `bin/new-project` 时，容器文件夹
-  按此命名，容器文件夹名不符时 `bin/new-project` 给出警告（不阻止）；README 与
-  profiles/code.md 写明 `<dir>` 的形式。以后改名按 D-7 的做法迁移 `~/.claude/projects/`、
-  `~/.claude.json` 和 `~/.codex/config.toml` 中按路径保存的数据，README 日常用法有一句提示。
+- 影响：RULE.md 第 4 节的示例为 `P0NN_名称/`；`bin/new-project` 在容器文件夹名不符时警告
+  （不阻止）；README 与 profiles/code.md 写明 `<dir>` 的形式。
+- 改名做法（D-7 至 D-9 实际执行过）：先退出该文件夹里的所有 Claude Code / Codex 会话；
+  改容器文件夹名；把按路径保存的数据一并改名：`~/.claude/projects/` 下对应的目录、
+  `~/.claude.json` 的项目键、`~/.codex/config.toml` 的项目信任条目（没有就跳过）。日志和
+  历史报告里的旧路径不改。各项目的 pre-commit 链接指向 `~/agent-system`，不受影响。
 
 ### D-11 pre-commit 拦截令牌与密钥，命中时不回显内容（2026-10-03，用户决定）
 
@@ -247,3 +219,39 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：在项目目录里直接 `new-project .` 是最自然的用法。
 - 影响：`bin/new-project`；`tests/run.sh` 新增 3 项（`.`、末尾斜杠、被拒绝的名称不创建目录），
   共 94 项。2026-10-03：当前版本全过；对 8784c32 运行时 `.` 一项失败。
+
+### D-21 已有项目补结构时先改名再运行 new-project（2026-10-03，agent 选择）
+
+- 背景：「进行中」原定先在 CodaPace 运行 `new-project .` 再提迁移方案。但 new-project 会按
+  模板新建空的 `docs/project-notes.md`，与把原笔记 `project-notes.zh-CN.md` 改名过去冲突。
+- 选项：A 先运行，再删模板文件、改名 / B 先 `git mv` 原笔记，再运行，new-project 保留已有文件
+- 选择：B
+- 理由：new-project 从不覆盖已有文件，B 不需要删任何东西，改名历史也由 git 保留。
+- 影响：`profiles/code.md` 第 1 节加一句已有项目的做法。CodaPace 按此完成，其决策记为
+  CodaPace D-1（AGENTS.md 用中文、不变量保留编号、backlog 继续作逐条记录）。
+  2026-10-03 验证：CodaPace 的 `swift run CoreTests` 490 通过、UI 类型检查无输出、
+  pre-commit 对全部改动（临时索引）通过、SessionStart hook 注入了「进行中」与 D-1。
+
+### D-22 精简已被替代和已并入的决策（2026-10-03，用户决定）
+
+- 背景：用户要求清理本文件中无用的记录。D-5、D-6 已被 D-10 替代；D-7 至 D-9 是单个项目的
+  改名操作，唯一仍有用的是改名做法，README 写的是“做法见 D-7”。RULE.md 第 2 节只允许追加，
+  没有清理的规定。
+- 选项：A 删除这些条目 / B 保留标题和编号，正文精简为一行，有用内容并入 D-10
+- 选择：B，并在 RULE.md 第 2 节补一条精简规则
+- 理由：用户决定清理，agent 建议 B。提交信息里的 `Why: D-n` 和文档里的引用仍能找到条目；
+  原文留在提交 `bdc281a`，用 `git show bdc281a:docs/decisions.md` 查看。
+- 影响：D-5 至 D-9 精简为一行；D-10 改写为可独立阅读，收入改名做法；README 的引用由 D-7
+  改为 D-10；RULE.md 第 2 节新增精简规则（全局生效）。D-1 至 D-4、D-11 及以后未改动。
+
+### D-23 new-project 拒绝在 P0NN_ 容器文件夹上运行（2026-10-03，用户决定）
+
+- 背景：在容器文件夹 `P011_CodaPace/` 里运行了 `new-project .`，它把容器当成项目：在真实
+  仓库外层 `git init`、生成一套空模板，并在上一层 `VBCD/` 建了 `materials/`。已按用户指示删除
+  这些产物，`CodaPace/` 与 `P011_CodaPace/materials/` 未受影响。
+- 选项：A 只警告 / B 目标目录名是 `P0NN_*` 时拒绝，退出码 2，不创建任何东西
+- 选择：B
+- 理由：用户决定。按 D-10 容器与项目是两层，在容器上运行没有正当用途，警告容易被忽略。
+- 影响：`bin/new-project` 在创建任何目录前检查目标目录名（已存在的取解析后的名字，否则取
+  参数的 basename）；`tests/run.sh` 新增 4 项，共 98 项。2026-10-03：当前版本全过；对修改前的
+  脚本运行时这 4 项失败；在真实的 `P011_CodaPace/` 里运行被拒绝，目录内容不变。

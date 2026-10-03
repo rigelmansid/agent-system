@@ -136,6 +136,13 @@ check "dir '.': name from directory (D-20)" "# Dotted 开发与维护记录" \
     "$(head -1 "$T/P001_np/Dotted/docs/project-notes.md")"
 (cd "$T/P001_np" && "$root/bin/new-project" Slashed/ >/dev/null 2>&1)
 check "trailing slash: name from directory" "# Slashed" "$(cat "$T/P001_np/Slashed/README.md")"
+(cd "$T/P001_np" && "$root/bin/new-project" . >/dev/null 2>&1)
+check "container '.': refused (D-23)" 2 $?
+check "container '.': nothing created" no \
+    "$([ -e "$T/P001_np/AGENTS.md" ] || [ -e "$T/P001_np/.git" ] && echo yes || echo no)"
+"$root/bin/new-project" "$T/P002_new" >/dev/null 2>&1
+check "new container path: refused" 2 $?
+check "new container path: not created" no "$([ -e "$T/P002_new" ] && echo yes || echo no)"
 
 # ------------------------------------------------------------- session-start
 section "claude/hooks/session-start.sh"

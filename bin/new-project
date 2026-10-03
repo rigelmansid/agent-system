@@ -23,6 +23,19 @@ check_name() {
 dir=$1
 # Check an explicit name before creating anything.
 [ $# -ge 2 ] && check_name "$2"
+# A P0NN_<name> folder is the container, not the project; running there would
+# git init around the real repo and put materials one level too high (D-23).
+if [ -d "$dir" ]; then
+    target=$(cd "$dir" && basename "$PWD")
+else
+    target=$(basename "$dir")
+fi
+case $target in
+    P[0-9][0-9][0-9]_*)
+        echo "new-project: '$target' is a project container (D-10); run it on the" \
+             "project directory inside, e.g. $target/<project>" >&2
+        exit 2 ;;
+esac
 today=$(date +%Y-%m-%d)
 now=$(date '+%Y-%m-%d %H:%M')
 status=0

@@ -30,6 +30,8 @@ RULE.md 第 4 节。
 新项目用 `~/agent-system/bin/new-project <dir>` 初始化（模板在
 `~/agent-system/templates/code/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器
 文件夹（agent-system D-10）。
+已有项目补结构时，先把原有笔记 `git mv` 为 `docs/project-notes.md`，再运行
+`new-project .`，它只补缺的文件（agent-system D-21）。
 
 ### 按读取频率分文件
 
