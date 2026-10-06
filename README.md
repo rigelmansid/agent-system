@@ -19,18 +19,16 @@
 
 | 文件 | 作用 |
 |---|---|
-| `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。只**检查** `settings.json` 里的 SessionStart hook，缺少时打印要粘贴的片段，不自动修改该文件（D-19）。Codex 只链接 RULE.md（D-27） |
+| `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。不装任何 hook（D-39）。Codex 只链接 RULE.md（D-27） |
 | `bin/new-project <dir> [名称]` | 按 `templates/code/` 建项目或补齐缺的文件，建 `../materials/`，装 pre-commit hook；不覆盖已有文件。`<dir>` 写成 `P0NN_名称/<project>`（D-10），容器文件夹名不符时提示 |
-| `claude/hooks/session-start.sh` | 新会话、`/clear`、压缩后注入「进行中」、最近决策与 git 状态；没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态（D-15）。「进行中」之后有提交没更新它、或 AGENTS.md 超过约 200 行、project-notes 超过约 600 行时加一行提醒（D-19）。纯文本输出，只进模型上下文（D-28）；只给 Claude Code 用（D-27） |
-| `claude/skills/pickup`、`wrap`、`adopt` | `/pickup` 重新读取并显示项目状态，只读不动手，开场或对话中途都可用（D-33）；`/wrap` 收尾记录；`/adopt` 把已有项目补成标准结构（D-34）。三个命令都只在用户输入时运行（D-35） |
-| `git-hooks/pre-commit` | 拦截令牌与密钥（只报行号，D-11）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词；该文件有无效正则时也拦截（D-14） |
-| `tests/run.sh` | 上面四个脚本的回归测试，在临时目录和假 HOME 中运行，约 6 秒（D-17） |
+| `claude/skills/pickup`、`wrap`、`adopt` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 把已有项目补成标准结构（D-34）。三个命令都只在用户输入时运行（D-35） |
+| `git-hooks/pre-commit` | 拦截令牌与密钥（常见令牌格式、URL 里的密码、`TOKEN=…` 类赋值；只报行号，D-11、D-37）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词（worktree 共用这份文件）；该文件有无效正则时也拦截（D-14） |
+| `tests/run.sh` | 上面三个脚本的回归测试，在临时目录和假 HOME 中运行，约 6 秒（D-17） |
 
 ## 日常用法
 
-- 看状态：`/pickup`，开场或对话中途都可以，只显示不动手。hook 在开场把「进行中」注入
-  给模型，但不显示给用户。
-- 接着做：说“继续”，agent 先复述再按「进行中」的下一步执行。
+- 开场：模型不会自动读项目状态，直接说要做什么。想接着上次做，先输入 `/pickup`：它读
+  「进行中」、待办和相关决策并显示出来，之后照常下指示（D-39）。对话中途也可以用。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n）；看不懂某个操作时问“依据是哪条”。
 - 结束：`/wrap`，agent 更新「进行中」与记录并汇报。
 - 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
@@ -46,8 +44,8 @@
 的项目目录（D-10），写成容器文件夹本身会被拒绝（D-23）。
 
 - **空的新项目**：运行 `~/agent-system/bin/new-project ~/<项目目录>/P0NN_名称/名称`，最后
-  一行显示 `ok private-notes.md is ignored` 即成功。进入该目录开 Claude，说“继续”，按模板
-  的下一步填写项目概况；AGENTS.md 的占位符在有了真实命令和规则后再填。
+  一行显示 `ok private-notes.md is ignored` 即成功。进入该目录开 Claude，说这个项目要做
+  什么，填写项目概况；AGENTS.md 的占位符在有了真实命令和规则后再填。
 - **已有内容的项目**：先放进 `P0NN_名称/` 容器（要移动时按 D-10 迁移按路径保存的数据）。
   在项目目录开 Claude，输入 `/adopt`：先检查并给出迁移方案，确认后再执行，步骤见
   [claude/skills/adopt](claude/skills/adopt/SKILL.md)（D-34）。CodaPace 是按这个流程迁移的。
@@ -59,19 +57,17 @@
 1. 装好 Claude Code 和 Codex，配置好各自的登录或 API（不在本仓库）。
 2. 登录 GitHub 后 clone 到 `~/agent-system`（D-4）。
 3. 运行 `~/agent-system/bin/install`。出现 `SKIP` 时把那个文件移走再运行。
-4. 按 install 打印的片段，把 SessionStart hook 合并进 `~/.claude/settings.json`，再运行一次
-   install，全部显示 `ok`。
-5. 重建本机才有的东西（都不随 clone 过来）：
+4. 重建本机才有的东西（都不随 clone 过来）：
    - 本仓库的 `.git/privacy-patterns`（D-12）；
    - 各项目：clone 后运行 `bin/new-project <项目目录>` 装上 pre-commit hook（只补缺的，
      不覆盖），并重建该项目的 `.git/privacy-patterns`；
    - 各项目的 `private-notes.md` 和 `../materials/`，从旧电脑自行同步。
-6. 运行 `tests/run.sh`，再在一个项目里开新会话，说“继续”，确认 agent 先复述「进行中」。
+5. 运行 `tests/run.sh`，再在一个项目里开新会话，输入 `/pickup`，确认能显示「进行中」。
 
 ## 修改本仓库
 
-改规则就改这里，所有项目同时生效。改了 `bin/`、`git-hooks/` 或 `claude/hooks/` 后运行
-`tests/run.sh`，全部通过再提交；改完后在一个项目里开新会话确认 hook 输出正常。
+改规则就改这里，所有项目同时生效。改了 `bin/` 或 `git-hooks/` 后运行
+`tests/run.sh`，全部通过再提交。
 新增 profile（例如非代码项目）时放进 `profiles/<名称>.md`，并在 RULE.md 的 Profile 一段
 登记。每个 profile 都要有「收尾时的文档更新」一节，`/wrap` 按它执行（D-16）。
 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），提交正文写 `Why: D-n`。

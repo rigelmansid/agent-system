@@ -25,6 +25,8 @@ disable-model-invocation: true
 - 内容怎么拆：命令、不变量、验证方式进 AGENTS.md；做过的决定进 decisions；踩过的坑进
   pitfalls；历史进 log；大文档留在 `docs/` 下独立成文。
 - 已有 CLAUDE.md 是普通文件时：内容并入 AGENTS.md 后，换成指向它的软链接（要用户同意）。
+- 已有 AGENTS.md 里和 RULE.md 重复的内容（开场读状态、收尾、记录决策这类流程）列出来，
+  建议删掉：AGENTS.md 只写本项目特有的规则（D-38）。
 - 预计的 WARNING 和处理方法（常见：旧 `.gitignore` 缺 `private-notes.md`）。
 
 ## 三、执行（用户确认后）
@@ -32,6 +34,6 @@ disable-model-invocation: true
 1. 按方案改名、运行 new-project，处理输出里的 WARNING。
 2. 迁移内容，写好「进行中」。
 3. 隐私扫描：用 pre-commit 的规则扫全部入库文件；公开仓库按 profiles/code.md 第 6 节。
-4. 验证：项目原有的测试仍通过；
-   `CLAUDE_PROJECT_DIR=$PWD ~/agent-system/claude/hooks/session-start.sh` 的输出里有「进行中」。
+4. 验证：项目原有的测试仍通过；`docs/project-notes.md` 最上方有「进行中」区块，新会话里
+   输入 `/pickup` 能显示它。
 5. 在本项目 `docs/decisions.md` 记一条迁移决策。不提交，等用户说。

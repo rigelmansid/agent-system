@@ -1,5 +1,5 @@
 #!/bin/bash
-# Regression tests for bin/, git-hooks/ and claude/hooks/ (D-17). Everything
+# Regression tests for bin/ and git-hooks/ (D-17). Everything
 # runs in a temp directory with a fake HOME and no global git config, so real
 # projects and settings are never touched. Fake secrets, private IPs and home
 # paths are assembled at run time: the literal values must not appear in this
@@ -76,6 +76,26 @@ for c in 'TOKEN=<token>' 'export GITHUB_TOKEN=$GITHUB_TOKEN' \
     try_commit "$c"; check "passes: $c" pass "$result"
 done
 
+# More token formats and passwords in URLs (D-37).
+google=AIza$(r Sy9 11)Ab
+gitlab=glpat-$(r aB3 7)
+npm=npm_$(r Xy7z 9)
+stripe=sk_live_$(r 4eC3 6)
+jwt=eyJ$(r hbGc 3).eyJ$(r zdWI 3).$(r Qw4 10)
+urlpw="https://admin:""Pa55w0rd$(r x 6)@db.example.com/x"
+for c in "key: $google" "$gitlab" "$npm" "$stripe" "auth: $jwt" "$urlpw"; do
+    try_commit "$c"
+    check "secret blocked: ${c:0:16}..." block "$result"
+    case $commit_out in *"$google"*|*"$gitlab"*|*"$npm"*|*"$stripe"*|*"$jwt"*|*"$urlpw"*)
+        check "secret not echoed: ${c:0:16}..." hidden shown ;;
+    esac
+done
+for c in 'postgres://user:<password>@<host>:5432/db' 'postgres://app:${DB_PASS}@db:5432/x' \
+         'git clone ssh://git@github.com:22/o/r.git' 'see http://localhost:8080/a@b' \
+         'Aizawa is a name'; do
+    try_commit "$c"; check "passes: $c" pass "$result"
+done
+
 fffd=$'\xef\xbf\xbd'
 try_commit "host 192.168"".1.20"; check "private IP blocked" block "$result"
 try_commit "/Users""/someone/x"; check "home path blocked" block "$result"
@@ -101,6 +121,13 @@ rm -f "$patterns"
 try_commit "$(seq 1 300000)"
 check "large file: passes without Broken pipe" "pass:0" \
     "$result:$(printf '%s\n' "$commit_out" | grep -c 'Broken pipe')"
+# A linked worktree must use the repository's privacy-patterns too (D-37).
+printf 'wthost\n' > "$patterns"
+git -C "$repo" worktree add -q "$T/pc-wt" -b wt >/dev/null 2>&1
+printf 'ssh wthost\n' > "$T/pc-wt/w.txt" && git -C "$T/pc-wt" add w.txt
+if git -C "$T/pc-wt" commit -qm t >/dev/null 2>&1; then wt=pass; else wt=block; fi
+check "worktree uses privacy-patterns" block "$wt"
+rm -f "$patterns"
 
 # --------------------------------------------------------------- new-project
 section "bin/new-project"
@@ -147,64 +174,10 @@ check "container '.': nothing created" no \
 check "new container path: refused" 2 $?
 check "new container path: not created" no "$([ -e "$T/P002_new" ] && echo yes || echo no)"
 
-# ------------------------------------------------------------- session-start
-section "claude/hooks/session-start.sh"
-hook="$root/claude/hooks/session-start.sh"
-mkdir -p "$T/ss/empty" "$T/ss/plain"
-git init -q "$T/ss/plain"
-out=$(CLAUDE_PROJECT_DIR="$T/ss/empty" "$hook"); rc=$?
-check "empty dir: exit 0" 0 $rc
-check "empty dir: no output" "" "$out"
-out=$(CLAUDE_PROJECT_DIR="$T/ss/plain" "$hook")
-check "plain repo: git state" 1 "$(printf '%s\n' "$out" | grep -c '^git 分支')"
-check "plain repo: no restate" 0 "$(printf '%s\n' "$out" | grep -c '复述')"
-out=$(CLAUDE_PROJECT_DIR="$T/P001_np/p4" "$hook")
-check "project: 进行中 injected" 1 "$(printf '%s\n' "$out" | grep -c '^## 进行中')"
-check "project: restate asked" 1 "$(printf '%s\n' "$out" | grep -c '复述')"
-out=$(CLAUDE_PROJECT_DIR="$T/ss/missing" "$hook"); rc=$?
-check "missing dir: exit 0, no output" "0:" "$rc:$out"
-check "fresh project: no warnings" 0 "$(CLAUDE_PROJECT_DIR="$T/P001_np/p4" "$hook" | grep -c '^提醒')"
-
-# Stale 进行中 (D-19): only commits after the stamp that skip the notes count.
-s="$T/ss/stale"
-mkdir -p "$s/docs" && git init -q "$s"
-printf '## 进行中\n\n更新：2026-01-01 10:00\n- 任务：x\n' > "$s/docs/project-notes.md"
-at() {  # at <time> <message> <file>...: commit the files at a fixed date
-    local when=$1 msg=$2; shift 2
-    git -C "$s" add "$@"
-    GIT_AUTHOR_DATE="$when" GIT_COMMITTER_DATE="$when" git -C "$s" commit -qm "$msg"
-}
-echo a > "$s/code.txt"; at "2026-01-01T09:00:00" before docs/project-notes.md code.txt
-out=$(CLAUDE_PROJECT_DIR="$s" "$hook")
-check "commit before stamp: not stale" 0 "$(printf '%s\n' "$out" | grep -c '可能已过时')"
-echo b > "$s/code.txt"; echo '- 停在：y' >> "$s/docs/project-notes.md"
-at "2026-01-01T11:00:00" with-notes docs/project-notes.md code.txt
-out=$(CLAUDE_PROJECT_DIR="$s" "$hook")
-check "later commit that updates notes: not stale" 0 "$(printf '%s\n' "$out" | grep -c '可能已过时')"
-echo c > "$s/code.txt"; at "2026-01-01T12:00:00" code-only code.txt
-out=$(CLAUDE_PROJECT_DIR="$s" "$hook")
-check "later commit without notes: stale" 1 "$(printf '%s\n' "$out" | grep -c '之后有 1 个提交没有更新它')"
-
-seq 200 > "$s/AGENTS.md"
-check "AGENTS.md at 200 lines: ok" 0 "$(CLAUDE_PROJECT_DIR="$s" "$hook" | grep -c 'AGENTS.md 有')"
-seq 201 > "$s/AGENTS.md"
-check "AGENTS.md over 200 lines: warned" 1 "$(CLAUDE_PROJECT_DIR="$s" "$hook" | grep -c 'AGENTS.md 有 201 行')"
-seq 601 > "$s/docs/project-notes.md"
-check "project-notes over 600 lines: warned" 1 \
-    "$(CLAUDE_PROJECT_DIR="$s" "$hook" | grep -c 'project-notes.md 有 601 行')"
-
-# An invalid byte in the notes must not lose 进行中 in a UTF-8 locale (D-28).
-e="$T/ss/badbyte"
-mkdir -p "$e/docs" && git init -q "$e"
-printf '## 进行中\n\n更新：2026-01-01 10:00\n- 任务：bad\377\376y\n- 下一步：z\n' > "$e/docs/project-notes.md"
-out=$(LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 CLAUDE_PROJECT_DIR="$e" "$hook" 2>&1)
-check "invalid byte in notes: 进行中 kept" 1 "$(printf '%s\n' "$out" | grep -c '^- 下一步：z')"
-check "invalid byte in notes: no awk error" 0 "$(printf '%s\n' "$out" | grep -c 'awk:')"
-
 # ------------------------------------------------------------------- install
 section "bin/install"
 "$root/bin/install" >/dev/null 2>&1
-check "first run without hook config: exit 1" 1 $?
+check "first run: exit 0" 0 $?
 check "CLAUDE.md linked" "$root/RULE.md" "$(readlink "$HOME/.claude/CLAUDE.md")"
 check "codex AGENTS.md linked" "$root/RULE.md" "$(readlink "$HOME/.codex/AGENTS.md")"
 for s in "$root"/claude/skills/*/; do
@@ -213,10 +186,9 @@ for s in "$root"/claude/skills/*/; do
 done
 check "nothing installed for Codex but AGENTS.md (D-27)" "no:no" \
     "$([ -e "$HOME/.agents" ] && echo yes || echo no):$([ -e "$HOME/.codex/hooks.json" ] && echo yes || echo no)"
-printf '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"%s"}]}]}}\n' \
-    "$hook" > "$HOME/.claude/settings.json"
+check "settings.json untouched, no hooks (D-39)" no "$([ -e "$HOME/.claude/settings.json" ] && echo yes || echo no)"
 "$root/bin/install" >/dev/null 2>&1
-check "rerun with hook config: exit 0" 0 $?
+check "rerun: exit 0" 0 $?
 rm "$HOME/.codex/AGENTS.md" && echo mine > "$HOME/.codex/AGENTS.md"
 "$root/bin/install" >/dev/null 2>&1
 check "existing file: exit 1" 1 $?

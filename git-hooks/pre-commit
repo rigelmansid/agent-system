@@ -9,7 +9,8 @@
 #   ln -s ~/agent-system/git-hooks/pre-commit .git/hooks/pre-commit
 # Project-specific patterns (real usernames, hostnames): one extended regex per
 # line in .git/privacy-patterns; blank lines and lines starting with # are
-# skipped. That file lives inside .git, so it is never committed.
+# skipped. That file lives inside .git, so it is never committed, and it is
+# read from the common git dir so linked worktrees use it too (D-37).
 # Compatible with macOS bash 3.2.
 
 export LC_ALL=C
@@ -17,17 +18,18 @@ export LC_ALL=C
 ip='(^|[^0-9.])(10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|192\.168\.[0-9]{1,3}\.[0-9]{1,3})([^0-9]|$)'
 home='/(Users|home)/[A-Za-z0-9_][A-Za-z0-9_.-]+'
 fffd=$'\xef\xbf\xbd'
-# Secrets (D-11): known token formats, and NAME=value assignments whose name
-# looks secret and whose value is a complete run of 16+ token characters
-# containing a digit. Values starting with <, $ or { are placeholders or
-# variables, and values followed by ( or . are code (sqlite3_column_int64(...)).
-known='(^|[^A-Za-z0-9_])(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|xox[abprs]-[A-Za-z0-9-]{10,})|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+# Secrets (D-11, D-37): known token formats, passwords inside URLs, and
+# NAME=value assignments whose name looks secret and whose value is a complete
+# run of 16+ token characters containing a digit. Values starting with <, $ or
+# { are placeholders or variables, and values followed by ( or . are code
+# (sqlite3_column_int64(...)).
+known='(^|[^A-Za-z0-9_])(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|glpat-[A-Za-z0-9_-]{20,}|npm_[A-Za-z0-9]{36}|[rs]k_(live|test)_[A-Za-z0-9]{20,}|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})|-----BEGIN [A-Z ]*PRIVATE KEY-----|[A-Za-z][A-Za-z0-9+.-]*://[^/[:space:]:@]+:[^/[:space:]@<${][^/[:space:]@]*@'
 assign="(TOKEN|SECRET|PASSWORD|PASSWD|API_?KEY|ACCESS_?KEY|PRIVATE_?KEY)[A-Za-z0-9_]*[\"']?[[:space:]]*[:=][[:space:]]*[\"']?[A-Za-z0-9_+/=-]{16,}([\"'[:space:],;]|$)"
 # Applied to the matched text only: the digit must be in the value at its end.
 digit="[0-9][A-Za-z0-9_+/=-]*[\"'[:space:],;]?$"
 
 extra=
-patterns_file="$(git rev-parse --git-dir)/privacy-patterns"
+patterns_file="$(git rev-parse --git-common-dir)/privacy-patterns"
 if [ -f "$patterns_file" ]; then
     # An invalid regex would make grep fail silently and turn the check off,
     # so validate every line and block the commit instead (D-14).

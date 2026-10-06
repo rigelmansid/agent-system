@@ -10,12 +10,9 @@ plan; § numbers below refer to it), [decisions.md](docs/decisions.md) (D-n),
 [pitfalls.md](docs/pitfalls.md) (坑 n) and [log.md](docs/log.md) (history and
 verification records). Do not copy project content into this file.
 
-## Getting started
+## What exists
 
-1. Read project-notes 进行中 and the todo list, then restate the state to the
-   user before changing anything.
-2. What exists: <commands, scripts, entry points>. Anything listed as planned
-   does not exist yet; never describe it as existing or invent its interface.
+<Commands, scripts and entry points that exist today.>
 
 ## Commands
 
@@ -39,9 +36,8 @@ verification records). Do not copy project content into this file.
 
 ## Keeping docs current
 
-- Record decisions in `docs/decisions.md` when they are made, not at the end.
-- At the end of a unit of work, overwrite 进行中, append to `docs/log.md`, and
-  update the todo list and current status.
+- The session workflow (`/pickup`, recording decisions, `/wrap`) follows
+  `~/agent-system/RULE.md`; this file adds only project-specific rules.
 - Docs language: <language>.
 
 ## Privacy and publishing

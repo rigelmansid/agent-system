@@ -38,7 +38,7 @@ RULE.md 第 4 节。
 | 文件 | 什么时候读 | 控制 |
 |---|---|---|
 | `AGENTS.md` | 每次会话 | 只写规则，约 200 行内 |
-| `project-notes.md` | 每次会话读「进行中」与待办；其余按需 | 约 600 行内；超出时把稳定的参考内容拆出去 |
+| `project-notes.md` | 用户输入 `/pickup` 时读「进行中」与待办；其余按需 | 约 600 行内；超出时把稳定的参考内容拆出去 |
 | `decisions.md` | 改动涉及某个决策、或看不懂某个做法时 | 只追加 |
 | `pitfalls.md` | 改动某个模块前，查相关的坑 | 只追加 |
 | `log.md` | 需要历史证据时 | 只追加 |
@@ -98,7 +98,7 @@ RULE.md 第 4 节。
   ```sh
   ln -s ~/agent-system/git-hooks/pre-commit .git/hooks/pre-commit
   ```
-  它检查暂存文件中的私有网段 IP、`/Users/<name>` 与 `/home/<name>` 路径、U+FFFD。
+  它检查哪些内容见 agent-system 的 README 工具表。
   项目特有的敏感词（真实用户名、主机名）一行一个正则，写进
   `.git/privacy-patterns`（在 `.git` 里，不会被提交）。
 - hook 拦下时修正内容，不用 `--no-verify` 绕过；确属误报，先告诉用户。

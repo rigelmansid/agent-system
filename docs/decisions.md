@@ -135,7 +135,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   在临时仓库验证 11 个用例，含 `foo(`、`foo[`、末尾单个 `\`、注释后的第 3 行；D-11 的扫描
   也用 `/usr/bin/grep` 重跑，4 个仓库仍为 0 命中（首次扫描误用了交互 shell 里的 ugrep）。
 
-### D-15 SessionStart hook 只在 agent 项目里要求复述（2026-10-03，用户决定）
+### D-15 SessionStart hook 只在 agent 项目里要求复述（2026-10-03，用户决定）（已被 D-39 替代）
 
 - 背景：审查发现 hook 在任何 git 仓库里都输出“项目状态快照”并要求按 RULE.md 1.1 复述，
   与注释“项目外不输出”不符。改动后 CodaPace（尚无 `AGENTS.md`，笔记是
@@ -187,7 +187,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   指向 RULE.md、README.md 的相对链接改为 `../`；新增 `docs/project-notes.md`（进行中与
   待办）；README“修改本仓库”的链接与说明相应修改。
 
-### D-19 审查修复第 9 条的取舍（2026-10-03，用户决定）（Codex 一项已被 D-24 修正）
+### D-19 审查修复第 9 条的取舍（2026-10-03，用户决定）（Codex 一项已被 D-24 修正；hook 提醒一项已被 D-39 替代，改由 /pickup 提醒）
 
 - 背景：审查和自查剩下 6 个小问题：install 不自动改 settings.json、缺换电脑步骤、模板链接
   在模板目录里解析不到、hook 不提示过时与超长、profile 不自动加载、Codex 没有 hook。
@@ -295,7 +295,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   原样）。D-24 的事实更正保留。以后的改进按此原则取舍：对比清单里的 plugin 分发、Stop hook
   先不做，等实际使用中出现需要再说。
 
-### D-28 SessionStart hook 退回纯文本，只保留 LC_ALL=C 修复（2026-10-04，用户决定）
+### D-28 SessionStart hook 退回纯文本，只保留 LC_ALL=C 修复（2026-10-04，用户决定）（已被 D-39 替代）
 
 - 背景：D-26 为了在开场给用户显示一行摘要，在 hook 里加了约 60 行 JSON 转义（iconv、tr、sed、
   按字节截断）。按 D-27 的原则，这一项偏重。D-26 的测试顺带发现一个旧 bug：UTF-8 环境下
@@ -330,7 +330,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：README 原则一行；D-27 标题注明；D-27 搁置的 plugin 分发、Stop hook 改为可评估的待办。
   已按旧原则做的 D-28、D-30 不回退。
 
-### D-32 开场不重复读已载入的内容；一次性任务不复述、不收尾（2026-10-04，用户决定）
+### D-32 开场不重复读已载入的内容；一次性任务不复述、不收尾（2026-10-04，用户决定）（已被 D-39 替代）
 
 - 选择：RULE.md 1.1 第 1 步改为 AGENTS.md 与「进行中」已自动载入时不再读；新增一句：代码审查、
   问答、单次操作跳过复述和 1.4 收尾。
@@ -363,3 +363,32 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 选择：照用户的正常工作流写成规则，其他会话只读。不另加“写前重读、合并”的机制：D-22 撞号
   是两个会话同时改本仓库的特殊情况。
 - 影响：RULE.md 第 2 节末尾一行（全局）。
+
+### D-37 审查修复：worktree 共用敏感词、补充令牌格式、/pickup 过时判断与 hook 一致（2026-10-05，用户决定）
+
+- 背景：2026-10-05 全面审查发现：在 worktree 里提交时 `.git/privacy-patterns` 被忽略；
+  Google、GitLab、npm、Stripe 令牌、JWT、URL 里的密码会被放行；/pickup 写的过时规则会误报；
+  profiles/code.md 对 pre-commit 的描述过时；RULE.md 示例编号和本仓库的真实决策重名。
+- 选择：pre-commit 从共用的 git 目录读 privacy-patterns，并补上这些格式（URL 密码以 `<`、`$`、
+  `{` 开头时视为占位符）；/pickup 改用 D-19 的判断；code.md 改为指向 README；示例改成 D-n。
+- 影响：git-hooks/pre-commit、tests/run.sh、claude/skills/pickup、profiles/code.md 第 5 节、
+  README 工具表、RULE.md 第 1.3、2、3 节的示例。
+
+### D-38 项目 AGENTS.md 只写项目特有的规则，不重复 RULE.md（2026-10-06，用户决定）
+
+- 背景：审查 A1 发现模板 AGENTS.md 和 CodaPace、meshlink 的 AGENTS.md 都写了开场复述、收尾
+  这类会话流程，和 RULE.md 重复；AGENTS.md 优先级更高，RULE.md 改了也不生效。用户的本意是
+  两者没有交集，有交集时以 AGENTS.md 为准；这两个项目早于本仓库就有自己的 AGENTS.md。
+- 选择：RULE.md 开头写明这条；模板去掉会话流程，改为一句指向 RULE.md；/adopt 出方案时
+  列出已有 AGENTS.md 里和 RULE.md 重复的内容，建议删掉。CodaPace、meshlink 在各自项目里改。
+- 影响：RULE.md 开头、templates/code/AGENTS.md、claude/skills/adopt。
+
+### D-39 开场不自动读项目状态，只在用户输入 /pickup 时读；去掉 SessionStart hook（2026-10-06，用户决定）
+
+- 背景：用户不一定每次都接着上次的工作，开场自动读「进行中」和待办会浪费 token；“继续”这个
+  特定反应和 /pickup 作用重复。替代 D-15、D-28、D-32，以及 D-19 中 hook 提醒一项。
+- 选择：RULE.md 1.1 改为开场不读状态，按用户的话做；/pickup 才读并显示。删除
+  `claude/hooks/session-start.sh` 和 settings.json 里的登记；过时、超长提醒移进 /pickup。
+  Claude Code 开场自带 git 状态快照，不再另外注入。
+- 影响：RULE.md 1.1、claude/skills/pickup、profiles/code.md 第 1 节、claude/skills/adopt、
+  bin/install、tests/run.sh、README；本机 ~/.claude/settings.json 删除该 hook。

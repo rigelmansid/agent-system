@@ -5,8 +5,7 @@
 #   ~/.claude/CLAUDE.md          -> RULE.md
 #   ~/.codex/AGENTS.md           -> RULE.md
 #   ~/.claude/skills/<name>      -> claude/skills/<name>
-# The SessionStart hook in ~/.claude/settings.json is not edited here; the
-# script checks for it and prints the snippet to add if it is missing.
+# No hooks: project state is read only when the user types /pickup (D-39).
 # Compatible with macOS bash 3.2.
 
 root=$(cd "$(dirname "$0")/.." && pwd -P)
@@ -32,18 +31,4 @@ for skill in "$root"/claude/skills/*/; do
     link "$root/claude/skills/$name" "$HOME/.claude/skills/$name"
 done
 
-hook="$root/claude/hooks/session-start.sh"
-if grep -qF "$hook" "$HOME/.claude/settings.json" 2>/dev/null; then
-    echo "ok      SessionStart hook in ~/.claude/settings.json"
-else
-    status=1
-    cat <<EOF
-MISSING SessionStart hook. Add this to ~/.claude/settings.json:
-  "hooks": {
-    "SessionStart": [
-      { "hooks": [ { "type": "command", "command": "$hook" } ] }
-    ]
-  }
-EOF
-fi
 exit $status
