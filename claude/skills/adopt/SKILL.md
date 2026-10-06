@@ -33,7 +33,7 @@ disable-model-invocation: true
 
 1. 按方案改名、运行 new-project，处理输出里的 WARNING。
 2. 迁移内容，写好「进行中」。
-3. 隐私扫描：用 pre-commit 的规则扫全部入库文件；公开仓库按 profiles/code.md 第 6 节。
+3. 隐私扫描：用 pre-commit 的规则扫全部入库文件；公开仓库按 profiles/code/PROFILE.md 第 6 节。
 4. 验证：项目原有的测试仍通过；`docs/project-notes.md` 最上方有「进行中」区块，新会话里
    输入 `/pickup` 能显示它。
 5. 在本项目 `docs/decisions.md` 记一条迁移决策。不提交，等用户说。

@@ -392,3 +392,23 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   Claude Code 开场自带 git 状态快照，不再另外注入。
 - 影响：RULE.md 1.1、claude/skills/pickup、profiles/code.md 第 1 节、claude/skills/adopt、
   bin/install、tests/run.sh、README；本机 ~/.claude/settings.json 删除该 hook。
+
+### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）
+
+- 背景：用户明确本仓库分两部分：全局部分对所有项目生效；profile 按项目类型（代码、网页设计、
+  建筑设计、演示等）做成模块，项目执行 /adopt 选定 profile 后，才加载它的文件夹结构、规则、
+  专用命令和 hook，以后可以方便地增加模块。
+- 选择：
+  - 所有 profile 共用最小结构：AGENTS.md（CLAUDE.md 链接到它）、docs/project-notes.md
+    （「进行中」、待办）、docs/decisions.md、private-notes.md、../materials/；各 profile 再加自己的。
+  - RULE.md 保持全局；第 1–3 节只在已接入的项目（AGENTS.md 有 profile 声明）执行，第 4–7 节
+    处处适用；未接入的项目里 /pickup、/wrap 提示可用 /adopt。
+  - 是否用 git、是否装 pre-commit 由 profile 决定；依赖 git 的规则只对用 git 的项目适用。
+  - 专用命令链接进项目 `.claude/skills/`，hook 写进 `.claude/settings.local.json`，都不进 git；
+    先定目录约定，链接逻辑等第一个需要的 profile 出现时再写。此项待优化，按需求再升级（如改用
+    plugin）。
+  - 一个项目先只选一个 profile。模块只复制项目自有内容的骨架，不复制共享规则（承接 D-38）。
+  - 模块放在 `profiles/<名称>/`（规则、骨架、可选的专用命令、hook、审查规则）；new-project 拆成
+    “建结构”（/adopt 时做一次）和可反复运行的 setup（只恢复本机链接和设置）。
+- 影响：待实施，实施时再改 README（不描述还不存在的东西）。审查 B3 不再适用，关闭；审查 C3
+  由 setup 解决。

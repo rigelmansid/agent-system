@@ -1,4 +1,4 @@
-# profiles/code.md：代码项目规则
+# profiles/code/PROFILE.md：代码项目规则
 
 适用于在 `AGENTS.md` 开头声明 `<!-- profile: code -->` 的项目。通用规则见
 `~/agent-system/RULE.md`，本文件只补充代码项目特有的部分。
@@ -28,7 +28,7 @@ RULE.md 第 4 节。
 结论写回文档）、`docs/` 下的独立指南、`README.<lang>.md`、`LICENSE`。
 
 新项目用 `~/agent-system/bin/new-project <dir>` 初始化（模板在
-`~/agent-system/templates/code/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器
+`~/agent-system/profiles/code/template/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器
 文件夹（agent-system D-10）。
 已有项目补结构时，先把原有笔记 `git mv` 为 `docs/project-notes.md`，再运行
 `new-project .`，它只补缺的文件（agent-system D-21）。
@@ -117,8 +117,8 @@ RULE.md 第 4 节。
 
 ## 7. 用 Codex 审查
 
-审查代码时让 Codex 按 `~/agent-system/review.md` 进行，例如在 Codex 中：
+审查代码时让 Codex 按 `~/agent-system/profiles/code/review.md` 进行，例如在 Codex 中：
 
-> 按 ~/agent-system/review.md 审查当前未提交的改动。
+> 按 ~/agent-system/profiles/code/review.md 审查当前未提交的改动。
 
 审查结果交回 Claude Code 处理；采纳或不采纳的理由按需记为决策。

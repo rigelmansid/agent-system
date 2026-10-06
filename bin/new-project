@@ -1,14 +1,14 @@
 #!/bin/bash
-# Create a new code project from templates/code, or add the missing pieces to
-# an existing directory. Never overwrites an existing file. Exits non-zero if
-# any file could not be created or an existing one is empty.
+# Create a new code project from profiles/code/template, or add the missing
+# pieces to an existing directory. Never overwrites an existing file. Exits
+# non-zero if any file could not be created or an existing one is empty.
 #   new-project <dir> [project name]
 # The name defaults to the directory's own name, so "new-project ." works.
 # Compatible with macOS bash 3.2.
 
 set -u
 root=$(cd "$(dirname "$0")/.." && pwd -P)
-tpl="$root/templates/code"
+tpl="$root/profiles/code/template"
 
 if [ $# -lt 1 ]; then
     echo "usage: new-project <dir> [project name]" >&2

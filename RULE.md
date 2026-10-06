@@ -8,7 +8,7 @@
 不重复本文件；有重复时以 `AGENTS.md` 为准。
 
 Profile：项目 `AGENTS.md` 开头的 `<!-- profile: <名称> -->` 表示该项目同时适用
-`~/agent-system/profiles/<名称>.md`，开始工作前读它；文件不存在时告诉用户。没有声明时
+`~/agent-system/profiles/<名称>/PROFILE.md`，开始工作前读它；文件不存在时告诉用户。没有声明时
 只适用本文件。现有 profile：`code`（代码项目）。
 
 ---
