@@ -412,3 +412,18 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
     “建结构”（/adopt 时做一次）和可反复运行的 setup（只恢复本机链接和设置）。
 - 影响：待实施，实施时再改 README（不描述还不存在的东西）。审查 B3 不再适用，关闭；审查 C3
   由 setup 解决。
+
+### D-41 profile 模块的组成，new-project 与 setup 的分工（2026-10-06，用户决定）
+
+- 背景：落实 D-40。
+- 选择：模块是 `profiles/<名称>/`：`PROFILE.md`（第一行是名称和一句话说明，/adopt 列出它）、
+  `template/`（只补不覆盖的骨架）、可选的 `setup` 脚本（本机设置，可反复运行）。
+  `bin/new-project <dir> <profile> [名称]` 建结构，profile 必须写明；AGENTS.md 没有对应声明时
+  不运行 setup，加声明属于改用户文件，交给 /adopt。新增 `bin/setup <dir>`：按 AGENTS.md 的
+  声明建 `../materials/`、运行该 profile 的 setup，不建内容文件，拒绝没接入的项目；换电脑后
+  对每个已接入的项目运行一次（解决审查 C3）。RULE.md 第 1–3 节只在已接入的项目执行，依赖 git
+  的规则加前提；默认完成标准由 profile 规定，code 是相关测试通过加一次证明可用的检查；
+  /pickup、/wrap 在没接入的项目里提示 /adopt。所有 profile 共用的骨架，等第二个 profile
+  出现时再抽出来。
+- 影响：bin/new-project、bin/setup、profiles/code/setup 与 PROFILE.md、RULE.md、三个技能、
+  tests/run.sh、README。

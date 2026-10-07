@@ -1,0 +1,54 @@
+#!/bin/bash
+# Restore the machine-local parts of a project that has adopted a profile:
+# ../materials/ and whatever the profile's own setup script does (for code:
+# git repository, pre-commit hook). Reads the profile from the declaration at
+# the top of AGENTS.md. Safe to rerun and never creates content files in the
+# project, so it is what to run on each adopted project after cloning it on a
+# new machine (D-41).
+#   setup <dir>
+# Compatible with macOS bash 3.2.
+
+set -u
+root=$(cd "$(dirname "$0")/.." && pwd -P)
+
+if [ $# -ne 1 ]; then
+    echo "usage: setup <dir>" >&2
+    exit 2
+fi
+cd "$1" 2>/dev/null || { echo "setup: no such directory: $1" >&2; exit 2; }
+
+profile=$(sed -nE '1,5s/^<!-- profile: ([A-Za-z0-9_-]+) -->.*/\1/p' AGENTS.md 2>/dev/null | head -n 1)
+if [ -z "$profile" ]; then
+    echo "setup: '$(basename "$PWD")' has not adopted a profile (no '<!-- profile: NAME -->'" \
+         "at the top of AGENTS.md); use /adopt" >&2
+    exit 2
+fi
+if [ ! -f "$root/profiles/$profile/PROFILE.md" ]; then
+    echo "setup: unknown profile '$profile' in AGENTS.md" >&2
+    exit 2
+fi
+status=0
+
+# Project materials live next to the project dir, outside git (RULE.md §4).
+# They assume one container folder per project, named P0NN_<name> (D-10);
+# without one, ../materials would be shared with sibling projects.
+container=$(basename "$(cd .. && pwd -P)")
+case $container in
+    P[0-9][0-9][0-9]_*) ;;
+    *) echo "WARNING container folder '$container' is not named P0NN_<name> (D-10);" \
+            "../materials may be shared with other projects" >&2 ;;
+esac
+for sub in refs inbox scratch; do
+    if [ ! -d "../materials/$sub" ]; then
+        mkdir -p "../materials/$sub" && echo "created ../materials/$sub"
+    fi
+done
+echo "note    materials: $(cd ../materials && pwd -P)"
+
+# The profile's own machine-local setup, if it has one (D-41). Linking
+# profile-specific skills and hooks belongs here once a profile needs them
+# (D-40 Q4, to be refined).
+if [ -x "$root/profiles/$profile/setup" ]; then
+    "$root/profiles/$profile/setup" || status=1
+fi
+exit $status

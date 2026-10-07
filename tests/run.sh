@@ -1,6 +1,6 @@
 #!/bin/bash
-# Regression tests for bin/ and git-hooks/ (D-17). Everything
-# runs in a temp directory with a fake HOME and no global git config, so real
+# Regression tests for bin/, git-hooks/ and the profiles' setup scripts (D-17).
+# Everything runs in a temp directory with a fake HOME and no global git config, so real
 # projects and settings are never touched. Fake secrets, private IPs and home
 # paths are assembled at run time: the literal values must not appear in this
 # file, or the pre-commit hook would block committing it.
@@ -135,7 +135,7 @@ mkdir -p "$T/P001_np"
 n=0
 for name in 'a/b' 'R&D' 'back\slash' 'Plain'; do
     n=$((n + 1)); d="$T/P001_np/p$n"
-    "$root/bin/new-project" "$d" "$name" >/dev/null 2>&1
+    "$root/bin/new-project" "$d" code "$name" >/dev/null 2>&1
     check "exit 0: $name" 0 $?
     check "title: $name" "# $name 开发与维护记录" "$(head -1 "$d/docs/project-notes.md")"
     check "README: $name" "# $name" "$(cat "$d/README.md")"
@@ -151,28 +151,62 @@ check "no temp files" 0 "$(find "$T/P001_np" -name '*.tmp.*' | wc -l | tr -d ' '
 check "CLAUDE.md links AGENTS.md" AGENTS.md "$(readlink "$d/CLAUDE.md")"
 check "pre-commit installed" "$root/git-hooks/pre-commit" "$(readlink "$d/.git/hooks/pre-commit")"
 check "materials created" yes "$([ -d "$T/P001_np/materials/scratch" ] && echo yes)"
-"$root/bin/new-project" "$d" Plain >/dev/null 2>&1
+"$root/bin/new-project" "$d" code Plain >/dev/null 2>&1
 check "rerun exits 0" 0 $?
 : > "$d/docs/log.md"
-"$root/bin/new-project" "$d" Plain >/dev/null 2>&1
+"$root/bin/new-project" "$d" code Plain >/dev/null 2>&1
 check "existing empty file: exit 1" 1 $?
 check "existing empty file not overwritten" 0 "$(wc -c < "$d/docs/log.md" | tr -d ' ')"
-"$root/bin/new-project" "$T/P001_np/px" "$(printf 'a\nb')" >/dev/null 2>&1
+"$root/bin/new-project" "$T/P001_np/px" code "$(printf 'a\nb')" >/dev/null 2>&1
 check "control character rejected" 2 $?
 check "rejected name creates nothing" no "$([ -e "$T/P001_np/px" ] && echo yes || echo no)"
 mkdir -p "$T/P001_np/Dotted"
-(cd "$T/P001_np/Dotted" && "$root/bin/new-project" . >/dev/null 2>&1)
+(cd "$T/P001_np/Dotted" && "$root/bin/new-project" . code >/dev/null 2>&1)
 check "dir '.': name from directory (D-20)" "# Dotted 开发与维护记录" \
     "$(head -1 "$T/P001_np/Dotted/docs/project-notes.md")"
-(cd "$T/P001_np" && "$root/bin/new-project" Slashed/ >/dev/null 2>&1)
+(cd "$T/P001_np" && "$root/bin/new-project" Slashed/ code >/dev/null 2>&1)
 check "trailing slash: name from directory" "# Slashed" "$(cat "$T/P001_np/Slashed/README.md")"
-(cd "$T/P001_np" && "$root/bin/new-project" . >/dev/null 2>&1)
+(cd "$T/P001_np" && "$root/bin/new-project" . code >/dev/null 2>&1)
 check "container '.': refused (D-23)" 2 $?
 check "container '.': nothing created" no \
     "$([ -e "$T/P001_np/AGENTS.md" ] || [ -e "$T/P001_np/.git" ] && echo yes || echo no)"
-"$root/bin/new-project" "$T/P002_new" >/dev/null 2>&1
+"$root/bin/new-project" "$T/P002_new" code >/dev/null 2>&1
 check "new container path: refused" 2 $?
 check "new container path: not created" no "$([ -e "$T/P002_new" ] && echo yes || echo no)"
+
+# Profiles and bin/setup (D-41).
+"$root/bin/new-project" "$T/P001_np/nop" >/dev/null 2>&1
+check "missing profile: usage error" 2 $?
+check "missing profile: nothing created" no "$([ -e "$T/P001_np/nop" ] && echo yes || echo no)"
+"$root/bin/new-project" "$T/P001_np/unk" nosuch >/dev/null 2>&1
+check "unknown profile: exit 2" 2 $?
+check "unknown profile: nothing created" no "$([ -e "$T/P001_np/unk" ] && echo yes || echo no)"
+# An AGENTS.md that existed without a declaration is kept, and setup does not run.
+mkdir -p "$T/P001_np/old" && printf '# Old rules\n' > "$T/P001_np/old/AGENTS.md"
+"$root/bin/new-project" "$T/P001_np/old" code >/dev/null 2>&1
+check "undeclared AGENTS.md: exit 1" 1 $?
+check "undeclared AGENTS.md: kept" "# Old rules" "$(cat "$T/P001_np/old/AGENTS.md")"
+check "undeclared AGENTS.md: setup not run" no "$([ -e "$T/P001_np/old/.git" ] && echo yes || echo no)"
+mkdir -p "$T/P001_np/mis" && printf '<!-- profile: other -->\n' > "$T/P001_np/mis/AGENTS.md"
+"$root/bin/new-project" "$T/P001_np/mis" code >/dev/null 2>&1
+check "AGENTS.md declares another profile: exit 1" 1 $?
+"$root/bin/setup" >/dev/null 2>&1
+check "setup without a directory: usage error" 2 $?
+"$root/bin/setup" "$T/P001_np/old" >/dev/null 2>&1
+check "setup refuses a project without a profile" 2 $?
+mkdir -p "$T/P001_np/bad" && printf '<!-- profile: nosuch -->\n' > "$T/P001_np/bad/AGENTS.md"
+"$root/bin/setup" "$T/P001_np/bad" >/dev/null 2>&1
+check "setup refuses an unknown declared profile" 2 $?
+# As after cloning on a new machine: the hook link is gone, setup brings it back.
+before=$(cd "$d" && find . -path ./.git -prune -o -print | LC_ALL=C sort)
+rm "$d/.git/hooks/pre-commit"
+"$root/bin/setup" "$d" >/dev/null 2>&1
+check "setup on an adopted project: exit 0" 0 $?
+check "setup restores pre-commit" "$root/git-hooks/pre-commit" "$(readlink "$d/.git/hooks/pre-commit")"
+"$root/bin/setup" "$d" >/dev/null 2>&1
+check "setup rerun: exit 0" 0 $?
+check "setup creates no content files" "$before" \
+    "$(cd "$d" && find . -path ./.git -prune -o -print | LC_ALL=C sort)"
 
 # ------------------------------------------------------------------- install
 section "bin/install"

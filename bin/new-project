@@ -1,17 +1,23 @@
 #!/bin/bash
-# Create a new code project from profiles/code/template, or add the missing
-# pieces to an existing directory. Never overwrites an existing file. Exits
-# non-zero if any file could not be created or an existing one is empty.
-#   new-project <dir> [project name]
-# The name defaults to the directory's own name, so "new-project ." works.
+# Create a project from a profile's template, or add the missing pieces to an
+# existing directory, then run bin/setup for the machine-local parts (D-41).
+# Never overwrites an existing file. Exits 2 on usage errors, and 1 if a file
+# could not be created, an existing one is empty, or AGENTS.md does not
+# declare this profile.
+#   new-project <dir> <profile> [project name]
+# The name defaults to the directory's own name, so "new-project . code" works.
 # Compatible with macOS bash 3.2.
 
 set -u
 root=$(cd "$(dirname "$0")/.." && pwd -P)
-tpl="$root/profiles/code/template"
 
-if [ $# -lt 1 ]; then
-    echo "usage: new-project <dir> [project name]" >&2
+profiles() {
+    for d in "$root"/profiles/*/; do
+        [ -f "$d/PROFILE.md" ] && basename "$d"
+    done | paste -sd ' ' -
+}
+if [ $# -lt 2 ]; then
+    echo "usage: new-project <dir> <profile> [project name]   profiles: $(profiles)" >&2
     exit 2
 fi
 check_name() {
@@ -21,8 +27,14 @@ check_name() {
     esac
 }
 dir=$1
+profile=$2
+tpl="$root/profiles/$profile/template"
+if [ ! -f "$root/profiles/$profile/PROFILE.md" ] || [ ! -d "$tpl" ]; then
+    echo "new-project: unknown profile '$profile'; profiles: $(profiles)" >&2
+    exit 2
+fi
 # Check an explicit name before creating anything.
-[ $# -ge 2 ] && check_name "$2"
+[ $# -ge 3 ] && check_name "$3"
 # A P0NN_<name> folder is the container, not the project; running there would
 # git init around the real repo and put materials one level too high (D-23).
 if [ -d "$dir" ]; then
@@ -40,10 +52,10 @@ today=$(date +%Y-%m-%d)
 now=$(date '+%Y-%m-%d %H:%M')
 status=0
 
-mkdir -p "$dir/docs" && cd "$dir" || exit 1
+mkdir -p "$dir" && cd "$dir" || exit 1
 # Take the default from the resolved directory, not the argument: basename of
 # "." or "../x/" would give "." or a trailing-slash surprise (D-20).
-name=${2:-$(basename "$PWD")}
+name=${3:-$(basename "$PWD")}
 check_name "$name"
 
 # Replace placeholders literally, so the name may contain / & \ (D-13).
@@ -83,48 +95,34 @@ put() {  # put <template file> <dest>
     fi
 }
 
-put AGENTS.md AGENTS.md
-put docs/project-notes.md docs/project-notes.md
-put docs/decisions.md docs/decisions.md
-put docs/pitfalls.md docs/pitfalls.md
-put docs/log.md docs/log.md
-put gitignore .gitignore
+# Every file in the profile's template; one named gitignore becomes .gitignore.
+while IFS= read -r rel; do
+    case $rel in
+        gitignore|*/gitignore) dest="${rel%gitignore}.gitignore" ;;
+        *) dest=$rel ;;
+    esac
+    mkdir -p "$(dirname "$dest")"
+    put "$rel" "$dest"
+done < <(cd "$tpl" && find . -type f ! -name .DS_Store | sed 's#^\./##' | LC_ALL=C sort)
+
+# Shared by every profile (D-40).
 [ -e private-notes.md ] || { : > private-notes.md; echo "created private-notes.md"; }
 [ -e README.md ] || { printf '# %s\n' "$name" > README.md; echo "created README.md"; }
 if [ ! -e CLAUDE.md ] && [ ! -L CLAUDE.md ]; then
     ln -s AGENTS.md CLAUDE.md && echo "linked  CLAUDE.md -> AGENTS.md"
 fi
 
-# Project materials live next to the project dir, outside git (RULE.md §4).
-# They assume one container folder per project, named P0NN_<name> (D-10);
-# without one, ../materials would be shared with sibling projects.
-container=$(basename "$(cd .. && pwd -P)")
-case $container in
-    P[0-9][0-9][0-9]_*) ;;
-    *) echo "WARNING container folder '$container' is not named P0NN_<name> (D-10);" \
-            "../materials may be shared with other projects" >&2 ;;
-esac
-for sub in refs inbox scratch; do
-    if [ ! -d "../materials/$sub" ]; then
-        mkdir -p "../materials/$sub" && echo "created ../materials/$sub"
-    fi
-done
-echo "note    materials: $(cd ../materials && pwd -P)"
-
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    git init -q && echo "git init"
+# An AGENTS.md that existed before keeps its content, so it may lack the
+# declaration; adding it is an edit to the user's file, left to /adopt.
+declared=$(sed -nE '1,5s/^<!-- profile: ([A-Za-z0-9_-]+) -->.*/\1/p' AGENTS.md 2>/dev/null | head -n 1)
+if [ -z "$declared" ]; then
+    echo "WARNING AGENTS.md has no profile declaration; add '<!-- profile: $profile -->'" \
+         "as its first line, then run bin/setup" >&2
+    exit 1
+elif [ "$declared" != "$profile" ]; then
+    echo "WARNING AGENTS.md declares profile '$declared', not '$profile'; a project has" \
+         "one profile (D-40), setup not run" >&2
+    exit 1
 fi
-hooks_dir=$(git rev-parse --git-path hooks)
-if [ ! -e "$hooks_dir/pre-commit" ]; then
-    mkdir -p "$hooks_dir"
-    ln -s "$root/git-hooks/pre-commit" "$hooks_dir/pre-commit" && echo "linked  pre-commit hook"
-else
-    echo "kept    $hooks_dir/pre-commit (already exists)"
-fi
-
-if git check-ignore -q private-notes.md; then
-    echo "ok      private-notes.md is ignored"
-else
-    echo "WARNING private-notes.md is NOT ignored; check .gitignore" >&2
-fi
+"$root/bin/setup" . || status=1
 exit $status

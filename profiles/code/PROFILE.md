@@ -1,4 +1,4 @@
-# profiles/code/PROFILE.md：代码项目规则
+# code：代码项目，有源码和测试，用 git 管理，提交前做隐私检查
 
 适用于在 `AGENTS.md` 开头声明 `<!-- profile: code -->` 的项目。通用规则见
 `~/agent-system/RULE.md`，本文件只补充代码项目特有的部分。
@@ -27,11 +27,10 @@ RULE.md 第 4 节。
 按需再加，不预先建空目录：`scripts/`、`src/`、`tests/`、`experiments/`（一次性实验，
 结论写回文档）、`docs/` 下的独立指南、`README.<lang>.md`、`LICENSE`。
 
-新项目用 `~/agent-system/bin/new-project <dir>` 初始化（模板在
-`~/agent-system/profiles/code/template/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器
-文件夹（agent-system D-10）。
-已有项目补结构时，先把原有笔记 `git mv` 为 `docs/project-notes.md`，再运行
-`new-project .`，它只补缺的文件（agent-system D-21）。
+新项目用 `~/agent-system/bin/new-project <dir> code` 初始化（骨架在本模块的 `template/`）。
+`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器文件夹（agent-system D-10）。已有项目在
+项目里输入 `/adopt` 选 code 接入：先把原有笔记 `git mv` 为 `docs/project-notes.md`，再运行
+`new-project . code`，它只补缺的文件（agent-system D-21、D-41）。
 
 ### 按读取频率分文件
 
@@ -85,6 +84,7 @@ RULE.md 第 4 节。
 - 带原因注释的代码（“这里必须这样，否则……”）在防止已知的静默失败，不要为了
   “简化”删掉；确需改动，先读注释引用的 D-n / 坑 n。
 - 不凭空引入构建系统、依赖或新语言；需要时先记一条决策。
+- 完成标准（RULE.md 1.2 的默认值）：相关测试通过，加上一次能证明功能可用的检查。
 
 ---
 
@@ -94,11 +94,9 @@ RULE.md 第 4 节。
 - 提交主题用简短的英文祈使句（`Add tunnel reconnect test`）。有对应决策时，正文写
   `Why: D-n`。
 - 一个提交只做一件事；不混入与任务无关的改动。
-- 每个仓库装上 pre-commit hook（`new-project` 会自动装；已有仓库手动装）：
-  ```sh
-  ln -s ~/agent-system/git-hooks/pre-commit .git/hooks/pre-commit
-  ```
-  它检查哪些内容见 agent-system 的 README 工具表。
+- pre-commit hook 由本模块的 `setup` 装上：`new-project` 和 `/adopt` 会自动运行；换电脑后对
+  项目运行一次 `~/agent-system/bin/setup <项目目录>`（agent-system D-41）。它检查哪些内容见
+  agent-system 的 README 工具表。
   项目特有的敏感词（真实用户名、主机名）一行一个正则，写进
   `.git/privacy-patterns`（在 `.git` 里，不会被提交）。
 - hook 拦下时修正内容，不用 `--no-verify` 绕过；确属误报，先告诉用户。
