@@ -9,11 +9,10 @@ disable-model-invocation: true
 按 `~/agent-system/RULE.md` 第 1.4 节执行；项目声明了 profile 时，同时按该 profile 的
 「收尾时的文档更新」一节。不提交、不推送，除非用户在这次调用里明确要求。
 
-0. 项目没有接入（`AGENTS.md` 开头没有 profile 声明）、也没有 `docs/project-notes.md` 时
-   （D-43、D-46）：只在对话里给出四段汇报和本次的决定，不建 `docs/decisions.md`、project-notes
-   等文件；项目的 AGENTS.md 指向了自己的笔记文件、里面有 Handoff（或「进行中」）区块时，问用户
-   要不要更新它，同意后按 RULE.md 第 3 节的格式写进去。然后停下。有 `docs/project-notes.md`
-   的项目即使没有声明，也照下面的步骤做，第 4 步按项目自己的约定。
+0. 项目没有接入（`AGENTS.md` 开头没有 profile 声明）时（D-43）：只在对话里给出四段汇报和
+   本次的决定，不建 `docs/decisions.md`、project-notes 等文件；项目的 AGENTS.md 指向了自己的
+   笔记文件、里面有 Handoff（或「进行中」）区块时，问用户要不要更新它，同意后按 RULE.md
+   第 3 节的格式写进去。然后停下。
 1. **整理本次**：列出改动的文件（用 git 的项目对照 `git status`）、运行过的验证及结果、
    用户的决定、你做的不显而易见的选择。
 2. **补齐决策**：达到 RULE.md 第 2 节门槛的，确认 `docs/decisions.md` 里已有条目，漏记的
