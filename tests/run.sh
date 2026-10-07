@@ -243,6 +243,72 @@ rm "$HOME/.codex/AGENTS.md" && echo mine > "$HOME/.codex/AGENTS.md"
 check "existing file: exit 1" 1 $?
 check "existing file not overwritten" mine "$(cat "$HOME/.codex/AGENTS.md")"
 
+# ------------------------------------------------------------------- release
+section "bin/release"
+# A small repository stands in for ~/agent-system; its tests and install are stubs.
+lv="$T/live" dv="$T/live-dev"
+git init -q -b main "$lv" && mkdir -p "$lv/bin" "$lv/tests" "$lv/docs"
+cp "$root/bin/release" "$lv/bin/release"
+printf '#!/bin/bash\necho ran >> "$HOME/installs"\n' > "$lv/bin/install"
+printf '#!/bin/bash\n[ ! -e "$HOME/fail-tests" ]\n' > "$lv/tests/run.sh"
+chmod +x "$lv/bin/install" "$lv/tests/run.sh"
+printf '### D-1 old\n' > "$lv/docs/decisions.md"
+git -C "$lv" add -A && git -C "$lv" commit -qm base && git -C "$lv" worktree add -q -b dev "$dv"
+base=$(git -C "$lv" rev-parse HEAD)
+decide() {  # decide <id> <是|否>: commit a new decision in the dev worktree
+    printf '\n### %s new\n\n- 影响：x。影响现有项目：%s（y）\n' "$1" "$2" >> "$dv/docs/decisions.md"
+    git -C "$dv" commit -qam "$1"
+}
+at() { git -C "$lv" rev-parse "$1^{commit}"; }  # at <rev>: the commit it names in the live copy
+listed() { printf '%s\n' "$out" | grep '^  [ !] D-'; }  # decisions in the release output
+
+"$lv/bin/release" >/dev/null 2>&1
+check "release from the live copy: refused" 1 $?
+"$dv/bin/release" >/dev/null 2>&1
+check "nothing new: exit 0, no tag" "0:" "$?:$(git -C "$lv" tag)"
+decide D-2 是
+touch "$HOME/fail-tests"
+"$dv/bin/release" >/dev/null 2>&1
+check "failing tests: refused, live copy untouched" "1:$base:" "$?:$(at HEAD):$(git -C "$lv" tag)"
+rm "$HOME/fail-tests"
+touch "$dv/stray" && "$dv/bin/release" >/dev/null 2>&1
+check "uncommitted change in dev: refused" 1 $?
+rm "$dv/stray"
+touch "$lv/stray" && "$dv/bin/release" >/dev/null 2>&1
+check "local change in the live copy: refused" 1 $?
+rm "$lv/stray"
+out=$("$dv/bin/release" 2>&1)
+check "release: exit 0" 0 $?
+check "release: live copy is at dev" "$(git -C "$dv" rev-parse HEAD)" "$(at HEAD)"
+check "release: release-0 marks the state before" "$base" "$(at release-0)"
+check "release: tagged release-1" "$(at HEAD)" "$(at release-1)"
+check "release: decision marked as affecting projects" "  ! D-2 new" "$(listed)"
+check "release: install ran" 1 "$(grep -c ran "$HOME/installs")"
+# An old header that was only edited, here a superseded mark, is not a new decision.
+sed 's/^### D-2 new$/### D-2 new (superseded by D-3)/' "$dv/docs/decisions.md" > "$T/dec" &&
+    cat "$T/dec" > "$dv/docs/decisions.md"
+decide D-3 否
+out=$("$dv/bin/release" 2>&1)
+check "second release: only the new decision, unmarked" "    D-3 new" "$(listed)"
+"$dv/bin/release" --rollback >/dev/null 2>&1
+check "rollback: live copy at release-1, main kept" "0:$(at release-1):$(at release-2)" \
+    "$?:$(at HEAD):$(at main)"
+"$lv/bin/release" --rollback >/dev/null 2>&1
+check "rollback run from the live copy: release-0" "$base" "$(at HEAD)"
+"$dv/bin/release" --rollback >/dev/null 2>&1
+check "nothing before release-0: refused" 1 $?
+"$dv/bin/release" >/dev/null 2>&1
+check "nothing new: rolled-back copy stays" "$base" "$(at HEAD)"
+decide D-4 否
+"$dv/bin/release" >/dev/null 2>&1
+check "release after a rollback: back on main" "main:$(git -C "$dv" rev-parse HEAD)" \
+    "$(git -C "$lv" symbolic-ref -q --short HEAD):$(at HEAD)"
+git -C "$lv" commit -q --allow-empty -m direct && decide D-5 否
+"$dv/bin/release" >/dev/null 2>&1
+check "main ahead of dev: refused" 1 $?
+"$dv/bin/release" --bogus >/dev/null 2>&1
+check "unknown option: usage error" 2 $?
+
 echo
 echo "passed $pass, failed $fail"
 [ "$fail" = 0 ]

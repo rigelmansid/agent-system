@@ -1,0 +1,84 @@
+#!/bin/bash
+# Publish the dev worktree to the live copy (D-45). The live copy is the main
+# worktree, ~/agent-system: every link and every path in the rules points
+# there, so changes are made in a linked worktree (~/agent-system-dev, branch
+# dev) and reach other projects only through this script. Never pushes.
+#   release              test dev, fast-forward main to it, tag release-N,
+#                        list the new decisions, run bin/install
+#   release --rollback   switch the live copy back to the previous release
+# Exits 2 on usage errors and 1 when it refuses or fails.
+# Compatible with macOS bash 3.2.
+
+set -u
+here=$(cd "$(dirname "$0")/.." && pwd -P)
+live=$(cd "$here" && cd "$(git rev-parse --git-common-dir)/.." && pwd -P) || exit 1
+
+die() { echo "release: $*" >&2; exit 1; }
+clean() { [ -z "$(git -C "$1" status --porcelain)" ]; }
+# Release numbers in ascending order; with a commit, only the releases at it.
+numbers() {
+    if [ $# -gt 0 ]; then git -C "$live" tag -l --points-at "$1" 'release-*'
+    else git -C "$live" tag -l 'release-*'; fi | sed -nE 's/^release-([0-9]+)$/\1/p' | sort -n
+}
+
+# Decisions added between two commits, those marked 影响现有项目：是 first. A
+# header that was only edited, such as a superseded mark, is not new.
+notes() {  # notes <from> <to>
+    local diff removed id ids=
+    diff=$(git -C "$live" diff "$1" "$2" -- docs/decisions.md)
+    removed=" $(printf '%s\n' "$diff" | sed -nE 's/^-### (D-[0-9]+) .*/\1/p' | tr '\n' ' ')"
+    for id in $(printf '%s\n' "$diff" | sed -nE 's/^\+### (D-[0-9]+) .*/\1/p'); do
+        case $removed in *" $id "*) ;; *) ids="$ids $id" ;; esac
+    done
+    [ -n "$ids" ] || { echo "no new decisions"; return; }
+    echo "new decisions (! = affects existing projects):"
+    git -C "$live" show "$2:docs/decisions.md" | LC_ALL=C awk -v ids="$ids " '
+        function flush() {
+            if (keep && hit) a = a "  ! " title "\n"
+            else if (keep) b = b "    " title "\n"
+        }
+        /^### D-[0-9]+ / { flush(); keep = index(ids, " " $2 " "); hit = 0; title = substr($0, 5); next }
+        keep && index($0, "影响现有项目：是") { hit = 1 }
+        END { flush(); printf "%s%s", a, b }'
+}
+
+if [ "${1:-}" = --rollback ]; then
+    clean "$live" || die "$live has local changes; commit or discard them first"
+    cur=$(numbers HEAD | tail -n 1)
+    [ -n "$cur" ] || die "$live is not at a release"
+    prev=$(numbers | awk -v c="$cur" '$1 < c' | tail -n 1)
+    [ -n "$prev" ] || die "no release before release-$cur"
+    git -C "$live" checkout -q --detach "release-$prev" || exit 1
+    echo "$live is back at release-$prev; fix it in dev, then run bin/release again"
+    exit 0
+fi
+[ $# -eq 0 ] || { echo "usage: release [--rollback]" >&2; exit 2; }
+
+[ "$here" != "$live" ] || die "run it from the dev worktree; $live is the live copy"
+branch=$(git -C "$here" symbolic-ref -q --short HEAD) || die "$here is not on a branch"
+clean "$here" || die "commit the changes in $here first"
+clean "$live" || die "$live has local changes; commit or discard them first"
+last=$(numbers | tail -n 1)
+if [ -n "$last" ]; then from=release-$last; else from=HEAD; fi
+if [ "$(git -C "$live" rev-parse "$from^{commit}")" = "$(git -C "$here" rev-parse HEAD)" ]; then
+    echo "nothing new to release"
+    exit 0
+fi
+git -C "$live" merge-base --is-ancestor main "$branch" \
+    || die "main has commits that $branch lacks; merge main into $branch first"
+echo "testing $here"
+out=$("$here/tests/run.sh" 2>&1) || { printf '%s\n' "$out" >&2; die "tests failed; nothing released"; }
+printf '%s\n' "$out" | tail -n 1
+
+if [ -z "$last" ]; then
+    # First release on this machine: tag the current state so it can be rolled back to.
+    git -C "$live" tag release-0 HEAD || exit 1
+    last=0
+fi
+# After a rollback the live copy is detached; go back to main before moving it.
+git -C "$live" checkout -q main && git -C "$live" merge -q --ff-only "$branch" || exit 1
+n=$((last + 1))
+git -C "$live" tag "release-$n" || exit 1
+echo "release-$n is live, commits since release-$last: $(git -C "$live" rev-list --count "release-$last..release-$n"); nothing pushed"
+notes "release-$last" "release-$n"
+"$live/bin/install" || die "bin/install reported a problem; release-$n is live"
