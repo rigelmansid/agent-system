@@ -9,7 +9,7 @@
 
 | 层 | 文件 | 生效方式 |
 |---|---|---|
-| 通用 | [RULE.md](RULE.md)：会话协议、决策记录、Handoff 区块、执行安全、验证、隐私、写文档 | `~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md` 链接到它，每个会话自动加载；第 1–3 节只在已接入的项目执行（D-40） |
+| 通用 | [RULE.md](RULE.md)：会话协议、决策记录、Handoff 区块、执行安全、验证、隐私、写文档 | `~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md` 链接到它，每个会话自动加载；第 1–3 节只在已接入或已有 `docs/project-notes.md` 的项目执行（D-40、D-46） |
 | 项目类型 | `profiles/<名称>/` 模块，现有 [code](profiles/code/PROFILE.md)：文件结构、内容归属、git、发布 | `/adopt` 或 `new-project` 在项目 `AGENTS.md` 开头写入 `<!-- profile: code -->`，之后才加载 |
 | 项目 | 项目自己的 `AGENTS.md` 与 `docs/` | 项目目录 |
 
@@ -24,7 +24,7 @@
 | `bin/setup <dir>` | 恢复已接入项目的本机部分：建 `../materials/`（容器文件夹名不符时提示），运行该 profile 的 `setup`（code：git 仓库、pre-commit）。可反复运行，不建任何内容文件；没接入的项目会被拒绝（D-41） |
 | `bin/next-container [根目录]` | 输出下一个容器编号 `P0NN`：根目录和下一层（如 `00_Archieve/`）里 `P0NN_`、`Proj.0NN_` 文件夹的最大编号加一，归档过的编号不再用（D-44） |
 | `bin/release [--rollback]` | 在工作副本 `~/agent-system-dev` 里运行，把改动发布到正式版 `~/agent-system`：测试通过后把 main 快进到 dev，打标签 `release-N`，列出新决策（影响现有项目的标 `!`），再运行 `bin/install`；`--rollback` 把正式版退回上一个发布。不推送（D-45） |
-| `claude/skills/pickup`、`wrap`、`adopt`、`new-project` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：只读报告、只在对话里汇报，不建文件（D-43） |
+| `claude/skills/pickup`、`wrap`、`adopt`、`new-project` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：已有 `docs/project-notes.md` 的走完整流程（D-46）；都没有的只读报告、只在对话里汇报，不建文件，`/pickup` 会提示用 `/resume` 接着以前的对话（D-43） |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（常见令牌格式、URL 里的密码、`TOKEN=…` 类赋值；只报行号，D-11、D-37）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词（worktree 共用这份文件）；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面这些脚本的回归测试，在临时目录和假 HOME 中运行，约 10 秒（D-17） |
 
@@ -54,8 +54,9 @@
 - **已有内容的项目**：先放进 `P0NN_名称/` 容器（要移动时按 D-10 迁移按路径保存的数据）。
   在项目目录开 Claude，输入 `/adopt`（或 `/adopt code`）：先选 profile，再检查并给出迁移
   方案，确认后再执行，步骤见 [claude/skills/adopt](claude/skills/adopt/SKILL.md)（D-34）。
-  CodaPace 是按这个流程迁移的。没有 `/adopt` 过的项目只受 RULE.md 第 4–7 节约束（D-40），
-  `/pickup`、`/wrap` 照样能用，但不会建出 agent-system 的文件（D-43）。
+  CodaPace 是按这个流程迁移的。没有 `/adopt` 过、也没有 `docs/project-notes.md` 的项目只受
+  RULE.md 第 4–7 节约束（D-40、D-46），`/pickup`、`/wrap` 照样能用，但不会建出 agent-system
+  的文件（D-43）。
 - **不要在这些项目里用内置的 `/init`**：它会生成或改写 CLAUDE.md，而这里的 CLAUDE.md 是
   指向 AGENTS.md 的软链接，会不会改坏 AGENTS.md 或替换掉软链接没有验证过。补结构用 `/adopt`。
 
@@ -90,6 +91,7 @@ Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行
 更新」一节，`/wrap` 按它执行（D-16）。
 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），提交正文写 `Why: D-n`。
 本仓库不按 code profile 管理，只用 [docs/project-notes.md](docs/project-notes.md)（Handoff
-区块与待办）和 docs/decisions.md 两个文件（D-18）。
+区块与待办）和 docs/decisions.md 两个文件（D-18）；有了 project-notes，`/pickup`、`/wrap` 在
+这里也走完整流程（D-46）。
 `profiles/*/template/` 里的相对链接（如 `../README.md`）按生成后的项目结构写，在模板目录里
 本来就解析不到，检查链接时跳过这些目录。

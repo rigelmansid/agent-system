@@ -393,7 +393,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：RULE.md 1.1、claude/skills/pickup、profiles/code.md 第 1 节、claude/skills/adopt、
   bin/install、tests/run.sh、README；本机 ~/.claude/settings.json 删除该 hook。
 
-### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）（/pickup、/wrap 在没接入项目里的做法已被 D-43 替代）
+### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）（/pickup、/wrap 在没接入项目里的做法已被 D-43 替代；第 1–3 节的适用范围已被 D-46 替代）
 
 - 背景：用户明确本仓库分两部分：全局部分对所有项目生效；profile 按项目类型（代码、网页设计、
   建筑设计、演示等）做成模块，项目执行 /adopt 选定 profile 后，才加载它的文件夹结构、规则、
@@ -437,7 +437,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   README，本仓库自己的 project-notes。影响现有项目：是（CodaPace、meshlink 下次 /wrap 时自动
   改格式）。
 
-### D-43 没接入的项目里也能用 /pickup、/wrap，但不建 agent-system 的文件（2026-10-07，用户决定）
+### D-43 没接入的项目里也能用 /pickup、/wrap，但不建 agent-system 的文件（2026-10-07，用户决定）（适用条件已被 D-46 替代）
 
 - 选择：/pickup 只读报告：git 状态和最近提交、项目自己笔记里的 Handoff（或「进行中」）区块、
   本会话进展，最后说明没有接入。/wrap 只在对话里汇报；项目自己的笔记里有交接区块时，问用户
@@ -467,3 +467,16 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：链接和路径都不用改；发布前必须通过测试，出了问题能退回上一个发布。
 - 影响：新增 `bin/release` 和测试、README。首次发布把当时的正式版标为 `release-0`；回滚只切换
   正式版的检出，不改写历史（D-12）。影响现有项目：否（以后的改动发布后才生效）。
+
+### D-46 已有 docs/project-notes.md 的项目也适用第 1–3 节，/pickup 提示 /resume（2026-10-07，用户决定）
+
+- 背景：本仓库按 D-18 不接入 profile，按 D-43 算没接入：/pickup 读不到它的 Handoff，/wrap 不
+  更新它，/pickup 还会建议用本仓库不该用的 /adopt。
+- 选项：A 以有没有 docs/project-notes.md 作第二个标记 / B 给本仓库加 AGENTS.md 指向笔记 /
+  C 以有没有 AGENTS.md 作标记
+- 选择：A，替代 D-40 中第 1–3 节的适用范围和 D-43 的适用条件。两者都没有的文件夹照旧简化，
+  /pickup 最后提示用 /resume 接着以前的对话、用 /adopt 持久记录。
+- 理由：project-notes 是这套规则自己的文件，别人的仓库不会有；AGENTS.md 是多个工具共用的约定，
+  会误判。B 只解决 /pickup 读 Handoff。
+- 影响：RULE.md、claude/skills/pickup、claude/skills/wrap、README。影响现有项目：否（CodaPace、
+  meshlink 已接入，不变；blog 没有 project-notes，只是 /pickup 多一句 /resume 提示）。

@@ -9,8 +9,8 @@
 
 Profile：项目 `AGENTS.md` 开头的 `<!-- profile: <名称> -->` 表示该项目已经接入（由 `/adopt`
 或 `new-project` 写入），同时适用 `~/agent-system/profiles/<名称>/PROFILE.md`，开始工作前读它；
-文件不存在时告诉用户。现有 profile：`code`（代码项目）。第 1–3 节只适用于已接入的项目；没有
-声明的项目只适用第 4–7 节。
+文件不存在时告诉用户。现有 profile：`code`（代码项目）。第 1–3 节适用于已接入的项目，以及没有
+声明但已有 `docs/project-notes.md` 的项目（D-46）；其他文件夹只适用第 4–7 节。
 
 ---
 

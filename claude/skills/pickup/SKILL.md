@@ -9,10 +9,11 @@ disable-model-invocation: true
 开场不自动读项目状态，用户输入本命令时才读（D-39）。只读：不修改文件，不开始任何任务。
 输出后停下，等用户指示（D-33）。
 
-0. 项目没有接入（`AGENTS.md` 开头没有 profile 声明）时，只做只读报告，不建任何文件（D-43）：
-   是 git 仓库就报告 git 状态和最近 5 个提交；项目的 AGENTS.md 指向了自己的笔记文件、里面有
-   Handoff（或「进行中」）区块时读它；对话进行到一半时列出本会话的进展。最后一句说明本项目
-   没有接入，要持久记录状态可以用 `/adopt`。然后停下。
+0. 项目没有接入（`AGENTS.md` 开头没有 profile 声明）、也没有 `docs/project-notes.md` 时，只做
+   只读报告，不建任何文件（D-43、D-46）：是 git 仓库就报告 git 状态和最近 5 个提交；项目的
+   AGENTS.md 指向了自己的笔记文件、里面有 Handoff（或「进行中」）区块时读它；对话进行到一半时
+   列出本会话的进展。最后一句说明本项目没有接入：想接着以前的对话用 `/resume`，要持久记录状态
+   用 `/adopt`。然后停下。有 `docs/project-notes.md` 的项目即使没有声明，也照下面的步骤做。
 1. 读 `docs/project-notes.md` 的 Handoff 区块与待办（旧项目里这个区块叫「进行中」，字段是中文，
    照样读，D-42）。
 2. 项目用 git 时，运行 `git status --short` 和 `git log --oneline -5`。
