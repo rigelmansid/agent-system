@@ -5,15 +5,15 @@
 工作规则在 [AGENTS.md](../AGENTS.md)。决策见 [decisions.md](decisions.md)（D-n），
 踩过的坑见 [pitfalls.md](pitfalls.md)（坑 n），阶段记录与验证记录见 [log.md](log.md)。
 
-## 进行中
+## Handoff
 
-更新：YYYY-MM-DD HH:MM
-- 任务：无，项目刚建立
-- 停在：—
-- 本次决策：—
-- 待用户确认：—
-- 下一步：1. 填写项目概况与首版范围
-- 不要重复：—
+Updated: YYYY-MM-DD HH:MM
+- Task: 无，项目刚建立
+- Stopped at: —
+- Decisions: —
+- Waiting on user: —
+- Next: 1. 填写项目概况与首版范围
+- Don't repeat: —
 
 ## 项目概况
 

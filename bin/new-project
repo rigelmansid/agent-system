@@ -71,7 +71,7 @@ fill() {  # fill <template file>
         }
         {
             s = rep($0, "<项目名>", ENVIRON["NAME"])
-            s = rep(s, "更新：YYYY-MM-DD HH:MM", "更新：" ENVIRON["NOW"])
+            s = rep(s, "Updated: YYYY-MM-DD HH:MM", "Updated: " ENVIRON["NOW"])
             s = rep(s, "更新：YYYY-MM-DD", "更新：" ENVIRON["TODAY"])
             print s
         }' "$tpl/$1"

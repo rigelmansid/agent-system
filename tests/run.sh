@@ -143,8 +143,9 @@ for name in 'a/b' 'R&D' 'back\slash' 'Plain'; do
         "$(find "$d" -type f -empty ! -name private-notes.md ! -path '*/.git/*' | wc -l | tr -d ' ')"
 done
 d="$T/P001_np/p4"
-check "进行中 timestamp filled" 1 \
-    "$(grep -cE '^更新：[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$' "$d/docs/project-notes.md")"
+check "Handoff timestamp filled" 1 \
+    "$(grep -cE '^Updated: [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$' "$d/docs/project-notes.md")"
+check "document date filled" 1 "$(grep -cE '^最后更新：[0-9]{4}-[0-9]{2}-[0-9]{2}。$' "$d/docs/project-notes.md")"
 check "no placeholders left" 0 "$(grep -cE 'HH:MM|<项目名>' "$d/docs/project-notes.md")"
 check "example dates kept" 2 "$(cat "$d/docs/decisions.md" "$d/docs/pitfalls.md" | grep -c 'YYYY-MM-DD')"
 check "no temp files" 0 "$(find "$T/P001_np" -name '*.tmp.*' | wc -l | tr -d ' ')"
@@ -207,6 +208,20 @@ check "setup restores pre-commit" "$root/git-hooks/pre-commit" "$(readlink "$d/.
 check "setup rerun: exit 0" 0 $?
 check "setup creates no content files" "$before" \
     "$(cd "$d" && find . -path ./.git -prune -o -print | LC_ALL=C sort)"
+
+# ------------------------------------------------------------ next-container
+section "bin/next-container"
+nc="$T/nc" && mkdir -p "$nc"
+check "empty root: P001" P001 "$("$root/bin/next-container" "$nc")"
+mkdir -p "$nc/P001_b" "$nc/P003_a/a" "$nc/notes" "$nc/Other/z"
+check "after the highest container" P004 "$("$root/bin/next-container" "$nc")"
+mkdir -p "$nc/00_Archieve/P007_old"
+check "archived numbers are not reused (D-44)" P008 "$("$root/bin/next-container" "$nc")"
+mkdir -p "$nc/00_Archieve/Proj.009_legacy name"
+check "old Proj.0NN_ names count, 009 is not octal" P010 "$("$root/bin/next-container" "$nc")"
+check "root defaults to the current directory" P010 "$(cd "$nc" && "$root/bin/next-container")"
+"$root/bin/next-container" "$T/nosuch" >/dev/null 2>&1
+check "missing root: exit 2" 2 $?
 
 # ------------------------------------------------------------------- install
 section "bin/install"

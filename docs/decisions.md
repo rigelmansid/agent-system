@@ -393,7 +393,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：RULE.md 1.1、claude/skills/pickup、profiles/code.md 第 1 节、claude/skills/adopt、
   bin/install、tests/run.sh、README；本机 ~/.claude/settings.json 删除该 hook。
 
-### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）
+### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）（/pickup、/wrap 在没接入项目里的做法已被 D-43 替代）
 
 - 背景：用户明确本仓库分两部分：全局部分对所有项目生效；profile 按项目类型（代码、网页设计、
   建筑设计、演示等）做成模块，项目执行 /adopt 选定 profile 后，才加载它的文件夹结构、规则、
@@ -427,3 +427,32 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   出现时再抽出来。
 - 影响：bin/new-project、bin/setup、profiles/code/setup 与 PROFILE.md、RULE.md、三个技能、
   tests/run.sh、README。
+
+### D-42 「进行中」区块改名 Handoff，字段改成英文（2026-10-07，用户决定）
+
+- 选择：标题 `## Handoff`；字段 Updated、Task、Stopped at、Decisions、Waiting on user、Next、
+  Don't repeat，内容可以用中文。旧项目里的「进行中」区块（中文字段）/pickup 和 /wrap 照样读，
+  下次 /wrap 重写时改成新格式，不专门去改现有项目。
+- 影响：RULE.md 第 1、2、3 节，code 模板与 new-project 的时间替换，PROFILE.md，三个技能，
+  README，本仓库自己的 project-notes。影响现有项目：是（CodaPace、meshlink 下次 /wrap 时自动
+  改格式）。
+
+### D-43 没接入的项目里也能用 /pickup、/wrap，但不建 agent-system 的文件（2026-10-07，用户决定）
+
+- 选择：/pickup 只读报告：git 状态和最近提交、项目自己笔记里的 Handoff（或「进行中」）区块、
+  本会话进展，最后说明没有接入。/wrap 只在对话里汇报；项目自己的笔记里有交接区块时，问用户
+  要不要更新它。都不建 docs/decisions.md、project-notes 等文件。替代 D-40 中“提示可用 /adopt
+  后停下”一项。
+- 影响：claude/skills/pickup、claude/skills/wrap、README。影响现有项目：是（blog 这类没接入的
+  项目里两个命令开始可用）。
+
+### D-44 新增 /new-project，在项目根目录里自动建下一个编号的容器（2026-10-07，用户决定）
+
+- 背景：新建项目要手动建 `P0NN_名称/` 容器、查下一个编号，再运行 `bin/new-project`；用户
+  要在容器里或放所有项目的根目录里输入一个命令就建好。
+- 选项：下一个编号 A 由技能里的模型数文件夹得出 / B 由脚本 `bin/next-container` 算
+- 选择：B。技能按当前目录分三种：容器里、容器里的空项目目录、项目根目录（先建新容器）；
+  建好后由用户输入 `/cd` 进入新项目。
+- 理由：编号要扫描根目录和归档，用脚本算稳定、能测试；技能只做判断和询问。
+- 影响：新增 `claude/skills/new-project/`、`bin/next-container`；README、code profile。归档里
+  用过的编号不再用。影响现有项目：否（只在用户输入 `/new-project` 时运行）。

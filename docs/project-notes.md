@@ -3,18 +3,19 @@
 本仓库是规则与工具的分发源，不按 code profile 管理，只用本文件和
 [decisions.md](decisions.md)（D-18）。仓库说明见 [README.md](../README.md)。
 
-## 进行中
+## Handoff
 
-更新：2026-10-07 13:22
-- 任务：用户新定的四项：/new-project 命令（含自动编号建容器）、「进行中」改名 Handoff 且字段
-  改英文、没接入的项目里 /pickup 与 /wrap 也能用、风险机制（发布 + 影响标注）
-- 停在：第 4 步（D-41）已提交；四项还没开始；本地 4 个提交未推送
-- 本次决策：D-41
-- 待用户确认：是否推送
-- 下一步：1. Handoff 改名 2. 没接入项目里的 /pickup、/wrap 3. /new-project 4. 发布机制先给
-  用户看细化方案 5. CodaPace、meshlink 的 AGENTS.md 去掉重复的会话流程（D-38、D-36）
-- 不要重复：hook 已删除（D-39），不要再加回；不要再给 Codex 装 hook 或技能（D-27）；不要改写
-  git 历史（D-12）；共用骨架等第二个 profile 出现再抽（D-41）
+Updated: 2026-10-07 14:14
+- Task: 风险机制（用户已同意方案）：在 ~/agent-system-dev（worktree，dev 分支）里改，
+  bin/release 测试通过后发布到正式版，可回滚；新决策标注是否影响现有项目
+- Stopped at: D-42、D-43、D-44 已提交到 main；发布机制还没开始写
+- Decisions: D-42、D-43、D-44
+- Waiting on user: 是否推送（本地 4 个提交未推送）
+- Next: 1. 建 ~/agent-system-dev，写 bin/release 和测试，记 D-45 2. 用户实测 /new-project、
+  没接入项目里的 /pickup 与 /wrap 3. CodaPace、meshlink 的 AGENTS.md 去掉重复的会话流程
+  （D-38、D-36）
+- Don't repeat: hook 已删除（D-39），不要再加回；不要再给 Codex 装 hook 或技能（D-27）；不要
+  改写 git 历史（D-12）；共用骨架等第二个 profile 出现再抽（D-41）
 
 ## 待办
 
@@ -27,5 +28,5 @@
 - [ ] CodaPace（AGENTS.md 第 16、129 行）、meshlink（第 23、150 行）去掉重复的会话流程（D-38）
 - 观察：官方建议每个 CLAUDE.md 文件 200 行以内。2026-10-05：RULE.md 160、meshlink AGENTS.md
   196（接近上限）、CodaPace 157；超长提醒由 /pickup 给出（D-39）
-- [ ] 可评估：plugin 分发；Stop hook 提醒更新「进行中」。按简洁、高效逐项判断（D-31）
+- [ ] 可评估：plugin 分发；Stop hook 提醒更新 Handoff 区块。按简洁、高效逐项判断（D-31）
 - 已关闭：审查 B3（D-40：blog 未接入，hook 已删除，不再适用）；审查 C3（D-41：bin/setup）

@@ -15,7 +15,7 @@
 ├── .gitignore             # 至少包含 private-notes.md
 ├── private-notes.md       # 不入库：真实地址、用户名、个人配置
 └── docs/
-    ├── project-notes.md   # 热：进行中、概况、当前状态、待办、规划
+    ├── project-notes.md   # 热：Handoff、概况、当前状态、待办、规划
     ├── decisions.md       # 冷：决策 D-n，只追加
     ├── pitfalls.md        # 冷：踩过的坑，编号 坑 n，只追加
     └── log.md             # 冷：阶段记录与验证记录，只追加
@@ -27,8 +27,9 @@ RULE.md 第 4 节。
 按需再加，不预先建空目录：`scripts/`、`src/`、`tests/`、`experiments/`（一次性实验，
 结论写回文档）、`docs/` 下的独立指南、`README.<lang>.md`、`LICENSE`。
 
-新项目用 `~/agent-system/bin/new-project <dir> code` 初始化（骨架在本模块的 `template/`）。
-`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器文件夹（agent-system D-10）。已有项目在
+新项目用 `/new-project` 选 code，或运行 `~/agent-system/bin/new-project <dir> code` 初始化
+（骨架在本模块的 `template/`）。`<dir>` 写成 `P0NN_名称/<project>`，每个项目一个容器文件夹
+（agent-system D-10、D-44）。已有项目在
 项目里输入 `/adopt` 选 code 接入：先把原有笔记 `git mv` 为 `docs/project-notes.md`，再运行
 `new-project . code`，它只补缺的文件（agent-system D-21、D-41）。
 
@@ -37,7 +38,7 @@ RULE.md 第 4 节。
 | 文件 | 什么时候读 | 控制 |
 |---|---|---|
 | `AGENTS.md` | 每次会话 | 只写规则，约 200 行内 |
-| `project-notes.md` | 用户输入 `/pickup` 时读「进行中」与待办；其余按需 | 约 600 行内；超出时把稳定的参考内容拆出去 |
+| `project-notes.md` | 用户输入 `/pickup` 时读 Handoff 区块与待办；其余按需 | 约 600 行内；超出时把稳定的参考内容拆出去 |
 | `decisions.md` | 改动涉及某个决策、或看不懂某个做法时 | 只追加 |
 | `pitfalls.md` | 改动某个模块前，查相关的坑 | 只追加 |
 | `log.md` | 需要历史证据时 | 只追加 |
@@ -51,7 +52,7 @@ RULE.md 第 4 节。
 | 写到哪里 | 内容 |
 |---|---|
 | `AGENTS.md` | 接手步骤；命令及前置条件；修改时不能破坏的不变量（引用 D-n / 坑 n）；操作真实环境的约定；项目特有的验证、隐私与发布规则 |
-| `project-notes.md` | 进行中；概况与范围；当前状态（文件表、最新快照、验证现状摘要）；架构、环境、配置、日常使用；待办；规划与待定事项 |
+| `project-notes.md` | Handoff；概况与范围；当前状态（文件表、最新快照、验证现状摘要）；架构、环境、配置、日常使用；待办；规划与待定事项 |
 | `decisions.md` | 每个决策的背景、选项、选择、理由、影响 |
 | `pitfalls.md` | 现象、原因、修法、→ 对后续工作的启示 |
 | `log.md` | 阶段记录（时间 / 进展 / 验证与限制）；验证记录（时间与来源 / 已确认 / 适用范围与限制） |
