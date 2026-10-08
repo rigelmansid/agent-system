@@ -43,7 +43,7 @@ RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或
 1. 按方案加声明、改名、运行 new-project，处理输出里的 WARNING。
 2. 迁移内容，写好 Handoff 区块。
 3. 隐私扫描：profile 装了 pre-commit 时，用它的规则扫全部入库文件；公开仓库按该 profile 的
-   发布规则（code：`PROFILE.md` 第 6 节）。
+   发布规则（code：`profiles/code/publish.md`）。
 4. 验证：项目原有的测试仍通过；`docs/project-notes.md` 最上方有 Handoff 区块，新会话里
    输入 `/pickup` 能显示它。
 5. 在本项目 `docs/decisions.md` 记一条接入决策。不提交，等用户说。

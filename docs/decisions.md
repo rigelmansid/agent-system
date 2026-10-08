@@ -501,3 +501,14 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。远端只放发布过的版本；发布后 dev 与 main 一致，换电脑后第一次发布会重新建
   release-0（D-45）。
 - 影响：README「修改本仓库」。影响现有项目：否。
+
+### D-49 /pickup、/wrap 只读用得上的部分；RULE.md、PROFILE.md 移出少用的细节（2026-10-08，用户决定）
+
+- 背景：/pickup、/wrap 没规定怎么读文件，整份读入 project-notes（已接入项目各约 18k 字符）和
+  decisions.md（本仓库约 21k 字符）时，一次 /pickup 可能近 2 万 token，用到的不到 2k。
+- 选项：1 按章节、按条目读 / 2 精简 meshlink 的 AGENTS.md / 3 RULE.md 去掉与 /wrap 重复的步骤和
+  模板 / 4 PROFILE.md 移出少用的章节 / 5 RULE.md 第 1–3 节改用 @ 导入 / 6 精简已替代的决策
+- 选择：1、3、4。2 在 meshlink 里另做（D-38 的待办），5、6 暂不做。
+- 理由：用户决定。1 省得最多且不改变行为；3、4 只是移动内容，每处仍只维护一份。
+- 影响：pickup、wrap（读取方式；Handoff 格式和四段汇报移进 wrap）；RULE.md 1.4、第 2、3 节；
+  PROFILE.md 第 1、3、5、6 节，新增 profiles/code/publish.md；adopt；README。影响现有项目：否（规则内容不变，项目文件不用改）。

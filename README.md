@@ -86,7 +86,8 @@ Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行
 `bin/release` 靠它把这类决策标出来。
 每个 profile 是 `profiles/<名称>/` 下的一个模块（D-40、D-41）：规则写在 `PROFILE.md`，它的
 第一行是名称和一句话说明，`/adopt`、`/new-project` 列出可选 profile 时显示这一行；复制进项目的骨架放在
-`template/`；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）。新增 profile
+`template/`；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）；只在特定任务
+时才读的规则单独成文件，由 `PROFILE.md` 指向（code：`review.md`、`publish.md`，D-49）。新增 profile
 时加一个这样的文件夹，并在 RULE.md 的 Profile 一段登记。每个 profile 都要有「收尾时的文档
 更新」一节，`/wrap` 按它执行（D-16）。
 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），提交正文写 `Why: D-n`。
