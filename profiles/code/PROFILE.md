@@ -93,7 +93,7 @@ D-41、D-44）。
   `Why: D-n`。
 - 一个提交只做一件事；不混入与任务无关的改动。
 - pre-commit hook 由 `bin/setup` 装上（新建和接入时自动运行；换电脑后在项目里输入 `/adopt`，
-  agent-system D-41、D-51）。项目特有的敏感词（真实用户名、主机名）一行一个正则，写进
+  agent-system D-41、D-51）。项目特有的敏感词（真实用户名、主机名）一行一个正则，由 `/adopt` 问过后写进
   `.git/privacy-patterns`（在 `.git` 里，不会被提交）。
 - hook 拦下时修正内容，不用 `--no-verify` 绕过；确属误报，先告诉用户。
 

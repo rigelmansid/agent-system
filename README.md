@@ -71,7 +71,7 @@
    - 本仓库的 `.git/privacy-patterns`（D-12）；
    - 每个已接入的项目（AGENTS.md 开头有 profile 声明）：clone 后在项目里开 Claude 输入 `/adopt`，
      它运行 `bin/setup`，恢复 `../materials/` 目录和该 profile 的本机设置（code：pre-commit）
-     （D-41、D-51）；再重建该项目的 `.git/privacy-patterns`。没接入的项目不用管；
+     （D-41、D-51），没有 `.git/privacy-patterns` 时问你要拦哪些敏感词并写进去（D-54）。没接入的项目不用管；
    - 各项目的 `private-notes.md` 和 `../materials/` 里的资料，从旧电脑自行同步（setup 只建
      空目录）。
 5. 运行 `tests/run.sh`，再在一个项目里开新会话，输入 `/pickup`，确认能显示 Handoff 区块。

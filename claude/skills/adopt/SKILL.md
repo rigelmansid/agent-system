@@ -14,8 +14,15 @@ RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或
 项目 `AGENTS.md` 开头已有 profile 声明时（例如换电脑后 clone 下来的项目），不重复接入，也不
 出方案，直接运行 `~/agent-system/bin/setup .`（D-51）：它只补 `../materials/` 和该 profile 的
 本机设置（code：git、pre-commit），不碰项目内容，可以反复运行。汇报它的输出，处理其中的
-WARNING，并提醒用户自己补回 setup 补不了的：`private-notes.md` 的内容、`../materials/` 里的
-资料、`.git/privacy-patterns`。然后停下。
+WARNING，再按下面的「敏感词文件」补 `.git/privacy-patterns`，并提醒用户自己补回 setup 补不了
+的：`private-notes.md` 的内容和 `../materials/` 里的资料。然后停下。
+
+**敏感词文件**（profile 装了 pre-commit 时，code 是；D-54）：
+`$(git rev-parse --git-common-dir)/privacy-patterns` 不存在时，问用户这个项目要拦哪些真实的
+用户名、主机名、公司名等。用户给了，每个写成一行扩展正则（`.` 写成 `\.`），第一行写注释
+`# 每行一个扩展正则，pre-commit 命中即拦截`；写完运行 `grep -E -f <该文件> /dev/null`，退出码
+是 2 说明有无效正则，改好再继续。用户说不需要就跳过。这些词只写进这个文件，不写进任何入库
+文件、提交信息或汇报。文件已存在时不改，只说明已有几条。
 
 ## 一、选 profile
 
@@ -49,7 +56,8 @@ WARNING，并提醒用户自己补回 setup 补不了的：`private-notes.md` �
 
 1. 按方案加声明、改名、运行 new-project，处理输出里的 WARNING。
 2. 迁移内容，写好 Handoff 区块。
-3. 隐私扫描：profile 装了 pre-commit 时，用它的规则扫全部入库文件；公开仓库按该 profile 的
+3. 隐私扫描：profile 装了 pre-commit 时，先按第零节的「敏感词文件」补好 `.git/privacy-patterns`，
+   再用 pre-commit 的规则扫全部入库文件；公开仓库按该 profile 的
    发布规则（code：`profiles/code/publish.md`）。
 4. 验证：项目原有的测试仍通过；`docs/project-notes.md` 最上方有 Handoff 区块，新会话里
    输入 `/pickup` 能显示它。
