@@ -532,3 +532,13 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。setup 只补本机部分、可反复运行，不需要确认；“文件夹在本机用不起来就输入
   /adopt”一条就够，命令数不变。`bin/install` 仍要在终端运行，因为命令要靠它才装上。
 - 影响：claude/skills/adopt（新增第零节，后面各节顺延）、README 新电脑步骤、code PROFILE.md 第 5 节。影响现有项目：否。
+
+### D-52 新增 /update：纯用户用一个命令更新 agent-system（2026-10-08，用户决定）
+
+- 背景：纯用户没有 dev 工作副本，更新要在终端里 `git pull`、运行 `bin/install`，还看不到
+  `bin/release` 那样的“影响现有项目”提醒。
+- 选项：A 只在 README 写三条命令 / B 新增 /update
+- 选择：B。只做 `pull --ff-only`、`bin/install` 和列出新决策（标 `!`）；有本地修改、不在 main 上时
+  停下；本机有 dev 工作副本（开发者）时不更新，指向 `bin/release`。
+- 理由：用户决定，符合简洁好用。步骤都是固定命令，只读 diff（D-49），不另写脚本。
+- 影响：新增 claude/skills/update、README。影响现有项目：否（只在用户输入 /update 时运行）。

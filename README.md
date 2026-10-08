@@ -24,7 +24,7 @@
 | `bin/setup <dir>` | 恢复已接入项目的本机部分：建 `../materials/`（容器文件夹名不符时提示），运行该 profile 的 `setup`（code：git 仓库、pre-commit）。可反复运行，不建任何内容文件；没接入的项目会被拒绝（D-41） |
 | `bin/next-container [根目录]` | 输出下一个容器编号 `P0NN`：根目录和下一层（如 `00_Archieve/`）里 `P0NN_`、`Proj.0NN_` 文件夹的最大编号加一，归档过的编号不再用（D-44） |
 | `bin/release [--rollback]` | 在工作副本 `~/agent-system-dev` 里运行，把改动发布到正式版 `~/agent-system`：测试通过后把 main 快进到 dev，打标签 `release-N`，列出新决策（影响现有项目的标 `!`），再运行 `bin/install`；`--rollback` 把正式版退回上一个发布。不推送（D-45） |
-| `claude/skills/pickup`、`wrap`、`adopt`、`new-project` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40），已接入的项目里只运行 `bin/setup` 补本机部分（D-51）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：只读报告、只在对话里汇报，不建文件，`/pickup` 最后会提示用 `/resume` 接着以前的对话（D-43、D-47） |
+| `claude/skills/pickup`、`wrap`、`adopt`、`new-project`、`update` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40），已接入的项目里只运行 `bin/setup` 补本机部分（D-51）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）；`/update` 从 GitHub 拉取 main、重建链接并列出新决策，开发者本机不用它（D-52）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：只读报告、只在对话里汇报，不建文件，`/pickup` 最后会提示用 `/resume` 接着以前的对话（D-43、D-47） |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（常见令牌格式、URL 里的密码、`TOKEN=…` 类赋值；只报行号，D-11、D-37）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词（worktree 共用这份文件）；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面这些脚本的回归测试，在临时目录和假 HOME 中运行，约 10 秒（D-17） |
 
@@ -40,6 +40,7 @@
   `~/.claude/projects/` 下的目录、`~/.claude.json` 的项目键和 `~/.codex/config.toml` 的
   信任条目，做法见 D-10；改名前退出该文件夹里的所有会话。
 - 审查：在 Codex 里说“按 ~/agent-system/profiles/code/review.md 审查当前未提交的改动”。
+- 更新 agent-system：输入 `/update`（D-52）。开发者的正式版由 `bin/release` 更新，见「修改本仓库」。
 
 ## 建新项目 / 迁移已有项目
 
