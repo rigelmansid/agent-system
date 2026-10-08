@@ -513,7 +513,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：pickup、wrap（读取方式；Handoff 格式和四段汇报移进 wrap）；RULE.md 1.4、第 2、3 节；
   PROFILE.md 第 1、3、5、6 节，新增 profiles/code/publish.md；adopt；README。影响现有项目：否（规则内容不变，项目文件不用改）。
 
-### D-50 /pickup 的输出改成分项分行的 Markdown（2026-10-08，agent 选择）
+### D-50 /pickup 的输出改成分项分行的 Markdown（2026-10-08，agent 选择，用户已确认）
 
 - 背景：用户反馈 /pickup 的输出挤在一起难以阅读：原格式限 10 行，每项的多条内容用分号串成一行，
   在终端里折行后分不清项与项。
@@ -560,3 +560,4 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   有效性；用户说不需要就跳过，已存在不改。这些词只写进这个文件。
 - 理由：用户决定。和 D-51 一起，换电脑后一个 /adopt 补齐所有本机部分（资料内容和 private-notes 除外）。
 - 影响：claude/skills/adopt 第零节和第四节、README、code PROFILE.md 第 5 节。影响现有项目：否。
+

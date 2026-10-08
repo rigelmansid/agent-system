@@ -5,18 +5,19 @@
 
 ## Handoff
 
-Updated: 2026-10-07 23:26
-- Task: 无，上一个工作单元：撤回方案 A、保留 /resume 提示（D-47），已发布为 release-3 并推送
-- Stopped at: main 已推送（main = origin/main = 9d202d8），dev 和标签按用户要求不推（D-48）；
-  D-48、README 一句、本区块在 dev 里未提交
-- Decisions: D-47、D-48
+Updated: 2026-10-08 13:55
+- Task: 无，上一个工作单元：精简读取与规则（D-49）、/pickup 格式（D-50）、/adopt 补本机部分与
+  敏感词（D-51、D-54）、/update（D-52）、/release（D-53），已发布 release-5 并推送 main（225dc76）
+- Stopped at: main = origin/main；本区块与 D-50 的确认在 dev 里未提交；两份手册已删除，博客续篇
+  已在博客项目里发布（原稿在 P013 materials/posted/agent-system-progress/）
+- Decisions: D-49 至 D-54
 - Waiting on user: 无
-- Next: 1. 用户实测 /new-project（在 VBCD 根目录输入 /new-project <名称>） 2. CodaPace、meshlink
-  的 AGENTS.md 去掉重复的会话流程（D-38、D-36） 3. 新电脑步骤、Codex 审查的讨论（用户说留到最后）
-- Don't repeat: 不要在 ~/agent-system 里直接改，改 ~/agent-system-dev（D-45）；本仓库的
-  /pickup、/wrap 走简化模式是用户的决定，不要再提方案 A（D-47）；不要推 dev 和标签（D-48）；
-  hook 已删除（D-39），不要再加回；不要再给 Codex 装 hook 或技能（D-27）；不要改写 git 历史
-  （D-12）；共用骨架等第二个 profile 出现再抽（D-41）
+- Next: 1. 新会话里试 /release（在 dev）、/pickup 和 /adopt（在 CodaPace 或 meshlink） 2. 实测
+  /new-project 3. 在 meshlink 精简 AGENTS.md（223 行，D-38） 4. 新电脑步骤、Codex 审查的讨论
+  （用户说留到最后）
+- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推 dev 和标签（D-48）；不提方案 A（D-47）；
+  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；共用骨架等
+  第二个 profile 出现再抽（D-41）；RULE.md 1–3 节改 @ 导入、精简旧决策用户暂不做（D-49）
 
 ## 待办
 
