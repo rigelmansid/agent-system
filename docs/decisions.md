@@ -542,3 +542,13 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   停下；本机有 dev 工作副本（开发者）时不更新，指向 `bin/release`。
 - 理由：用户决定，符合简洁好用。步骤都是固定命令，只读 diff（D-49），不另写脚本。
 - 影响：新增 claude/skills/update、README。影响现有项目：否（只在用户输入 /update 时运行）。
+
+### D-53 开发者专用的 /release，放在本仓库的项目命令里（2026-10-08，用户决定）
+
+- 背景：发布要记住说“运行 bin/release”；只说“发布到 main”时，模型可能自己用 git 合并，跳过测试
+  和打标签。
+- 选项：A 只靠记忆 / B 全局命令 / C 本仓库的项目命令 `.claude/skills/release`
+- 选择：C。只在 agent-system 仓库里出现，不由 bin/install 装给所有用户；只运行 bin/release，
+  未提交时先问，推送 main 要用户在对话里明确同意；纯用户的 clone 里也有这个文件，但会被第 1 步拦下。
+- 理由：用户决定。和 /update 一起，开发者和纯用户各有一个命令，不用记脚本路径。
+- 影响：新增 .claude/skills/release、README。影响现有项目：否。
