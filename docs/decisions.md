@@ -523,3 +523,12 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   空项省略；没接入的项目用同样写法输出 Git、Handoff、New this session。
 - 理由：用户要求优化；具体排版是 agent 的选择，按 /code-review 的意见补了空项、长度和过时的规则。
 - 影响：claude/skills/pickup 的输出格式。影响现有项目：否（只改显示方式）。
+
+### D-51 已接入的项目里输入 /adopt，直接运行 bin/setup 补本机部分（2026-10-08，用户决定）
+
+- 背景：换电脑后，已接入的项目要手动运行 `bin/setup`；用户希望尽量只用 Claude 命令。
+- 选项：A 扩展 /adopt / B 新增 /setup 命令 / C 保持现状
+- 选择：A。/adopt 遇到已有 profile 声明时不出方案，直接运行 `bin/setup .` 并提醒 setup 补不回的东西。
+- 理由：用户决定。setup 只补本机部分、可反复运行，不需要确认；“文件夹在本机用不起来就输入
+  /adopt”一条就够，命令数不变。`bin/install` 仍要在终端运行，因为命令要靠它才装上。
+- 影响：claude/skills/adopt（新增第零节，后面各节顺延）、README 新电脑步骤、code PROFILE.md 第 5 节。影响现有项目：否。

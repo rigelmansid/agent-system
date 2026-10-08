@@ -1,6 +1,6 @@
 ---
 name: adopt
-description: Choose a profile and bring a project folder into the agent-system structure. Checks first and proposes a migration plan, then carries it out only after the user confirms. Runs only when the user types /adopt (or /adopt <profile>).
+description: Choose a profile and bring a project folder into the agent-system structure. Checks first and proposes a migration plan, then carries it out only after the user confirms. In a project that has already adopted a profile, as after cloning it on a new machine, it restores the machine-local parts with bin/setup instead. Runs only when the user types /adopt (or /adopt <profile>).
 disable-model-invocation: true
 ---
 
@@ -9,13 +9,20 @@ disable-model-invocation: true
 先选 profile，再检查、出方案，停下等用户确认；确认后再执行（D-34、D-40、D-41）。全程遵守
 RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或替换用户文件前先问。
 
-## 零、选 profile
+## 零、已经接入时：只补本机部分
+
+项目 `AGENTS.md` 开头已有 profile 声明时（例如换电脑后 clone 下来的项目），不重复接入，也不
+出方案，直接运行 `~/agent-system/bin/setup .`（D-51）：它只补 `../materials/` 和该 profile 的
+本机设置（code：git、pre-commit），不碰项目内容，可以反复运行。汇报它的输出，处理其中的
+WARNING，并提醒用户自己补回 setup 补不了的：`private-notes.md` 的内容、`../materials/` 里的
+资料、`.git/privacy-patterns`。然后停下。
+
+## 一、选 profile
 
 列出 `~/agent-system/profiles/*/PROFILE.md` 的第一行（名称和一句话说明），请用户选一个；用户
-输入了 `/adopt <名称>` 就直接用它。一个项目只选一个。项目 `AGENTS.md` 开头已有 profile 声明
-时：说明已经接入了哪个 profile，不重复接入；换电脑后只需运行 `~/agent-system/bin/setup .`。
+输入了 `/adopt <名称>` 就直接用它。一个项目只选一个。
 
-## 一、检查（只读）
+## 二、检查（只读）
 
 1. **位置**：项目目录的上一层应是 `P0NN_名称/` 容器（D-10）。不是时停下：移动要先退出本
    会话，并按 D-10 迁移按路径保存的数据，不在本会话里移动。
@@ -25,7 +32,7 @@ RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或
    README、`.gitignore`、笔记和文档；找出相当于 project-notes 的旧笔记。读所选 profile 的
    `PROFILE.md` 和 `template/`，看它要求什么结构。
 
-## 二、方案（输出后停下）
+## 三、方案（输出后停下）
 
 - 旧笔记改名为 `docs/project-notes.md`（git 仓库里用 `git mv`，D-21）。
 - 已有 AGENTS.md 但开头没有声明：在第一行加上 `<!-- profile: <名称> -->`（要用户同意）。
@@ -38,7 +45,7 @@ RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或
   建议删掉：AGENTS.md 只写本项目特有的规则（D-38）。
 - 预计的 WARNING 和处理方法（常见：旧 `.gitignore` 缺 `private-notes.md`）。
 
-## 三、执行（用户确认后）
+## 四、执行（用户确认后）
 
 1. 按方案加声明、改名、运行 new-project，处理输出里的 WARNING。
 2. 迁移内容，写好 Handoff 区块。
