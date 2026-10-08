@@ -512,3 +512,14 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。1 省得最多且不改变行为；3、4 只是移动内容，每处仍只维护一份。
 - 影响：pickup、wrap（读取方式；Handoff 格式和四段汇报移进 wrap）；RULE.md 1.4、第 2、3 节；
   PROFILE.md 第 1、3、5、6 节，新增 profiles/code/publish.md；adopt；README。影响现有项目：否（规则内容不变，项目文件不用改）。
+
+### D-50 /pickup 的输出改成分项分行的 Markdown（2026-10-08，agent 选择）
+
+- 背景：用户反馈 /pickup 的输出挤在一起难以阅读：原格式限 10 行，每项的多条内容用分号串成一行，
+  在终端里折行后分不清项与项。
+- 选项：A 保留 10 行，只缩短内容 / B 每项一个加粗标题，多条内容分行列出
+- 选择：B，项的顺序不变，新增 Todo（最多 3 条）。每项最多 5 条、每条约 30 个汉字，删解释不删命令、
+  路径和编号；过时标在 Handoff 的 Updated 后面；Uncommitted、Waiting on user 没有时写“无”，其余
+  空项省略；没接入的项目用同样写法输出 Git、Handoff、New this session。
+- 理由：用户要求优化；具体排版是 agent 的选择，按 /code-review 的意见补了空项、长度和过时的规则。
+- 影响：claude/skills/pickup 的输出格式。影响现有项目：否（只改显示方式）。
