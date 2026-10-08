@@ -25,7 +25,7 @@
 | `bin/next-container [根目录]` | 输出下一个容器编号 `P0NN`：根目录和下一层（如 `00_Archieve/`）里 `P0NN_`、`Proj.0NN_` 文件夹的最大编号加一，归档过的编号不再用（D-44） |
 | `bin/release [--rollback]` | 在工作副本 `~/agent-system-dev` 里运行，把改动发布到正式版 `~/agent-system`：测试通过后把 main 快进到 dev，打标签 `release-N`，列出新决策（影响现有项目的标 `!`），再运行 `bin/install`；`--rollback` 把正式版退回上一个发布。不推送（D-45） |
 | `.claude/skills/release` | 本仓库自己的项目命令 `/release`，只在 agent-system 仓库里出现，不由 `bin/install` 安装：在 dev 工作副本里检查未提交的改动、运行 `bin/release`、汇报新决策，再问要不要推送 main；`/release rollback` 退回上一个发布（D-53） |
-| `claude/skills/pickup`、`wrap`、`adopt`、`new-project`、`update` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40），已接入的项目里只运行 `bin/setup` 补本机部分（D-51）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）；`/update` 从 GitHub 拉取 main、重建链接并列出新决策，开发者本机不用它（D-52）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：只读报告、只在对话里汇报，不建文件，`/pickup` 最后会提示用 `/resume` 接着以前的对话（D-43、D-47） |
+| `claude/skills/pickup`、`wrap`、`adopt`、`new-project`、`new-profile`、`update` | `/pickup` 读取并显示项目状态，只读不动手，开场或对话中途都可用；开场不会自动读状态（D-33、D-39）；`/wrap` 收尾记录；`/adopt` 先选 profile，再把项目接入（D-34、D-40），已接入的项目里只运行 `bin/setup` 补本机部分（D-51）；`/new-project` 选 profile 新建项目，在项目根目录里先建下一个编号的容器（D-44）；`/new-profile` 按 [profiles/README.md](profiles/README.md) 问几个问题、新建 profile，纯用户建的以 `my-` 开头、不进 git（D-55、D-57）；`/update` 从 GitHub 拉取 main、重建链接并列出新决策，开发者本机不用它（D-52）。这些命令都只在用户输入时运行（D-35）。`/pickup`、`/wrap` 在没接入的项目里也能用：只读报告、只在对话里汇报，不建文件，`/pickup` 最后会提示用 `/resume` 接着以前的对话（D-43、D-47） |
 | `git-hooks/pre-commit` | 拦截令牌与密钥（常见令牌格式、URL 里的密码、`TOKEN=…` 类赋值；只报行号，D-11、D-37）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词（worktree 共用这份文件）；该文件有无效正则时也拦截（D-14） |
 | `tests/run.sh` | 上面这些脚本的回归测试，在临时目录和假 HOME 中运行，约 10 秒（D-17） |
 
@@ -41,6 +41,7 @@
   `~/.claude/projects/` 下的目录、`~/.claude.json` 的项目键和 `~/.codex/config.toml` 的
   信任条目，做法见 D-10；改名前退出该文件夹里的所有会话。
 - 审查：在 Codex 里说“按 ~/agent-system/profiles/code/review.md 审查当前未提交的改动”。
+- 为一类项目建自己的 profile：输入 `/new-profile`，建出 `my-<名称>`，之后 `/new-project`、`/adopt` 就能选它（D-57）。
 - 更新 agent-system：输入 `/update`（D-52）。开发者的正式版由 `bin/release` 更新，见「修改本仓库」。
 
 ## 建新项目 / 迁移已有项目
@@ -86,14 +87,9 @@ Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行
 推送只推 main，dev 和发布标签留在本地（D-48）；每次推送都要用户明确同意。
 新决策在「影响」一项末尾写“影响现有项目：是/否（原因）”，“影响现有项目：是”不要跨行，
 `bin/release` 靠它把这类决策标出来。
-每个 profile 是 `profiles/<名称>/` 下的一个模块（D-40、D-41）：规则写在 `PROFILE.md`，它的
-第一行是名称和一句话说明，`/adopt`、`/new-project` 列出可选 profile 时显示这一行；复制进项目的骨架放在
-`template/`，所有 profile 共用的文件（`docs/decisions.md`、`gitignore`）放在仓库根目录的 `skeleton/`，
-`template/` 里有同一路径的文件时用 `template/` 的（D-56）；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）；只在特定任务
-时才读的规则单独成文件，由 `PROFILE.md` 指向（code：`review.md`、`publish.md`，D-49）。新增 profile
-时加一个这样的文件夹，并在 RULE.md 的 Profile 一段登记；官方 profile 的名称不用 `my-` 开头，
-`my-` 留给用户自己建、被 git 忽略的 profile（D-55）。每个 profile 都要有「收尾时的文档
-更新」一节，`/wrap` 按它执行（D-16）。
+每个 profile 是 `profiles/<名称>/` 下的一个模块（D-40、D-41），所有 profile 共用的文件放在
+`skeleton/`（D-56）。一个 profile 必须有什么、怎么检查，只写在 [profiles/README.md](profiles/README.md)；
+新增官方 profile 时在 dev 里输入 `/new-profile`，按它的提示选“官方”（D-57）。
 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），提交正文写 `Why: D-n`。
 本仓库不按 code profile 管理，只用 [docs/project-notes.md](docs/project-notes.md)（Handoff
 区块与待办）和 docs/decisions.md 两个文件（D-18）。本仓库没有 profile 声明，`/pickup`、`/wrap`

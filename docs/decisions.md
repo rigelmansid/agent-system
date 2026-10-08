@@ -586,3 +586,16 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。AGENTS.md 和 project-notes 两个 profile 不同，留在各自的 template。
 - 影响：bin/new-project、tests/run.sh、RULE.md 的 Profile 段、adopt、README。code 生成的项目只差
   decisions.md 开头一句（去掉了 pitfalls 的指向，general 没有这个文件）。影响现有项目：否（只影响新建和补齐的文件）。
+
+### D-57 profile 的规范写在 profiles/README.md，/new-profile 按它新建（2026-10-08，用户决定）
+
+- 背景：落实 D-55。一个 profile 必须有什么，原来只散在 README「修改本仓库」一段里，是写给开发者的；
+  纯用户自建时没有可照着做的说明，也容易漏掉 `my-` 前缀或声明。
+- 选择：规范只写在 `profiles/README.md`（名称、必须有的文件、不用放进 template 的、可选的 setup、
+  写法、检查、改名和删除），README 只链接它。新增 `/new-profile`：先读规范和 general，问名称、
+  项目类型、额外文件、完成标准、收尾、要不要 git，出方案等确认，再写文件并在临时目录检查。
+  纯用户只能建 `my-` 开头的；在 dev 工作副本里开发者可以选建官方的。
+- 理由：用户决定。“至少两个项目重复用到才写进 profile”只约束官方 profile，自建的不限。需要
+  git 和 pre-commit 时，`setup` 一行调用 code 的 setup，不复制脚本（2026-10-08 实测）。
+- 影响：profiles/README.md、claude/skills/new-profile（`bin/install` 自动链接）、README。影响现有
+  项目：否。
