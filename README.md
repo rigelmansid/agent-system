@@ -10,7 +10,7 @@
 | 层 | 文件 | 生效方式 |
 |---|---|---|
 | 通用 | [RULE.md](RULE.md)：会话协议、决策记录、Handoff 区块、执行安全、验证、隐私、写文档 | `~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md` 链接到它，每个会话自动加载；第 1–3 节只在已接入的项目执行（D-40） |
-| 项目类型 | `profiles/<名称>/` 模块，现有 [code](profiles/code/PROFILE.md)：文件结构、内容归属、git、发布 | `/adopt` 或 `new-project` 在项目 `AGENTS.md` 开头写入 `<!-- profile: code -->`，之后才加载 |
+| 项目类型 | `profiles/<名称>/` 模块，现有 [code](profiles/code/PROFILE.md)（代码项目：文件结构、内容归属、git、发布）和 [general](profiles/general/PROFILE.md)（通用项目：只要交接和决策记录，不要求 git 和测试，D-56） | `/adopt` 或 `new-project` 在项目 `AGENTS.md` 开头写入 `<!-- profile: <名称> -->`，之后才加载 |
 | 项目 | 项目自己的 `AGENTS.md` 与 `docs/` | 项目目录 |
 
 代码审查规则：[profiles/code/review.md](profiles/code/review.md)，给 Codex 用。
@@ -47,7 +47,7 @@
 
 - **空的新项目**：在放所有项目的根目录开 Claude，输入 `/new-project <名称>`，它按下一个编号
   建容器 `P0NN_<名称>/`，项目目录在容器下面（D-44）。已经建好容器时，在容器里开 Claude 输入
-  `/new-project`，项目目录名默认是容器名去掉 `P0NN_`。选好 profile（现有 `code`；也可以写成
+  `/new-project`，项目目录名默认是容器名去掉 `P0NN_`。选好 profile（现有 `code`、`general`；也可以写成
   `/new-project code <名称>`）后建好骨架，再按提示输入 `/cd <项目目录>` 进入新项目，说这个
   项目要做什么，填写项目概况；AGENTS.md 的占位符在有了真实命令和规则后再填。
   也可以直接运行脚本 `~/agent-system/bin/new-project <容器>/<名称> <profile>`（在 Claude 里
@@ -91,7 +91,8 @@ Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行
 `template/`，所有 profile 共用的文件（`docs/decisions.md`、`gitignore`）放在仓库根目录的 `skeleton/`，
 `template/` 里有同一路径的文件时用 `template/` 的（D-56）；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）；只在特定任务
 时才读的规则单独成文件，由 `PROFILE.md` 指向（code：`review.md`、`publish.md`，D-49）。新增 profile
-时加一个这样的文件夹，并在 RULE.md 的 Profile 一段登记。每个 profile 都要有「收尾时的文档
+时加一个这样的文件夹，并在 RULE.md 的 Profile 一段登记；官方 profile 的名称不用 `my-` 开头，
+`my-` 留给用户自己建、被 git 忽略的 profile（D-55）。每个 profile 都要有「收尾时的文档
 更新」一节，`/wrap` 按它执行（D-16）。
 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），提交正文写 `Why: D-n`。
 本仓库不按 code profile 管理，只用 [docs/project-notes.md](docs/project-notes.md)（Handoff

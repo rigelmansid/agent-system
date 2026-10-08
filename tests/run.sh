@@ -177,6 +177,31 @@ check "new container path: not created" no "$([ -e "$T/P002_new" ] && echo yes |
 
 # The shared skeleton (D-56): code projects still get it.
 check "code: .gitignore from skeleton" "$(cat "$root/skeleton/gitignore")" "$(cat "$d/.gitignore")"
+# The general profile: skeleton plus its own template, no git, no setup script.
+mkdir -p "$T/P003_gen"
+g="$T/P003_gen/g"
+"$root/bin/new-project" "$g" general Gen >/dev/null 2>&1
+check "general: exit 0" 0 $?
+check "general: declaration" "<!-- profile: general -->" "$(head -1 "$g/AGENTS.md")"
+check "general: files" ".gitignore AGENTS.md CLAUDE.md README.md docs/decisions.md docs/project-notes.md private-notes.md " \
+    "$(cd "$g" && find . \( -type f -o -type l \) | sed 's#^\./##' | LC_ALL=C sort | tr '\n' ' ')"
+check "general: decisions from skeleton" "$(cat "$root/skeleton/docs/decisions.md")" "$(cat "$g/docs/decisions.md")"
+check "general: title" "# Gen 项目记录" "$(head -1 "$g/docs/project-notes.md")"
+check "general: no placeholders left" 0 "$(grep -cE 'HH:MM|<项目名>' "$g/docs/project-notes.md")"
+check "general: no git" no "$([ -e "$g/.git" ] && echo yes || echo no)"
+check "general: materials created" yes "$([ -d "$T/P003_gen/materials/scratch" ] && echo yes)"
+"$root/bin/setup" "$g" >/dev/null 2>&1
+check "general: setup exit 0" 0 $?
+# A template file overrides the skeleton file at the same path.
+fr="$T/fakeroot" && mkdir -p "$fr/bin" "$fr/profiles"
+cp "$root/bin/new-project" "$root/bin/setup" "$fr/bin/"
+cp -R "$root/skeleton" "$fr/" && cp -R "$root/profiles/general" "$fr/profiles/x"
+sed 's/profile: general/profile: x/' "$root/profiles/general/template/AGENTS.md" > "$fr/profiles/x/template/AGENTS.md"
+printf '# own decisions\n' > "$fr/profiles/x/template/docs/decisions.md"
+"$fr/bin/new-project" "$T/P003_gen/ov" x >/dev/null 2>&1
+check "template overrides skeleton: exit 0" 0 $?
+check "template overrides skeleton" "# own decisions" "$(cat "$T/P003_gen/ov/docs/decisions.md")"
+check "skeleton still adds the rest" yes "$([ -f "$T/P003_gen/ov/.gitignore" ] && echo yes)"
 
 # Profiles and bin/setup (D-41).
 "$root/bin/new-project" "$T/P001_np/nop" >/dev/null 2>&1
