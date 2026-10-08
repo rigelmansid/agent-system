@@ -492,3 +492,12 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定；用户认为原来只按 profile 声明区分的逻辑没有问题。
 - 影响：RULE.md、claude/skills/wrap 恢复到 release-1；/pickup 只多出 /resume 提示；README。
   影响现有项目：否（CodaPace、meshlink 不变；blog 保留 /resume 提示）。
+
+### D-48 远端只同步 main，dev 和发布标签只在本地（2026-10-07，用户决定）
+
+- 背景：D-45 之后本地有 main、dev 两个分支和 release-N 标签，推送时要定推哪些。
+- 选项：A 只推 main / B main 和 dev 都推 / C 连标签一起推
+- 选择：A。每次推送仍要用户明确指示（RULE 第 4 节）。
+- 理由：用户决定。远端只放发布过的版本；发布后 dev 与 main 一致，换电脑后第一次发布会重新建
+  release-0（D-45）。
+- 影响：README「修改本仓库」。影响现有项目：否。

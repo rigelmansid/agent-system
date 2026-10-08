@@ -81,6 +81,7 @@
 Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行 `tests/run.sh`，全部
 通过再提交；提交后运行 `~/agent-system-dev/bin/release` 发布。发布后出了问题，运行
 `bin/release --rollback` 退回上一个发布（每运行一次退一个），在 dev 里修好再发布。
+推送只推 main，dev 和发布标签留在本地（D-48）；每次推送都要用户明确同意。
 新决策在「影响」一项末尾写“影响现有项目：是/否（原因）”，“影响现有项目：是”不要跨行，
 `bin/release` 靠它把这类决策标出来。
 每个 profile 是 `profiles/<名称>/` 下的一个模块（D-40、D-41）：规则写在 `PROFILE.md`，它的

@@ -5,18 +5,18 @@
 
 ## Handoff
 
-Updated: 2026-10-07 22:50
-- Task: 按用户要求撤回 D-46 的方案 A，保留 /pickup 的 /resume 提示（D-47）
-- Stopped at: RULE.md、/wrap 恢复到 release-1 的内容，/pickup 只保留 /resume 提示，README、D-47
-  已在 dev 提交；接着用 bin/release 发布
-- Decisions: D-47
-- Waiting on user: 是否推送（main 领先 origin 6 个提交，dev 未推送）
-- Next: 1. 发布 2. 用户在没接入的文件夹（如 blog）输入 /pickup，看最后的 /resume 提示
-  3. 用户实测 /new-project 4. CodaPace、meshlink 的 AGENTS.md 去掉重复的会话流程（D-38、D-36）
+Updated: 2026-10-07 23:26
+- Task: 无，上一个工作单元：撤回方案 A、保留 /resume 提示（D-47），已发布为 release-3 并推送
+- Stopped at: main 已推送（main = origin/main = 9d202d8），dev 和标签按用户要求不推（D-48）；
+  D-48、README 一句、本区块在 dev 里未提交
+- Decisions: D-47、D-48
+- Waiting on user: 无
+- Next: 1. 用户实测 /new-project（在 VBCD 根目录输入 /new-project <名称>） 2. CodaPace、meshlink
+  的 AGENTS.md 去掉重复的会话流程（D-38、D-36） 3. 新电脑步骤、Codex 审查的讨论（用户说留到最后）
 - Don't repeat: 不要在 ~/agent-system 里直接改，改 ~/agent-system-dev（D-45）；本仓库的
-  /pickup、/wrap 走简化模式是用户的决定，不要再提方案 A（D-47）；hook 已删除（D-39），不要再
-  加回；不要再给 Codex 装 hook 或技能（D-27）；不要改写 git 历史（D-12）；共用骨架等第二个
-  profile 出现再抽（D-41）
+  /pickup、/wrap 走简化模式是用户的决定，不要再提方案 A（D-47）；不要推 dev 和标签（D-48）；
+  hook 已删除（D-39），不要再加回；不要再给 Codex 装 hook 或技能（D-27）；不要改写 git 历史
+  （D-12）；共用骨架等第二个 profile 出现再抽（D-41）
 
 ## 待办
 
