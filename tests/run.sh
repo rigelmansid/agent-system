@@ -198,10 +198,17 @@ cp "$root/bin/new-project" "$root/bin/setup" "$fr/bin/"
 cp -R "$root/skeleton" "$fr/" && cp -R "$root/profiles/general" "$fr/profiles/x"
 sed 's/profile: general/profile: x/' "$root/profiles/general/template/AGENTS.md" > "$fr/profiles/x/template/AGENTS.md"
 printf '# own decisions\n' > "$fr/profiles/x/template/docs/decisions.md"
+mkdir -p "$fr/profiles/x/template/01_资料 a"
+printf 'keep\n' > "$fr/profiles/x/template/01_资料 a/.keep"
 "$fr/bin/new-project" "$T/P003_gen/ov" x >/dev/null 2>&1
 check "template overrides skeleton: exit 0" 0 $?
 check "template overrides skeleton" "# own decisions" "$(cat "$T/P003_gen/ov/docs/decisions.md")"
 check "skeleton still adds the rest" yes "$([ -f "$T/P003_gen/ov/.gitignore" ] && echo yes)"
+check "pre-made folder with .keep (D-58)" yes "$([ -f "$T/P003_gen/ov/01_资料 a/.keep" ] && echo yes)"
+# User profiles and their old versions stay out of git (D-55, D-58).
+check "my- profiles ignored" yes "$(git -C "$root" check-ignore -q profiles/my-x/PROFILE.md && echo yes)"
+check ".trash ignored" yes "$(git -C "$root" check-ignore -q profiles/.trash/my-x-1/PROFILE.md && echo yes)"
+check "official profiles not ignored" no "$(git -C "$root" check-ignore -q profiles/general/PROFILE.md && echo yes || echo no)"
 
 # Profiles and bin/setup (D-41).
 "$root/bin/new-project" "$T/P001_np/nop" >/dev/null 2>&1
@@ -270,6 +277,13 @@ rm "$HOME/.codex/AGENTS.md" && echo mine > "$HOME/.codex/AGENTS.md"
 "$root/bin/install" >/dev/null 2>&1
 check "existing file: exit 1" 1 $?
 check "existing file not overwritten" mine "$(cat "$HOME/.codex/AGENTS.md")"
+# A link to a skill that no longer exists here is removed; other links are kept (D-58).
+ln -s "$root/claude/skills/renamed" "$HOME/.claude/skills/renamed"
+ln -s "$T/elsewhere/x" "$HOME/.claude/skills/foreign"
+"$root/bin/install" >/dev/null 2>&1
+check "stale skill link removed" no "$([ -L "$HOME/.claude/skills/renamed" ] && echo yes || echo no)"
+check "foreign dangling link kept" yes "$([ -L "$HOME/.claude/skills/foreign" ] && echo yes || echo no)"
+check "live skill links kept" "$root/claude/skills/pickup" "$(readlink "$HOME/.claude/skills/pickup")"
 
 # ------------------------------------------------------------------- release
 section "bin/release"

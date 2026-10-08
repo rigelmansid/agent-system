@@ -5,6 +5,8 @@
 #   ~/.claude/CLAUDE.md          -> RULE.md
 #   ~/.codex/AGENTS.md           -> RULE.md
 #   ~/.claude/skills/<name>      -> claude/skills/<name>
+# Links into claude/skills/ whose skill no longer exists (renamed or removed)
+# are deleted; nothing else is.
 # No hooks: project state is read only when the user types /pickup (D-39).
 # Compatible with macOS bash 3.2.
 
@@ -29,6 +31,13 @@ link "$root/RULE.md" "$HOME/.codex/AGENTS.md"
 for skill in "$root"/claude/skills/*/; do
     name=$(basename "$skill")
     link "$root/claude/skills/$name" "$HOME/.claude/skills/$name"
+done
+# A renamed skill would leave a dangling link behind (D-58).
+for path in "$HOME"/.claude/skills/*; do
+    [ -L "$path" ] && [ ! -e "$path" ] || continue
+    case $(readlink "$path") in
+        "$root"/claude/skills/*) rm "$path" && echo "removed $path (skill no longer exists)" ;;
+    esac
 done
 
 exit $status

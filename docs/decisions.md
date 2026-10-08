@@ -587,7 +587,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：bin/new-project、tests/run.sh、RULE.md 的 Profile 段、adopt、README。code 生成的项目只差
   decisions.md 开头一句（去掉了 pitfalls 的指向，general 没有这个文件）。影响现有项目：否（只影响新建和补齐的文件）。
 
-### D-57 profile 的规范写在 profiles/README.md，/new-profile 按它新建（2026-10-08，用户决定）
+### D-57 profile 的规范写在 profiles/README.md，/new-profile 按它新建（2026-10-08，用户决定）（/new-profile 部分已被 D-58 替代）
 
 - 背景：落实 D-55。一个 profile 必须有什么，原来只散在 README「修改本仓库」一段里，是写给开发者的；
   纯用户自建时没有可照着做的说明，也容易漏掉 `my-` 前缀或声明。
@@ -599,3 +599,21 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   git 和 pre-commit 时，`setup` 一行调用 code 的 setup，不复制脚本（2026-10-08 实测）。
 - 影响：profiles/README.md、claude/skills/new-profile（`bin/install` 自动链接）、README。影响现有
   项目：否。
+
+### D-58 /new-profile 改为 /profile：点选提问，三种起点，领域预设，可以修改和删除（2026-10-08，用户决定）
+
+- 背景：用户实测 /new-profile：一次问六个开放问题，全靠打字，体验不好；而且用户对自己那类项目
+  往往已有习惯的文件夹结构，命令没有用上。自建的 profile 还没有修改和删除的办法。
+- 选项：修改和删除 A 改成一个 `/profile`，进来点选新建、修改、删除 / B 保留 /new-profile，另加
+  /edit-profile、/delete-profile / C 不加命令，只在规范里写手动做法
+- 选择：A，替代 D-57 里的 /new-profile。全程用选择框点选。新建有三种起点：照已有项目的文件夹
+  （只读文件夹名，具体名称换成通用名）、领域预设（调研、写作、设计、建筑、实验、财务、法律案件，
+  写在命令旁的 presets.md，选了才读）、从已有 profile 改。自建的可以预建文件夹，每个放一行的
+  `.keep`，用途写在 template 的 AGENTS.md。修改和删除只针对 `my-`：先找出在用的项目、点选怎么
+  处理，旧版本放进被 git 忽略的 `profiles/.trash/`。
+- 理由：用户决定。点选比打字省事，也不容易漏项；照已有项目最贴近用户自己的习惯。预设只是起点，
+  复制成 `my-` 后由用户自己改，不当作官方 profile 维护。
+- 影响：claude/skills/profile（原 new-profile）、presets.md；profiles/README.md 第 4、5、7 节；
+  `.gitignore` 加 `/profiles/.trash/`；`bin/install` 删掉指向本仓库、但命令已不存在的链接
+  （改名后不留死链接）；README、tests。影响现有项目：否。
+

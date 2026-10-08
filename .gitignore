@@ -1,4 +1,6 @@
 .DS_Store
 
-# User-defined profiles, kept out of the repository (D-55)
+# User-defined profiles and their old versions, kept out of the repository
+# (D-55, D-58)
 /profiles/my-*/
+/profiles/.trash/
