@@ -37,7 +37,7 @@
 - 结束：`/wrap`，agent 重写 Handoff 区块、更新记录并汇报。
 - 项目资料：放在项目目录旁的 `materials/`（`refs/` 参考、`inbox/` 待整理、`scratch/`
   agent 临时产出），不进 git；想让 agent 用某份资料就在任务里点名。约定见 RULE.md 第 4 节。
-- 项目容器文件夹：在用的项目命名为 `P0NN_名称`，归档不改（D-10）。改名时一并迁移
+- 项目容器文件夹：在用的项目命名为 `P0NN_名称`（三位编号，从 P001 起，D-59），归档不改（D-10）。改名时一并迁移
   `~/.claude/projects/` 下的目录、`~/.claude.json` 的项目键和 `~/.codex/config.toml` 的
   信任条目，做法见 D-10；改名前退出该文件夹里的所有会话。
 - 审查：在 Codex 里说“按 ~/agent-system/profiles/code/review.md 审查当前未提交的改动”。
