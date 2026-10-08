@@ -561,3 +561,15 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。和 D-51 一起，换电脑后一个 /adopt 补齐所有本机部分（资料内容和 private-notes 除外）。
 - 影响：claude/skills/adopt 第零节和第四节、README、code PROFILE.md 第 5 节。影响现有项目：否。
 
+### D-55 用户自己决定有哪些 profile：官方的不删，自建的用 my- 前缀（2026-10-08，用户决定）
+
+- 背景：用户希望每个人自己决定 `profiles/` 下有哪些模块，可以增加自己需要的、不要用不到的。
+  直接在 `~/agent-system/profiles/` 里删或加会让 `/update` 因工作区不干净而停下；自建的和以后
+  发布的同名时 pull 报错（2026-10-08 在临时仓库实测）。
+- 选项：A 只由开发者发布 profile / B 另建本机 profile 目录，所有查找改成查两处 /
+  C 官方 profile 不删、不用就行；自建的放同一目录、名称以 `my-` 开头，由 `.gitignore` 忽略
+- 选择：C。引导用户建 profile 的 `/new-profile` 等第二个 profile 做完、写好“profile 必须有什么”
+  的说明后再做；第二个 profile 先做通用最小 profile。
+- 理由：没用到的 profile 不读、不花 token，删掉没有收益；C 只加一行 `.gitignore`，脚本和规则里
+  的查找不用改。代价是自建的 profile 不在 git 里，换电脑时由用户自己复制。
+- 影响：`.gitignore` 加 `/profiles/my-*/`；官方 profile 不用 `my-` 开头。影响现有项目：否。

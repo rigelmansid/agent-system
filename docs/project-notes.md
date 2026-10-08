@@ -26,7 +26,8 @@ Updated: 2026-10-08 13:55
 - [ ] 待优化（D-40 Q4）：profile 专用命令和 hook 目前定为链接进项目 `.claude/skills/`、写进
   `.claude/settings.local.json`，链接逻辑等第一个需要的 profile 出现时再写；以后按需求升级（如
   改用 plugin）
-- [ ] 新 profile（网页设计、建筑设计、演示等）：用到时和用户一起逐个定义
+- [ ] 第二个 profile 先做通用最小 profile（D-55），之后写“profile 必须有什么”的说明，再做
+  `/new-profile` 引导用户建 `my-` 开头的自建 profile；领域 profile（网页设计、建筑设计等）用到时再定义
 - [ ] CodaPace（AGENTS.md 第 16、129 行）、meshlink（第 23、150 行）去掉重复的会话流程（D-38）
 - 观察：官方建议每个 CLAUDE.md 文件 200 行以内。2026-10-05：RULE.md 160、meshlink AGENTS.md
   196（接近上限）、CodaPace 157；超长提醒由 /pickup 给出（D-39）
