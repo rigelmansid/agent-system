@@ -37,7 +37,7 @@ WARNING，再按下面的「敏感词文件」补 `.git/privacy-patterns`，并�
    还是暂存。
 3. **盘点**：已有的 AGENTS.md（开头有没有 profile 声明）、CLAUDE.md（是文件还是软链接）、
    README、`.gitignore`、笔记和文档；找出相当于 project-notes 的旧笔记。读所选 profile 的
-   `PROFILE.md` 和 `template/`，看它要求什么结构。
+   `PROFILE.md`、`template/` 和共用的 `~/agent-system/skeleton/`，看它要求什么结构。
 
 ## 三、方案（输出后停下）
 

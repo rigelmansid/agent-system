@@ -16,13 +16,10 @@ Updated: 2026-10-08 13:55
   /new-project 3. 在 meshlink 精简 AGENTS.md（223 行，D-38） 4. 新电脑步骤、Codex 审查的讨论
   （用户说留到最后）
 - Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推 dev 和标签（D-48）；不提方案 A（D-47）；
-  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；共用骨架等
-  第二个 profile 出现再抽（D-41）；RULE.md 1–3 节改 @ 导入、精简旧决策用户暂不做（D-49）
+  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；RULE.md 1–3 节改 @ 导入、精简旧决策用户暂不做（D-49）
 
 ## 待办
 
-- [ ] 第二个 profile 出现时：把所有 profile 共用的骨架（AGENTS.md、project-notes、decisions）
-  从 code 的 template/ 抽成一份公共骨架（D-41）
 - [ ] 待优化（D-40 Q4）：profile 专用命令和 hook 目前定为链接进项目 `.claude/skills/`、写进
   `.claude/settings.local.json`，链接逻辑等第一个需要的 profile 出现时再写；以后按需求升级（如
   改用 plugin）

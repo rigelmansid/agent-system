@@ -20,7 +20,7 @@
 | 文件 | 作用 |
 |---|---|
 | `bin/install` | 建立上面的全局链接和技能链接；可重复运行，已有的非链接文件不覆盖。不装任何 hook（D-39）。Codex 只链接 RULE.md（D-27） |
-| `bin/new-project <dir> <profile> [名称]` | 按所选 profile 的 `template/` 建项目或补齐缺的文件（只补不覆盖），再运行 `bin/setup`。`<dir>` 写成 `P0NN_名称/<project>`（D-10），写成容器文件夹本身会被拒绝（D-23）；AGENTS.md 没有对应的 profile 声明时不运行 setup（D-41） |
+| `bin/new-project <dir> <profile> [名称]` | 按共用骨架 `skeleton/` 和所选 profile 的 `template/` 建项目或补齐缺的文件（只补不覆盖；同一路径两边都有时用 profile 的，D-56），再运行 `bin/setup`。`<dir>` 写成 `P0NN_名称/<project>`（D-10），写成容器文件夹本身会被拒绝（D-23）；AGENTS.md 没有对应的 profile 声明时不运行 setup（D-41） |
 | `bin/setup <dir>` | 恢复已接入项目的本机部分：建 `../materials/`（容器文件夹名不符时提示），运行该 profile 的 `setup`（code：git 仓库、pre-commit）。可反复运行，不建任何内容文件；没接入的项目会被拒绝（D-41） |
 | `bin/next-container [根目录]` | 输出下一个容器编号 `P0NN`：根目录和下一层（如 `00_Archieve/`）里 `P0NN_`、`Proj.0NN_` 文件夹的最大编号加一，归档过的编号不再用（D-44） |
 | `bin/release [--rollback]` | 在工作副本 `~/agent-system-dev` 里运行，把改动发布到正式版 `~/agent-system`：测试通过后把 main 快进到 dev，打标签 `release-N`，列出新决策（影响现有项目的标 `!`），再运行 `bin/install`；`--rollback` 把正式版退回上一个发布。不推送（D-45） |
@@ -88,7 +88,8 @@ Claude（D-45）。改了 `bin/`、`git-hooks/` 或 `profiles/*/setup` 后运行
 `bin/release` 靠它把这类决策标出来。
 每个 profile 是 `profiles/<名称>/` 下的一个模块（D-40、D-41）：规则写在 `PROFILE.md`，它的
 第一行是名称和一句话说明，`/adopt`、`/new-project` 列出可选 profile 时显示这一行；复制进项目的骨架放在
-`template/`；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）；只在特定任务
+`template/`，所有 profile 共用的文件（`docs/decisions.md`、`gitignore`）放在仓库根目录的 `skeleton/`，
+`template/` 里有同一路径的文件时用 `template/` 的（D-56）；本机设置放在可选的 `setup` 脚本（由 `bin/setup` 调用，可反复运行）；只在特定任务
 时才读的规则单独成文件，由 `PROFILE.md` 指向（code：`review.md`、`publish.md`，D-49）。新增 profile
 时加一个这样的文件夹，并在 RULE.md 的 Profile 一段登记。每个 profile 都要有「收尾时的文档
 更新」一节，`/wrap` 按它执行（D-16）。

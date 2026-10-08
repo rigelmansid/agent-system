@@ -1,6 +1,7 @@
 #!/bin/bash
-# Create a project from a profile's template, or add the missing pieces to an
-# existing directory, then run bin/setup for the machine-local parts (D-41).
+# Create a project from the shared skeleton/ and a profile's template, or add
+# the missing pieces to an existing directory, then run bin/setup for the
+# machine-local parts (D-41).
 # Never overwrites an existing file. Exits 2 on usage errors, and 1 if a file
 # could not be created, an existing one is empty, or AGENTS.md does not
 # declare this profile.
@@ -29,6 +30,7 @@ check_name() {
 dir=$1
 profile=$2
 tpl="$root/profiles/$profile/template"
+skel="$root/skeleton"
 if [ ! -f "$root/profiles/$profile/PROFILE.md" ] || [ ! -d "$tpl" ]; then
     echo "new-project: unknown profile '$profile'; profiles: $(profiles)" >&2
     exit 2
@@ -74,7 +76,7 @@ fill() {  # fill <template file>
             s = rep(s, "Updated: YYYY-MM-DD HH:MM", "Updated: " ENVIRON["NOW"])
             s = rep(s, "更新：YYYY-MM-DD", "更新：" ENVIRON["TODAY"])
             print s
-        }' "$tpl/$1"
+        }' "$1"
 }
 
 # Write through a temp file so a failure never leaves an empty file behind.
@@ -95,15 +97,20 @@ put() {  # put <template file> <dest>
     fi
 }
 
-# Every file in the profile's template; one named gitignore becomes .gitignore.
+files() {  # files <dir>: its files as relative paths
+    [ -d "$1" ] && (cd "$1" && find . -type f ! -name .DS_Store | sed 's#^\./##')
+}
+# Every file in the skeleton and the profile's template; a file in both comes
+# from the template (D-41). One named gitignore becomes .gitignore.
 while IFS= read -r rel; do
     case $rel in
         gitignore|*/gitignore) dest="${rel%gitignore}.gitignore" ;;
         *) dest=$rel ;;
     esac
+    if [ -f "$tpl/$rel" ]; then src="$tpl/$rel"; else src="$skel/$rel"; fi
     mkdir -p "$(dirname "$dest")"
-    put "$rel" "$dest"
-done < <(cd "$tpl" && find . -type f ! -name .DS_Store | sed 's#^\./##' | LC_ALL=C sort)
+    put "$src" "$dest"
+done < <({ files "$skel"; files "$tpl"; } | LC_ALL=C sort -u)
 
 # Shared by every profile (D-40).
 [ -e private-notes.md ] || { : > private-notes.md; echo "created private-notes.md"; }

@@ -573,3 +573,16 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：没用到的 profile 不读、不花 token，删掉没有收益；C 只加一行 `.gitignore`，脚本和规则里
   的查找不用改。代价是自建的 profile 不在 git 里，换电脑时由用户自己复制。
 - 影响：`.gitignore` 加 `/profiles/my-*/`；官方 profile 不用 `my-` 开头。影响现有项目：否。
+
+### D-56 第二个 profile general，所有 profile 共用的骨架抽到 skeleton/（2026-10-08，用户决定）
+
+- 背景：落实 D-55 的“先做通用最小 profile”；D-41 定了第二个 profile 出现时抽共用骨架。按现在的
+  规则，只有接入了 profile 的项目才有 Handoff 和决策记录，非代码项目只能选 code。
+- 选项：骨架 A 现在抽到仓库根目录的 `skeleton/` / B 先复制一份，以后再抽
+- 选择：新增 `profiles/general`：AGENTS.md、project-notes（Handoff、概况、当前状态、待办）、
+  decisions，不要求 git 和测试，没有 setup 脚本；完成标准是交付物已生成并按 AGENTS.md 检查过。
+  骨架选 A：两个 profile 相同的 `docs/decisions.md`、`gitignore` 移到 `skeleton/`，`bin/new-project`
+  先取 skeleton 再取 profile 的 template，同一路径用 template 的。
+- 理由：用户决定。AGENTS.md 和 project-notes 两个 profile 不同，留在各自的 template。
+- 影响：bin/new-project、tests/run.sh、RULE.md 的 Profile 段、adopt、README。code 生成的项目只差
+  decisions.md 开头一句（去掉了 pitfalls 的指向，general 没有这个文件）。影响现有项目：否（只影响新建和补齐的文件）。

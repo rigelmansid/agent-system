@@ -175,6 +175,9 @@ check "container '.': nothing created" no \
 check "new container path: refused" 2 $?
 check "new container path: not created" no "$([ -e "$T/P002_new" ] && echo yes || echo no)"
 
+# The shared skeleton (D-56): code projects still get it.
+check "code: .gitignore from skeleton" "$(cat "$root/skeleton/gitignore")" "$(cat "$d/.gitignore")"
+
 # Profiles and bin/setup (D-41).
 "$root/bin/new-project" "$T/P001_np/nop" >/dev/null 2>&1
 check "missing profile: usage error" 2 $?
