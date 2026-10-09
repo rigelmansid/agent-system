@@ -1,64 +1,61 @@
 ---
 name: adopt
-description: Choose a profile and bring a project folder into the agent-system structure. Checks first and proposes a migration plan, then carries it out only after the user confirms. In a project that has already adopted a profile, as after cloning it on a new machine, it restores the machine-local parts with bin/setup instead. Runs only when the user types /adopt (or /adopt <profile>).
+description: Bring a project folder into agent-system by creating the four files that /pickup, /wrap and /private use. With no notes yet it creates them blank; when the folder already has notes it analyzes them, proposes how to move their content into the four files, and migrates only after the user agrees. In git projects it also links the pre-commit hook and the privacy patterns file. Runs only when the user types /adopt.
 disable-model-invocation: true
 ---
 
-# /adopt：选定 profile，把项目接入 agent-system
+# /adopt：接入 agent-system
 
-先选 profile，再检查、出方案，停下等用户确认；确认后再执行（D-34、D-40、D-41）。全程遵守
-RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或替换用户文件前先问。
+接入就是建好下面四个文件；有了 `docs/project-notes.md` 就算接入（RULE.md 开头，D-62）。全程遵守
+RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或替换用户文件前先问。不提交。
 
-## 零、已经接入时：只补本机部分
+| 文件 | 用途 | 空白时 |
+|---|---|---|
+| `docs/project-notes.md` | Handoff、项目概况、待办；`/pickup` 读，`/wrap` 写 | 照 `templates/project-notes.md` |
+| `docs/decisions.md` | 决策 D-n，只追加（RULE.md 第 2 节） | 照 `templates/decisions.md` |
+| `docs/pitfalls.md` | 踩过的坑 坑 n，只追加（RULE.md 第 2 节） | 照 `templates/pitfalls.md` |
+| `private-notes.md` | 真实地址、用户名、账号等；`/private` 用它比对和脱敏 | 一行：`# 私密信息：不入库、不外传，入库文件里用占位符（<host>、<user>）` |
 
-项目 `AGENTS.md` 开头已有 profile 声明时（例如换电脑后 clone 下来的项目），不重复接入，也不
-出方案，直接运行 `~/agent-system/bin/setup .`（D-51）：它只补 `../materials/` 和该 profile 的
-本机设置（code：git、pre-commit），不碰项目内容，可以反复运行。汇报它的输出，处理其中的
-WARNING，再按下面的「敏感词文件」补 `.git/privacy-patterns`，并提醒用户自己补回 setup 补不了
-的：`private-notes.md` 的内容和 `../materials/` 里的资料。然后停下。
+模板在 `~/agent-system/claude/skills/adopt/templates/`：`<项目名>` 换成项目文件夹名，
+`YYYY-MM-DD HH:MM` 换成当前时间。
 
-**敏感词文件**（profile 装了 pre-commit 时，code 是；D-54）：
-`$(git rev-parse --git-common-dir)/privacy-patterns` 不存在时，问用户这个项目要拦哪些真实的
-用户名、主机名、公司名等。用户给了，每个写成一行扩展正则（`.` 写成 `\.`），第一行写注释
-`# 每行一个扩展正则，pre-commit 命中即拦截`；写完运行 `grep -E -f <该文件> /dev/null`，退出码
-是 2 说明有无效正则，改好再继续。用户说不需要就跳过。这些词只写进这个文件，不写进任何入库
-文件、提交信息或汇报。文件已存在时不改，只说明已有几条。
+## 一、检查（只读）
 
-## 一、选 profile
+1. **已经接入**（有 `docs/project-notes.md`，例如换电脑后 clone 下来的项目）：不重复接入，只建
+   缺的另外三个文件，再做第四节，然后汇报并停下。
+2. **工作区**：是 git 仓库并且 `git status --short` 有未提交的修改时停下，请用户先决定提交还是暂存。
+3. **盘点笔记**：NOTES、TODO、CHANGELOG、`docs/` 下的 md、CLAUDE.md 和 AGENTS.md 里写的状态与
+   决策、旧的「进行中」区块。先看标题和开头几行，判断每份讲的是什么。README 是给使用者看的，不动。
+   没有笔记走第二节，有就走第三节。
 
-列出 `~/agent-system/profiles/*/PROFILE.md` 的第一行（名称和一句话说明），请用户选一个；用户
-输入了 `/adopt <名称>` 就直接用它。一个项目只选一个。
+## 二、没有笔记：建空白文件
 
-## 二、检查（只读）
+按上表建四个文件，再做第四节。汇报建了什么，然后请用户说这个项目要做什么，填进项目概况。
 
-1. **位置**：项目目录的上一层应是 `P0NN_名称/` 容器（D-10）。不是时停下：移动要先退出本
-   会话，并按 D-10 迁移按路径保存的数据，不在本会话里移动。
-2. **工作区**：是 git 仓库并且 `git status --short` 有未提交的修改时停下，请用户先决定提交
-   还是暂存。
-3. **盘点**：已有的 AGENTS.md（开头有没有 profile 声明）、CLAUDE.md（是文件还是软链接）、
-   README、`.gitignore`、笔记和文档；找出相当于 project-notes 的旧笔记。读所选 profile 的
-   `PROFILE.md`、`template/` 和共用的 `~/agent-system/skeleton/`，看它要求什么结构。
+## 三、有笔记：出迁移方案，用户同意后再迁
 
-## 三、方案（输出后停下）
+方案按“哪一段 → 哪个文件”列出，输出后停下：
 
-- 旧笔记改名为 `docs/project-notes.md`（git 仓库里用 `git mv`，D-21）。
-- 已有 AGENTS.md 但开头没有声明：在第一行加上 `<!-- profile: <名称> -->`（要用户同意）。
-- 运行 `~/agent-system/bin/new-project . <名称>`：只补缺的骨架文件，然后运行 setup（建
-  `../materials/`，以及该 profile 自己的本机设置，code 是 git 和 pre-commit）。
-- 内容怎么拆，按所选 profile 的 `PROFILE.md`（code：命令、不变量、验证方式进 AGENTS.md；
-  做过的决定进 decisions；踩过的坑进 pitfalls；历史进 log；大文档留在 `docs/` 下独立成文）。
-- 已有 CLAUDE.md 是普通文件时：内容并入 AGENTS.md 后，换成指向它的软链接（要用户同意）。
-- 已有 AGENTS.md 里和 RULE.md 重复的内容（开场读状态、收尾、记录决策这类流程）列出来，
-  建议删掉：AGENTS.md 只写本项目特有的规则（D-38）。
-- 预计的 WARNING 和处理方法（常见：旧 `.gitignore` 缺 `private-notes.md`）。
+- 现状、待办、下一步 → project-notes（Handoff 按 RULE.md 第 3 节写）
+- 做过的决定和原因 → decisions，按 RULE.md 第 2 节的格式，从 D-1 起编号
+- 踩过的坑、没解决的问题 → pitfalls（没解决的同时在待办里写一行“解决 坑 n”）
+- 真实地址、用户名、账号 → private-notes，原处换成 `<host>`、`<user>` 这类占位符；令牌和密钥
+  不抄过去，提醒用户更换
+- 其他内容（架构说明、使用指南等）留在原处，project-notes 里写一句指向它
+- 原文件默认保留；整份并入时，git 仓库里先用 `git mv` 改名再改内容（D-21）；要删原文件先问
 
-## 四、执行（用户确认后）
+用户同意后：按方案建文件、迁移内容，再做第四节；检查改过的文件没有 U+FFFD、相对链接有效；在
+`docs/decisions.md` 记一条接入决策。汇报迁了哪些、哪些留在原处。
 
-1. 按方案加声明、改名、运行 new-project，处理输出里的 WARNING。
-2. 迁移内容，写好 Handoff 区块。
-3. 隐私扫描：profile 装了 pre-commit 时，先按第零节的「敏感词文件」补好 `.git/privacy-patterns`，
-   再用 pre-commit 的规则扫全部入库文件；公开仓库按该 profile 的
-   发布规则（code：`profiles/code/publish.md`）。
-4. 验证：项目原有的测试仍通过；`docs/project-notes.md` 最上方有 Handoff 区块，新会话里
-   输入 `/pickup` 能显示它。
-5. 在本项目 `docs/decisions.md` 记一条接入决策。不提交，等用户说。
+## 四、git 项目的本机部分
+
+不是 git 仓库就跳过。这几样不随 clone 走，换电脑后在项目里输入 `/adopt` 补上（D-51、D-54）：
+
+1. `.gitignore` 没有 `private-notes.md` 时加上一行（没有 `.gitignore` 就建）。
+2. `$(git rev-parse --git-path hooks)/pre-commit` 不存在时，链接到 `~/agent-system/git-hooks/pre-commit`；
+   已有别的钩子不动，告诉用户。
+3. **敏感词文件**：`$(git rev-parse --git-common-dir)/privacy-patterns` 不存在时，问用户这个项目要拦
+   哪些真实的用户名、主机名、公司名等。用户给了，每个写成一行扩展正则（`.` 写成 `\.`），第一行写
+   注释 `# 每行一个扩展正则，pre-commit 命中即拦截`；写完运行 `grep -E -f <该文件> /dev/null`，退出码
+   是 2 说明有无效正则，改好再继续。用户说不需要就跳过。这些词只写进这个文件，不写进任何入库文件、
+   提交信息或汇报。文件已存在时不改，只说明已有几条。

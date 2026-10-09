@@ -65,7 +65,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 
 已精简（D-22）：同 D-7。原文见提交 `bdc281a`。
 
-### D-10 在用项目的容器文件夹命名为 P0NN_名称，归档不改（2026-10-03，用户决定）
+### D-10 在用项目的容器文件夹命名为 P0NN_名称，归档不改（2026-10-03，用户决定）（容器命名规则已被 D-62 取消，改名做法仍有效）
 
 - 背景：项目容器文件夹原来命名为 `Proj.0NN_名称`。用户先决定统一改为 `P0NN_名称`（D-5），
   又回滚（D-6），随后把在用的 CodaPace、meshlink、Yuancheng.io 逐个改名（D-7 至 D-9），
@@ -109,7 +109,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：README 第 4 行和 D-3 的“选择”改为引用 `git remote -v`（D-3 只改这一处措辞，编号和
   结论不变）。本仓库的 `.git/privacy-patterns` 加入该用户名（不入库，换电脑时要重建）。
 
-### D-13 new-project 按字面量替换占位符，经临时文件写入（2026-10-03，agent 选择）
+### D-13 new-project 按字面量替换占位符，经临时文件写入（2026-10-03，agent 选择）（随 bin/new-project 删除，D-62）
 
 - 背景：审查发现项目名直接拼进 sed 表达式。含 `/` 时 sed 失败，模板文件变成 0 字节而退出码
   仍为 0；重跑时空文件被当作“已存在”跳过，无法自愈。含 `&` 时标题出错。另外
@@ -149,7 +149,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   逐字相同（2026-10-03 验证）。待办：CodaPace 用 `bin/new-project` 补成标准结构（单独任务）；
   agent-system 本身的处理见审查修复第 8 条。
 
-### D-16 profile 按名称通用引用，每个 profile 必须有收尾一节（2026-10-03，agent 选择）
+### D-16 profile 按名称通用引用，每个 profile 必须有收尾一节（2026-10-03，agent 选择）（已被 D-62 替代）
 
 - 背景：RULE.md、pickup、wrap 都把 `profile: code` 和 `profiles/code.md` 写死，新增非代码
   profile 时这些地方不会生效；wrap 还按“第 3 节”引用，各 profile 的章节号不一定相同。
@@ -174,7 +174,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   当前版本 84 项全过；对 HEAD 版本（修复前）运行有 32 项失败，覆盖 D-11、D-13、D-14、D-15
   的每一处修复。
 
-### D-18 本仓库只用 docs/project-notes.md 和 docs/decisions.md（2026-10-03，用户决定）
+### D-18 本仓库只用 docs/project-notes.md 和 docs/decisions.md（2026-10-03，用户决定）（已被 D-62 替代）
 
 - 背景：按 D-15，没有 `AGENTS.md` 或 `docs/project-notes.md` 的仓库只注入 git 状态，
   agent-system 本身因此没有「进行中」，跨会话的工作接不上。
@@ -206,7 +206,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   2026-10-03 对真实项目运行 hook：meshlink 的 project-notes 有 612 行，触发超长提醒（属实，
   未改动该项目）；blog 无提醒。
 
-### D-20 new-project 的默认项目名取自解析后的目录（2026-10-03，agent 选择）
+### D-20 new-project 的默认项目名取自解析后的目录（2026-10-03，agent 选择）（随 bin/new-project 删除，D-62）
 
 - 背景：准备给 CodaPace 补结构时发现，在项目目录里运行 `new-project .` 时，默认项目名是
   `basename .`，即 `.`，生成的标题是 `# . 开发与维护记录`。
@@ -216,7 +216,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：`bin/new-project`；`tests/run.sh` 新增 3 项（`.`、末尾斜杠、被拒绝的名称不创建目录），
   共 94 项。2026-10-03：当前版本全过；对 8784c32 运行时 `.` 一项失败。
 
-### D-21 已有项目补结构时先改名再运行 new-project（2026-10-03，agent 选择）
+### D-21 已有项目补结构时先改名再运行 new-project（2026-10-03，agent 选择）（new-project 部分随 D-62 删除，改名用 git mv 仍有效）
 
 - 背景：「进行中」原定先在 CodaPace 运行 `new-project .` 再提迁移方案。但 new-project 会按
   模板新建空的 `docs/project-notes.md`，与把原笔记 `project-notes.zh-CN.md` 改名过去冲突。
@@ -240,7 +240,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：D-5 至 D-9 精简为一行；D-10 改写为可独立阅读，收入改名做法；README 的引用由 D-7
   改为 D-10；RULE.md 第 2 节新增精简规则（全局生效）。D-1 至 D-4、D-11 及以后未改动。
 
-### D-23 new-project 拒绝在 P0NN_ 容器文件夹上运行（2026-10-03，用户决定）
+### D-23 new-project 拒绝在 P0NN_ 容器文件夹上运行（2026-10-03，用户决定）（随 bin/new-project 删除，D-62）
 
 - 背景：在容器文件夹 `P011_CodaPace/` 里运行了 `new-project .`，它把容器当成项目：在真实
   仓库外层 `git init`、生成一套空模板，并在上一层 `VBCD/` 建了 `materials/`。已按用户指示删除
@@ -345,7 +345,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   用户输入 `/pickup` 才运行，描述不占上下文。“继续”的含义不变。替代 D-30。
 - 影响：`claude/skills/pickup/`、README 工具表与日常用法。
 
-### D-34 /adopt：把已有项目补成标准结构的命令（2026-10-04，用户决定）
+### D-34 /adopt：把已有项目补成标准结构的命令（2026-10-04，用户决定）（已被 D-62 替代）
 
 - 选择：新增技能 `/adopt`，只能由用户调用；分两段，先检查（位置、工作区、已有文件）并给出
   迁移方案后停下，用户确认后再执行（D-21 的先改名后运行、隐私扫描、验证、记迁移决策、不
@@ -393,7 +393,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：RULE.md 1.1、claude/skills/pickup、profiles/code.md 第 1 节、claude/skills/adopt、
   bin/install、tests/run.sh、README；本机 ~/.claude/settings.json 删除该 hook。
 
-### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）（/pickup、/wrap 在没接入项目里的做法已被 D-43 替代）
+### D-40 架构：全局部分 + 模块化 profile，/adopt 选定后才加载（2026-10-06，用户决定）（/pickup、/wrap 在没接入项目里的做法已被 D-43 替代）（已被 D-62 替代）
 
 - 背景：用户明确本仓库分两部分：全局部分对所有项目生效；profile 按项目类型（代码、网页设计、
   建筑设计、演示等）做成模块，项目执行 /adopt 选定 profile 后，才加载它的文件夹结构、规则、
@@ -413,7 +413,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：待实施，实施时再改 README（不描述还不存在的东西）。审查 B3 不再适用，关闭；审查 C3
   由 setup 解决。
 
-### D-41 profile 模块的组成，new-project 与 setup 的分工（2026-10-06，用户决定）
+### D-41 profile 模块的组成，new-project 与 setup 的分工（2026-10-06，用户决定）（已被 D-62 替代）
 
 - 背景：落实 D-40。
 - 选择：模块是 `profiles/<名称>/`：`PROFILE.md`（第一行是名称和一句话说明，/adopt 列出它）、
@@ -446,7 +446,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：claude/skills/pickup、claude/skills/wrap、README。影响现有项目：是（blog 这类没接入的
   项目里两个命令开始可用）。
 
-### D-44 新增 /new-project，在项目根目录里自动建下一个编号的容器（2026-10-07，用户决定）
+### D-44 新增 /new-project，在项目根目录里自动建下一个编号的容器（2026-10-07，用户决定）（已被 D-62 替代）
 
 - 背景：新建项目要手动建 `P0NN_名称/` 容器、查下一个编号，再运行 `bin/new-project`；用户
   要在容器里或放所有项目的根目录里输入一个命令就建好。
@@ -481,7 +481,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：RULE.md、claude/skills/pickup、claude/skills/wrap、README。影响现有项目：否（CodaPace、
   meshlink 已接入，不变；blog 没有 project-notes，只是 /pickup 多一句 /resume 提示）。
 
-### D-47 撤回 D-46 的方案 A，保留 /pickup 的 /resume 提示（2026-10-07，用户决定）
+### D-47 撤回 D-46 的方案 A，保留 /pickup 的 /resume 提示（2026-10-07，用户决定）（已被 D-62 替代）
 
 - 背景：D-46 让已有 docs/project-notes.md、没有 profile 声明的项目也适用第 1–3 节，已发布为
   release-2；用户决定撤回这部分。
@@ -502,7 +502,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   release-0（D-45）。
 - 影响：README「修改本仓库」。影响现有项目：否。
 
-### D-49 /pickup、/wrap 只读用得上的部分；RULE.md、PROFILE.md 移出少用的细节（2026-10-08，用户决定）
+### D-49 /pickup、/wrap 只读用得上的部分；RULE.md、PROFILE.md 移出少用的细节（2026-10-08，用户决定）（PROFILE.md 一项随 D-62 删除）
 
 - 背景：/pickup、/wrap 没规定怎么读文件，整份读入 project-notes（已接入项目各约 18k 字符）和
   decisions.md（本仓库约 21k 字符）时，一次 /pickup 可能近 2 万 token，用到的不到 2k。
@@ -524,7 +524,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户要求优化；具体排版是 agent 的选择，按 /code-review 的意见补了空项、长度和过时的规则。
 - 影响：claude/skills/pickup 的输出格式。影响现有项目：否（只改显示方式）。
 
-### D-51 已接入的项目里输入 /adopt，直接运行 bin/setup 补本机部分（2026-10-08，用户决定）
+### D-51 已接入的项目里输入 /adopt，直接运行 bin/setup 补本机部分（2026-10-08，用户决定）（bin/setup 部分已被 D-62 替代）
 
 - 背景：换电脑后，已接入的项目要手动运行 `bin/setup`；用户希望尽量只用 Claude 命令。
 - 选项：A 扩展 /adopt / B 新增 /setup 命令 / C 保持现状
@@ -561,7 +561,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。和 D-51 一起，换电脑后一个 /adopt 补齐所有本机部分（资料内容和 private-notes 除外）。
 - 影响：claude/skills/adopt 第零节和第四节、README、code PROFILE.md 第 5 节。影响现有项目：否。
 
-### D-55 用户自己决定有哪些 profile：官方的不删，自建的用 my- 前缀（2026-10-08，用户决定）
+### D-55 用户自己决定有哪些 profile：官方的不删，自建的用 my- 前缀（2026-10-08，用户决定）（已被 D-62 替代）
 
 - 背景：用户希望每个人自己决定 `profiles/` 下有哪些模块，可以增加自己需要的、不要用不到的。
   直接在 `~/agent-system/profiles/` 里删或加会让 `/update` 因工作区不干净而停下；自建的和以后
@@ -574,7 +574,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   的查找不用改。代价是自建的 profile 不在 git 里，换电脑时由用户自己复制。
 - 影响：`.gitignore` 加 `/profiles/my-*/`；官方 profile 不用 `my-` 开头。影响现有项目：否。
 
-### D-56 第二个 profile general，所有 profile 共用的骨架抽到 skeleton/（2026-10-08，用户决定）
+### D-56 第二个 profile general，所有 profile 共用的骨架抽到 skeleton/（2026-10-08，用户决定）（已被 D-62 替代）
 
 - 背景：落实 D-55 的“先做通用最小 profile”；D-41 定了第二个 profile 出现时抽共用骨架。按现在的
   规则，只有接入了 profile 的项目才有 Handoff 和决策记录，非代码项目只能选 code。
@@ -587,7 +587,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：bin/new-project、tests/run.sh、RULE.md 的 Profile 段、adopt、README。code 生成的项目只差
   decisions.md 开头一句（去掉了 pitfalls 的指向，general 没有这个文件）。影响现有项目：否（只影响新建和补齐的文件）。
 
-### D-57 profile 的规范写在 profiles/README.md，/new-profile 按它新建（2026-10-08，用户决定）（/new-profile 部分已被 D-58 替代）
+### D-57 profile 的规范写在 profiles/README.md，/new-profile 按它新建（2026-10-08，用户决定）（/new-profile 部分已被 D-58 替代）（已被 D-62 替代）
 
 - 背景：落实 D-55。一个 profile 必须有什么，原来只散在 README「修改本仓库」一段里，是写给开发者的；
   纯用户自建时没有可照着做的说明，也容易漏掉 `my-` 前缀或声明。
@@ -600,7 +600,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：profiles/README.md、claude/skills/new-profile（`bin/install` 自动链接）、README。影响现有
   项目：否。
 
-### D-58 /new-profile 改为 /profile：点选提问，三种起点，领域预设，可以修改和删除（2026-10-08，用户决定）
+### D-58 /new-profile 改为 /profile：点选提问，三种起点，领域预设，可以修改和删除（2026-10-08，用户决定）（已被 D-62 替代）
 
 - 背景：用户实测 /new-profile：一次问六个开放问题，全靠打字，体验不好；而且用户对自己那类项目
   往往已有习惯的文件夹结构，命令没有用上。自建的 profile 还没有修改和删除的办法。
@@ -617,7 +617,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   `.gitignore` 加 `/profiles/.trash/`；`bin/install` 删掉指向本仓库、但命令已不存在的链接
   （改名后不留死链接）；README、tests。影响现有项目：否。
 
-### D-59 容器编号保持三位 P0NN_（2026-10-08，用户决定）
+### D-59 容器编号保持三位 P0NN_（2026-10-08，用户决定）（已被 D-62 替代）
 
 - 背景：用户问 `P0NN_` 里的 0 能否去掉改成 `PNN_`，或让用户自己定格式。0 其实是三位编号的百位
   （P001–P999），写法 `P0NN` 容易让人以为是固定字符。
@@ -628,7 +628,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   `Web2_site` 这类项目文件夹误认成容器。
 - 影响：README 一句说明；以后不再讨论 PNN 或自定义格式，除非用户提出。影响现有项目：否。
 
-### D-60 只有 /profile 用选择框，其他命令保持文字提问（2026-10-08，用户决定）
+### D-60 只有 /profile 用选择框，其他命令保持文字提问（2026-10-08，用户决定）（/profile 已随 D-62 删除，原则仍有效）
 
 - 背景：D-58 让 /profile 全程点选后，agent 提议把 /new-project、/adopt、/release、/wrap 里的提问
   也改成点选。
@@ -649,3 +649,18 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。实测中文约 1.2 字一个 token，CodaPace 的 project-notes 整份约 1.5 万 token，350k 时
   整份读和多一轮花费相当，A 省不了；C 有子 agent 的冷启动成本，和 B 差不多还更复杂。
 - 影响：claude/skills/wrap、README。影响现有项目：否（只改收尾的做法，项目文件不用改）。
+
+### D-62 收敛为 RULE.md 和 /adopt、/pickup、/wrap、/private 四个命令，删除 profile 等构架（2026-10-09，用户决定）
+
+- 背景：profile、骨架、容器编号、new-project、setup 让“接入”变成先选 profile 的步骤；用户真正要的是
+  通用的 /pickup、/wrap 和决策记录，general 这种只为打开交接而存在的 profile 说明门放错了位置。
+- 选项：A 维持现状 / B 文件按需建、profile 改成可选（讨论过，未实施）/ C 收敛：只留四个命令和交付工具
+- 选择：C，在 core 分支上做。有 `docs/project-notes.md` 就算接入；/adopt 没有笔记时建空白的
+  project-notes、decisions、pitfalls、private-notes，有笔记时先出迁移方案、同意后再迁，git 项目另装
+  pre-commit 和敏感词文件；pitfalls 成为通用文件；新增 /private，查改过的文件、同意后脱敏。保留
+  bin/install、bin/release、/update、/release、git-hooks/pre-commit、tests，review.md 移到 docs/。删除
+  profiles/、skeleton/、bin/new-project、bin/setup、bin/next-container、/new-project、/profile 和 P0NN_
+  容器命名（容器文件夹本身保留）。
+- 理由：用户决定。命令和文件对所有项目都一样，少一层概念、少一套模式；code 项目不再每次会话加载 PROFILE.md。
+- 影响：替代 D-16、D-18、D-34、D-40、D-41、D-44、D-47、D-55 至 D-59 和其他条目里的相应部分；RULE.md、
+  四个命令、README、tests、.gitignore。影响现有项目：是（CodaPace、meshlink 的 profile 声明不再起作用，code profile 的规则不再加载）。

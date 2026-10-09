@@ -1,7 +1,7 @@
 # agent-system 状态与待办
 
-本仓库是规则与工具的分发源，不按 code profile 管理，只用本文件和
-[decisions.md](decisions.md)（D-18）。仓库说明见 [README.md](../README.md)。
+本仓库是规则与命令的分发源，自己也按 `/adopt` 的四个文件记录：本文件、[decisions.md](decisions.md)、
+[pitfalls.md](pitfalls.md) 和不入库的 private-notes.md（D-62）。仓库说明见 [README.md](../README.md)。
 
 ## Handoff
 
@@ -20,13 +20,10 @@ Updated: 2026-10-08 13:55
 
 ## 待办
 
-- [ ] 待优化（D-40 Q4）：profile 专用命令和 hook 目前定为链接进项目 `.claude/skills/`、写进
-  `.claude/settings.local.json`，链接逻辑等第一个需要的 profile 出现时再写；以后按需求升级（如
-  改用 plugin）
-- [ ] 官方的领域 profile：某类项目有两个以上在用、规则重复时，在 dev 里用 `/profile` 和用户一起定义（D-57、D-58）
+- [ ] CodaPace、meshlink：去掉 AGENTS.md 第一行的 profile 声明，把要保留的 code 规则写进各自的
+  AGENTS.md，各记一条决策（D-62）。两边都有用户没提交的修改，等用户先提交或同意直接改
 - [ ] CodaPace（AGENTS.md 第 16、129 行）、meshlink（第 23、150 行）去掉重复的会话流程（D-38）
 - 观察：官方建议每个 CLAUDE.md 文件 200 行以内。2026-10-05：RULE.md 160、meshlink AGENTS.md
   196（接近上限）、CodaPace 157；超长提醒由 /pickup 给出（D-39）
 - [ ] 可评估：plugin 分发；Stop hook 提醒更新 Handoff 区块。按简洁、高效逐项判断（D-31）
-- 已关闭：审查 B3（D-40：blog 未接入，hook 已删除，不再适用）；审查 C3（D-41：bin/setup）；本仓库里 /pickup、/wrap
-  走简化模式：用户决定维持原逻辑（D-47）
+- 已关闭：审查 B3（D-40：blog 未接入，hook 已删除，不再适用）；审查 C3（D-41：bin/setup，已随 D-62 删除）

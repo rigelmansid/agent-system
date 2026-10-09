@@ -13,11 +13,11 @@ disable-model-invocation: true
 再只读需要的那几节（Read 的 offset/limit 或 `sed -n 'a,bp'`）；决策用
 `grep -nE '^### (D-n|D-m) ' docs/decisions.md` 定位，只读这几条。行数用 `wc -l` 得到。
 
-0. 项目没有接入（`AGENTS.md` 开头没有 profile 声明）时，只做只读报告，不建任何文件（D-43）：
+0. 项目没有接入（没有 `docs/project-notes.md`，D-62）时，只做只读报告，不建任何文件（D-43）：
    是 git 仓库就报告 git 状态和最近 5 个提交；项目的 AGENTS.md 指向了自己的笔记文件、里面有
    Handoff（或「进行中」）区块时只读这个区块；对话进行到一半时列出本会话的进展。按下面的写法
    输出 **Git**（状态、最近 5 个提交各一行）、**Handoff**、**New this session** 三项，最后一句
-   说明本项目没有接入：想接着以前的对话用 `/resume`，要持久记录状态用 `/adopt`（D-47）。然后停下。
+   说明本项目没有接入：想接着以前的对话用 `/resume`，要持久记录状态用 `/adopt`（D-62）。然后停下。
 1. 读 `docs/project-notes.md` 的 Handoff 区块与待办这两节（旧项目里这个区块叫「进行中」，字段
    是中文，照样读，D-42）。
 2. 项目用 git 时，运行 `git status --short` 和 `git log --oneline -5`。最近的提交只用来判断
