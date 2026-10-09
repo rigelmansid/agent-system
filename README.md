@@ -27,8 +27,7 @@
 
 ## 日常用法
 
-- 接入：在项目文件夹里开 Claude，输入 `/adopt`。项目资料放在项目目录旁的 `materials/`（每个项目
-  放在自己的容器文件夹里，项目目录和 `materials/` 并列），不进 git，约定见 RULE.md 第 4 节。
+- 接入：在项目文件夹里开 Claude，输入 `/adopt`。
 - 开场：直接说要做什么；想接着上次做，先输入 `/pickup`。
 - 过程中：决策当场记进 `docs/decisions.md`（D-n），踩到的坑记进 `docs/pitfalls.md`（坑 n）。
 - 结束：`/wrap`。对话已经很长、又要离开超过 5 分钟时，离开前先 `/wrap`：缓存 5 分钟后过期，回来再做
@@ -59,7 +58,7 @@
 4. 重建本机才有的东西（都不随 clone 过来）：
    - 本仓库的 `.git/privacy-patterns`（D-12）；
    - 每个接入过的 git 项目：clone 后在项目里输入 `/adopt`，补上 pre-commit 和敏感词文件；
-   - 各项目的 `private-notes.md` 和 `materials/` 里的资料，从旧电脑自行同步。
+   - 各项目的 `private-notes.md`，从旧电脑自行同步。
 5. 运行 `tests/run.sh`，再在一个项目里开新会话，输入 `/pickup`，确认能显示 Handoff 区块。
 
 ## 修改本仓库
