@@ -1,7 +1,7 @@
 # agent-system
 
 我和 AI agent（Claude Code 为主，Codex 用于代码审查和一次性的非代码任务）协作的规则与命令。
-私有仓库，远端是 GitHub 私有仓库（D-3，地址用 `git remote -v` 查看），不公开。
+公开仓库，MIT 许可（见 [LICENSE](LICENSE)），远端在 GitHub（D-65，地址用 `git remote -v` 查看）。
 
 原则：简洁、简约、高效（D-31）。
 
