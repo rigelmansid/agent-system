@@ -5,24 +5,21 @@
 
 ## Handoff
 
-Updated: 2026-10-08 13:55
-- Task: 无，上一个工作单元：精简读取与规则（D-49）、/pickup 格式（D-50）、/adopt 补本机部分与
-  敏感词（D-51、D-54）、/update（D-52）、/release（D-53），已发布 release-5 并推送 main（225dc76）
-- Stopped at: main = origin/main；本区块与 D-50 的确认在 dev 里未提交；两份手册已删除，博客续篇
-  已在博客项目里发布（原稿在 P013 materials/posted/agent-system-progress/）
-- Decisions: D-49 至 D-54
+Updated: 2026-10-09 13:50
+- Task: 无，上一个工作单元：收敛为四个命令（D-62），发布为 release-9 并已推送 main（7739718）；CodaPace、
+  meshlink 去掉 profile 声明（各自的 D-6、D-35）；dev 分支留作存档（D-63）
+- Stopped at: 正式版 = core = origin/main；本区块、D-63 和分支名的说明在工作副本里未提交；两个项目已提交
+  （CodaPace d3adb82、e9e52a8，meshlink 3a42b44、9f1d11e：去掉声明和重复的会话流程），没有推送
+- Decisions: D-62、D-63
 - Waiting on user: 无
-- Next: 1. 新会话里试 /release（在 dev）、/pickup 和 /adopt（在 CodaPace 或 meshlink） 2. 实测
-  /new-project 3. 在 meshlink 精简 AGENTS.md（223 行，D-38） 4. 新电脑步骤、Codex 审查的讨论
-  （用户说留到最后）
-- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推 dev 和标签（D-48）；不提方案 A（D-47）；
-  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；RULE.md 1–3 节改 @ 导入、精简旧决策用户暂不做（D-49）
+- Next: 1. 新会话里试 /adopt（空文件夹、已有笔记的文件夹各一次）、/private、/pickup、/wrap 2. 下次 /release 时
+  一起提交本区块和 D-63 3. meshlink 精简 AGENTS.md（D-38） 4. 新电脑步骤、Codex 审查的讨论（留到最后）
+- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推工作分支和标签（D-48）；不动 dev 分支（存档，D-63）；
+  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；@ 导入和精简旧决策
+  暂不做（D-49）；不再提 profile、容器编号和按需建文件（D-62），不再提其他命令改点选（D-60）
 
 ## 待办
 
-- [ ] CodaPace、meshlink：去掉 AGENTS.md 第一行的 profile 声明，把要保留的 code 规则写进各自的
-  AGENTS.md，各记一条决策（D-62）。两边都有用户没提交的修改，等用户先提交或同意直接改
-- [ ] CodaPace（AGENTS.md 第 16、129 行）、meshlink（第 23、150 行）去掉重复的会话流程（D-38）
 - 观察：官方建议每个 CLAUDE.md 文件 200 行以内。2026-10-05：RULE.md 160、meshlink AGENTS.md
   196（接近上限）、CodaPace 157；超长提醒由 /pickup 给出（D-39）
 - [ ] 可评估：plugin 分发；Stop hook 提醒更新 Handoff 区块。按简洁、高效逐项判断（D-31）
