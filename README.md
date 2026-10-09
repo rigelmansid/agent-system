@@ -1,75 +1,157 @@
+<div align="center">
+
 # agent-system
 
-我和 AI agent（Claude Code 为主，Codex 用于代码审查和一次性的非代码任务）协作的规则与命令。
-公开仓库，MIT 许可（见 [LICENSE](LICENSE)），远端在 GitHub（D-65，地址用 `git remote -v` 查看）。
+**Start a new session without re-explaining; end one so the next can pick up.**
 
-原则：简洁、简约、高效（D-31）。
+Rules and commands for Claude Code: `/adopt` brings a project in, `/pickup` resumes where you left
+off, `/wrap` records the session, `/private` checks for private details written by mistake. Codex
+reads the same rules.
 
-## 组成
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-skills-D97757)](#commands)
+[![Shell](https://img.shields.io/badge/shell-bash%203.2%2B-4EAA25?logo=gnubash&logoColor=white)](#install)
 
-| 部分 | 文件 | 作用 |
-|---|---|---|
-| 通用规则 | [RULE.md](RULE.md) | 会话协议、决策与踩坑记录、Handoff 区块、执行安全、验证、隐私、写文档。`~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md` 链接到它，每个会话自动加载；第 1–3 节只在接入的项目执行 |
-| 命令 | `claude/skills/` | `/adopt`、`/pickup`、`/wrap`、`/private`、`/update`，见下表 |
-| 项目自己的 | 项目里的四个文件，加可选的 `AGENTS.md` | `docs/project-notes.md`、`docs/decisions.md`、`docs/pitfalls.md`、`private-notes.md` 由 `/adopt` 建；有 `docs/project-notes.md` 就算接入（D-62） |
+**English** · [简体中文](README.zh-CN.md)
 
-## 命令
+</div>
 
-| 命令 | 作用 |
+---
+
+The rules, the command instructions and the notes they write are in Chinese; the agent replies in
+whatever language you use.
+
+## Install
+
+**Requirements**: [Claude Code](https://code.claude.com/docs) and git. Codex is optional. The scripts
+are tested on macOS (bash 3.2).
+
+1. Clone into `~/agent-system`. The rules and commands refer to that path, so keep it there. The address
+   is under the Code button on this repository's page:
+
+   ```sh
+   git clone <repository address> ~/agent-system
+   ```
+
+2. Create the links:
+
+   ```sh
+   ~/agent-system/bin/install
+   ```
+
+   It links `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` to [RULE.md](RULE.md) and links the commands
+   into `~/.claude/skills/`. It is safe to rerun. An existing file with the same name is never
+   overwritten: it shows `SKIP`; move that file away and run it again.
+
+3. Start a new Claude Code session and the commands are available.
+
+**Update**: type `/update` in Claude Code. It pulls the latest main, rebuilds the links and lists the
+new decisions.
+
+**Uninstall**: everything installed is a link, so delete the links:
+
+```sh
+rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private,update,wrap}
+```
+
+## Quick start
+
+1. Open Claude Code in a project folder and type `/adopt`. In a project without notes it creates four
+   blank files; in one that already has notes it first proposes how to move them, and moves them once
+   you agree.
+2. Work as usual. The agent records decisions and pitfalls as they come up.
+3. At the end, type `/wrap`. It adds any missing decisions and pitfalls, rewrites the handoff block and
+   reports what was done.
+4. Next time, type `/pickup` if you want to continue. It shows where the last session stopped and what
+   comes next.
+
+## Commands
+
+| Command | What it does |
 |---|---|
-| `/adopt` | 接入：没有笔记时建空白的四个文件；已有笔记时先分析、给出迁移方案，同意后再迁。用 git 的项目还会装 pre-commit、问要拦哪些敏感词。换电脑后在项目里再输入一次，补上不随 clone 走的部分 |
-| `/pickup` | 读 Handoff、待办和相关决策并显示，只读不动手（D-33、D-39） |
-| `/wrap` | 收尾：补记决策和坑，重写 Handoff，更新待办，给出四段汇报（D-61） |
-| `/private` | 查改过的文件里有没有误写进隐私内容，只报位置、不复述原值，问过再换成占位符 |
-| `/update` | 纯用户从 GitHub 更新 agent-system，列出新决策（D-52） |
+| `/adopt` | Brings a project in: creates the four files, or moves existing notes into them. In git projects it also installs the pre-commit hook and asks which words to block. After moving to a new machine, run it again in each project to restore what clone does not bring |
+| `/pickup` | Reads the handoff block, the to-do list and the related decisions and shows them; read-only |
+| `/wrap` | Wraps up: records missing decisions and pitfalls, rewrites the handoff block, updates the to-do list, gives a four-part report |
+| `/private` | Checks changed files for private details written by mistake; reports locations without repeating the values, and replaces them with placeholders once you agree |
+| `/update` | Updates agent-system from GitHub |
 
-都只在你输入时运行（D-35）。没接入的项目里 `/pickup`、`/wrap` 也能用：只在对话里汇报，不建文件（D-43）。
+The commands run only when you type them. In a project that has not been adopted, `/pickup` and
+`/wrap` still work, but only report in the conversation and create no files.
 
-## 日常用法
+## How it works
 
-- 接入：在项目文件夹里开 Claude，输入 `/adopt`。
-- 开场：直接说要做什么；想接着上次做，先输入 `/pickup`。
-- 过程中：决策当场记进 `docs/decisions.md`（D-n），踩到的坑记进 `docs/pitfalls.md`（坑 n）。
-- 结束：`/wrap`。对话已经很长、又要离开超过 5 分钟时，离开前先 `/wrap`：缓存 5 分钟后过期，回来再做
-  要先把整段对话重新写进缓存（D-61）。
-- 提交前：`/private` 查一遍改过的文件。用 git 的项目，pre-commit 也会在提交时拦截。
-- 审查：在 Codex 里说“按 ~/agent-system/docs/review.md 审查当前未提交的改动”。
-- 更新：纯用户输入 `/update`；开发者见「修改本仓库」。
-- 不要在这些项目里用内置的 `/init`：它会生成或改写 CLAUDE.md，而这里的 CLAUDE.md 通常是指向
-  AGENTS.md 的软链接。
+- **Rules**: [RULE.md](RULE.md) loads in every session. It covers how sessions start and end, how
+  decisions and pitfalls are recorded, which actions need your go-ahead, how results are verified and
+  how private details are kept out of committed files. The aim is simple, minimal and efficient.
+- **Four files in each project**, created by `/adopt`:
 
-## 工具
+  | File | Contents |
+  |---|---|
+  | `docs/project-notes.md` | The handoff block at the top, where the next session picks up; the project overview and to-do list |
+  | `docs/decisions.md` | Decisions D-n: background, options, choice, reason, impact |
+  | `docs/pitfalls.md` | Pitfalls 坑 n: what happened, why, the fix, the lesson |
+  | `private-notes.md` | Real hosts, usernames and accounts, kept out of git; committed files use placeholders |
 
-| 文件 | 作用 |
+- **Adopted** means the project has `docs/project-notes.md`.
+- Project-specific rules go in the project's optional `AGENTS.md`; `CLAUDE.md` is a symlink to it.
+
+## Day to day
+
+- Start by saying what you want done. The agent does not read the project state on its own; type
+  `/pickup` first if you want to continue the last session.
+- If the conversation is already long and you will be away for more than 5 minutes, run `/wrap` before
+  you leave. The prompt cache expires after 5 minutes, and wrapping up later means writing the whole
+  conversation into the cache again.
+- Run `/private` before committing. In git projects the pre-commit hook also blocks tokens, private IPs
+  and home directory paths at commit time.
+- Leave code review to Codex: in Codex, say "review the uncommitted changes following
+  ~/agent-system/docs/review.md".
+- Do not use the built-in `/init` in these projects: it creates or rewrites CLAUDE.md, which here is
+  usually a symlink to AGENTS.md.
+
+## Moving to a new machine
+
+1. Install as above.
+2. Restore what exists only on the machine and does not come with clone:
+   - in each adopted git project, after cloning it, type `/adopt` to restore the pre-commit hook and
+     the privacy patterns file;
+   - copy each project's `private-notes.md` over from the old machine.
+3. Open a new session in a project and type `/pickup` to check that the handoff block shows.
+
+## What is in the repository
+
+| File | Purpose |
 |---|---|
-| `bin/install` | 建立全局链接和命令链接；可重复运行，已有的非链接文件不覆盖；命令改名或删掉后，指向它的旧链接会被删掉。不装 hook（D-39）。Codex 只链接 RULE.md（D-27） |
-| `bin/release [--rollback]` | 在工作副本 `~/agent-system-dev` 里运行，把它当前所在的分支发布到正式版 `~/agent-system`：测试通过后快进 main，打标签 `release-N`，列出新决策（影响现有项目的标 `!`），再运行 `bin/install`；`--rollback` 退回上一个发布。不推送（D-45） |
-| `.claude/skills/release` | 本仓库自己的 `/release`，只在本仓库里出现：检查未提交的改动、运行 `bin/release`、汇报新决策，再问要不要推送 main（D-53） |
-| `git-hooks/pre-commit` | 拦截令牌与密钥（只报行号，D-11、D-37）、私有 IP、home 路径、U+FFFD 和 `.git/privacy-patterns` 中的词（worktree 共用这份文件）；该文件有无效正则时也拦截（D-14）。由 `/adopt` 装进 git 项目 |
-| `tests/run.sh` | 上面这些脚本的回归测试，在临时目录和假 HOME 中运行（D-17） |
-| [docs/review.md](docs/review.md) | 给 Codex 的代码审查规则 |
+| [RULE.md](RULE.md) | The shared rules |
+| `claude/skills/` | The five commands |
+| `bin/install` | Creates the links; when a command is renamed or removed, its old link is deleted. Installs no hooks; Codex gets only RULE.md |
+| `git-hooks/pre-commit` | Blocks tokens and keys (reporting line numbers only), private IPs, home directory paths, U+FFFD and the words in `.git/privacy-patterns` before a commit. `/adopt` installs it in git projects |
+| [docs/review.md](docs/review.md) | Code review rules for Codex |
+| `bin/release`, `.claude/skills/release`, `tests/run.sh` | The maintainer's release script and command, and the regression tests; see the next section |
+| [docs/decisions.md](docs/decisions.md), [docs/pitfalls.md](docs/pitfalls.md) | This repository's own decisions and pitfalls |
 
-## 在新电脑上安装
+## Maintainers: changing this repository
 
-1. 装好 Claude Code 和 Codex，配置好各自的登录或 API（不在本仓库）。
-2. 登录 GitHub 后 clone 到 `~/agent-system`（D-4）。
-3. 运行 `~/agent-system/bin/install`。出现 `SKIP` 时把那个文件移走再运行。开发者再建工作副本：
-   `git -C ~/agent-system worktree add -b core ~/agent-system-dev`（D-45、D-63）。
-4. 重建本机才有的东西（都不随 clone 过来）：
-   - 本仓库的 `.git/privacy-patterns`（D-12）；
-   - 每个接入过的 git 项目：clone 后在项目里输入 `/adopt`，补上 pre-commit 和敏感词文件；
-   - 各项目的 `private-notes.md`，从旧电脑自行同步。
-5. 运行 `tests/run.sh`，再在一个项目里开新会话，输入 `/pickup`，确认能显示 Handoff 区块。
+This section applies only to the maintainer's own machine. GitHub has only main; users just run
+`/update`.
 
-## 修改本仓库
+- `~/agent-system` is the live copy: every link and every path in the rules points there, so a change
+  made there reaches every new session. Work in a separate worktree instead:
+  `git -C ~/agent-system worktree add -b core ~/agent-system-dev`, and open Claude in
+  `~/agent-system-dev` (D-45, D-63).
+- After changing `bin/` or `git-hooks/`, run `tests/run.sh` and commit only when it passes. Then type
+  `/release`, which runs `bin/release`: once the tests pass it fast-forwards main to the working branch,
+  tags `release-N`, lists the new decisions (those affecting existing projects marked `!`) and runs
+  `bin/install`. If something breaks, `bin/release --rollback` goes back one release each time.
+- Push only main; the working branch and release tags stay local (D-48). Every push needs explicit
+  approval.
+- This repository's `.git/privacy-patterns` does not come with clone; recreate it on a new machine
+  (D-12).
+- Keep the two READMEs (`README.md` in English, `README.zh-CN.md` in Chinese) in sync.
+- Record rule decisions in [docs/decisions.md](docs/decisions.md) when they are made and pitfalls in
+  [docs/pitfalls.md](docs/pitfalls.md); commit bodies cite `Why: D-n`. End the impact item of a new
+  decision with "影响现有项目：是/否（原因）" on one line; `bin/release` uses it to mark those decisions.
 
-`~/agent-system` 是正式版：链接和规则里的路径都指向它，在这里改了，之后新开的会话就会用上。
-所以改本仓库要在工作副本 `~/agent-system-dev`（同一仓库的 git worktree）里开 Claude（D-45）。
-改了 `bin/` 或 `git-hooks/` 后运行 `tests/run.sh`，全部通过再提交；提交后输入 `/release` 发布。
-发布后出了问题，运行 `bin/release --rollback` 退回上一个发布（每运行一次退一个），修好再发布。
-推送只推 main，工作分支和发布标签留在本地（D-48）；每次推送都要用户明确同意。
-新决策在「影响」一项末尾写“影响现有项目：是/否（原因）”，“影响现有项目：是”不要跨行，
-`bin/release` 靠它把这类决策标出来。
-规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)（D-n），踩到的坑记进
-[docs/pitfalls.md](docs/pitfalls.md)（坑 n），提交正文写 `Why: D-n`。本仓库自己也按 `/adopt` 的
-四个文件记录（D-62）。
+## License
+
+[MIT](LICENSE)
