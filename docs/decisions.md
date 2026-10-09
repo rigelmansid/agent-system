@@ -96,7 +96,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   19 个用例在临时仓库验证，并扫描 agent-system、blog、CodaPace、meshlink 的全部入库文件：
   首版在 CodaPace 有 3 处误报（`sqlite3_column_int64(`、同一行别处的数字），收紧后为 0。
 
-### D-12 入库文件不写 GitHub 用户名，历史不改写（2026-10-03，用户决定）
+### D-12 入库文件不写 GitHub 用户名，历史不改写（2026-10-03，用户决定）（GitHub 用户名一项已被 D-67 放宽，历史不改写仍有效）
 
 - 背景：审查发现 README 和 D-3 写了真实的 GitHub 用户名，违反 RULE.md 第 6 节；D-3 只决定了
   用私有远端，没有声明隐私例外。
@@ -700,3 +700,12 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   clone 地址先写成占位，用户名按 D-12 不写进入库文件。
 - 理由：用户决定。
 - 影响：README.md、README.zh-CN.md。影响现有项目：否。
+
+### D-67 放宽 D-12：README 写真实的 clone 地址（2026-10-09，用户决定）
+
+- 背景：仓库已公开（D-65），网址里本来就带着 GitHub 用户名；README 的安装步骤只能写占位的 clone 地址（D-66）。
+- 选项：A 维持占位 / B 入库文件可以写本仓库的 GitHub 地址，本仓库的敏感词文件去掉用户名
+- 选择：B。两份 README 写真实的 clone 地址；本仓库 `.git/privacy-patterns` 里拦用户名的那一行删掉。
+  D-12 的“历史不改写”不变；其他项目的敏感词不受影响。
+- 理由：用户决定。
+- 影响：README.md、README.zh-CN.md、本机的 `.git/privacy-patterns`。影响现有项目：否。

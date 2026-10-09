@@ -26,11 +26,10 @@ whatever language you use.
 **Requirements**: [Claude Code](https://code.claude.com/docs) and git. Codex is optional. The scripts
 are tested on macOS (bash 3.2).
 
-1. Clone into `~/agent-system`. The rules and commands refer to that path, so keep it there. The address
-   is under the Code button on this repository's page:
+1. Clone into `~/agent-system`. The rules and commands refer to that path, so keep it there:
 
    ```sh
-   git clone <repository address> ~/agent-system
+   git clone https://github.com/rigelmansid/agent-system.git ~/agent-system
    ```
 
 2. Create the links:

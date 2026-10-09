@@ -22,10 +22,10 @@
 **需要**：[Claude Code](https://code.claude.com/docs)、git。Codex 可选。脚本在 macOS
 （bash 3.2）上测试过。
 
-1. clone 到 `~/agent-system`。规则和命令里的路径都指向这里，不要换位置。地址在本仓库页面的 Code 按钮里：
+1. clone 到 `~/agent-system`。规则和命令里的路径都指向这里，不要换位置：
 
    ```sh
-   git clone <本仓库地址> ~/agent-system
+   git clone https://github.com/rigelmansid/agent-system.git ~/agent-system
    ```
 
 2. 建立链接：
