@@ -664,3 +664,12 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定。命令和文件对所有项目都一样，少一层概念、少一套模式；code 项目不再每次会话加载 PROFILE.md。
 - 影响：替代 D-16、D-18、D-34、D-40、D-41、D-44、D-47、D-55 至 D-59 和其他条目里的相应部分；RULE.md、
   四个命令、README、tests、.gitignore。影响现有项目：是（CodaPace、meshlink 的 profile 声明不再起作用，code profile 的规则不再加载）。
+
+### D-63 dev 分支留作 release-8 的存档，以后在 core 上开发（2026-10-09，用户决定）
+
+- 背景：D-62 在 core 分支上做，已发布为 release-9；dev 停在 release-8（4e8c073），是删除 profile 之前的最后状态。
+- 选项：A 把 dev 快进到 core，继续在 dev 上开发 / B dev 留作存档，以后在 core 上开发
+- 选择：B。工作副本 `~/agent-system-dev` 留在 core；`bin/release` 发布工作副本当前所在的分支，不用改。
+  两个分支和发布标签都只在本地（D-48）。
+- 理由：用户决定；保留删除 profile 之前的完整状态，方便对照。
+- 影响：README 新电脑步骤的工作分支名改为 core，/release 的说明改为“工作分支”。影响现有项目：否。

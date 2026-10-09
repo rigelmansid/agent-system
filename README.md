@@ -55,7 +55,7 @@
 1. 装好 Claude Code 和 Codex，配置好各自的登录或 API（不在本仓库）。
 2. 登录 GitHub 后 clone 到 `~/agent-system`（D-4）。
 3. 运行 `~/agent-system/bin/install`。出现 `SKIP` 时把那个文件移走再运行。开发者再建工作副本：
-   `git -C ~/agent-system worktree add -b dev ~/agent-system-dev`（D-45）。
+   `git -C ~/agent-system worktree add -b core ~/agent-system-dev`（D-45、D-63）。
 4. 重建本机才有的东西（都不随 clone 过来）：
    - 本仓库的 `.git/privacy-patterns`（D-12）；
    - 每个接入过的 git 项目：clone 后在项目里输入 `/adopt`，补上 pre-commit 和敏感词文件；

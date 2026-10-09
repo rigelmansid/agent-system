@@ -1,9 +1,9 @@
 #!/bin/bash
 # Publish the dev worktree to the live copy (D-45). The live copy is the main
 # worktree, ~/agent-system: every link and every path in the rules points
-# there, so changes are made in a linked worktree (~/agent-system-dev, branch
-# dev) and reach other projects only through this script. Never pushes.
-#   release              test dev, fast-forward main to it, tag release-N,
+# there, so changes are made in a linked worktree (~/agent-system-dev, on its
+# working branch) and reach other projects only through this script. Never pushes.
+#   release              test the worktree, fast-forward main to its branch, tag release-N,
 #                        list the new decisions, run bin/install
 #   release --rollback   switch the live copy back to the previous release
 # Exits 2 on usage errors and 1 when it refuses or fails.

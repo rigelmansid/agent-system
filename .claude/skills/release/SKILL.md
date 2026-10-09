@@ -1,10 +1,10 @@
 ---
 name: release
-description: Developer only, in the agent-system dev worktree. Release the committed dev branch to the live copy with bin/release, report the new decisions, then offer to push main. /release rollback switches the live copy back one release. Runs only when the user types /release.
+description: Developer only, in the agent-system dev worktree. Release the committed working branch to the live copy with bin/release, report the new decisions, then offer to push main. /release rollback switches the live copy back one release. Runs only when the user types /release.
 disable-model-invocation: true
 ---
 
-# /release：把 dev 发布到正式版（只给开发者）
+# /release：把工作分支发布到正式版（只给开发者）
 
 本命令只在 agent-system 仓库里出现（项目命令，不由 `bin/install` 安装，D-53）。它只运行
 `bin/release`，不自己用 git 合并 main、打标签（D-45）。
@@ -19,7 +19,7 @@ disable-model-invocation: true
    `Why: D-n`。
 4. **发布**：运行 `bin/release`。失败就贴出输出（测试失败时什么都没发布），然后停下。
 5. **推送**：问用户要不要推送 main。只有用户在这次对话里明确同意，才运行
-   `git -C ~/agent-system push origin main`；dev 和标签不推（D-48）。
+   `git -C ~/agent-system push origin main`；工作分支和标签不推（D-48）。
 
 **输出**，写法同 `/pickup`：
 
