@@ -71,7 +71,7 @@ rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private
 | `/adopt` | Brings a project in: creates the four files, or moves existing notes into them. In git projects it also installs the pre-commit hook and asks which words to block. After moving to a new machine, run it again in each project to restore what clone does not bring |
 | `/pickup` | Reads the handoff block, the to-do list and the related decisions and shows them; read-only |
 | `/wrap` | Wraps up: records missing decisions and pitfalls, rewrites the handoff block, updates the to-do list, gives a four-part report |
-| `/private` | Checks changed files for private details written by mistake; reports locations without repeating the values, and replaces them with placeholders once you agree |
+| `/private` | Checks changed files for private details written by mistake; reports listed hits by location without repeating the values, lists suspected values by number for you to pick, and replaces them with placeholders once you agree; picked values are added to `.git/privacy-patterns` |
 | `/update` | Updates agent-system from GitHub |
 
 The commands run only when you type them. In a project that has not been adopted, `/pickup` and

@@ -62,7 +62,7 @@ rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private
 | `/adopt` | 接入项目：建四个文件，或者把已有笔记迁过来。用 git 的项目还会装 pre-commit、问要拦哪些敏感词。换电脑后在项目里再输入一次，补上不随 clone 走的部分 |
 | `/pickup` | 读交接区块、待办和相关决策并显示出来，只读不动手 |
 | `/wrap` | 收尾：补记决策和坑，重写交接区块，更新待办，四段汇报 |
-| `/private` | 查改过的文件里有没有误写进隐私内容，只报位置、不复述原值，你同意了再换成占位符 |
+| `/private` | 查改过的文件里有没有误写进隐私内容：名单上的只报位置、不复述原值，名单外的疑似值编号列出让你选；你同意了再换成占位符，选中的值加进 `.git/privacy-patterns` |
 | `/update` | 从 GitHub 更新 agent-system |
 
 这些命令都只在你输入时才运行。没接入的项目里也能用 `/pickup`、`/wrap`，只是只在对话里汇报，不建文件。
