@@ -5,18 +5,17 @@
 
 ## Handoff
 
-Updated: 2026-10-09 13:50
-- Task: 无，上一个工作单元：收敛为四个命令（D-62），发布为 release-9 并已推送 main（7739718）；CodaPace、
-  meshlink 去掉 profile 声明（各自的 D-6、D-35）；dev 分支留作存档（D-63）
-- Stopped at: 正式版 = core = origin/main；本区块、D-63 和分支名的说明在工作副本里未提交；两个项目已提交
-  （CodaPace d3adb82、e9e52a8，meshlink 3a42b44、9f1d11e：去掉声明和重复的会话流程），没有推送
-- Decisions: D-62、D-63
+Updated: 2026-10-11 14:08
+- Task: 无，上一个工作单元：去掉 materials 约定（D-64）；仓库开源，MIT（D-65）；README 改成英文为主、
+  附中文版（D-66），写真实的 clone 地址（D-67）；已发布 release-14 并推送 main（b5cc6d3）
+- Stopped at: 正式版 = core = origin/main；本区块和坑 5 未提交；第三篇博客已在 P013 的 blog 发布（c757949）
+- Decisions: D-64 至 D-67
 - Waiting on user: 无
-- Next: 1. 新会话里试 /adopt（空文件夹、已有笔记的文件夹各一次）、/private、/pickup、/wrap 2. 下次 /release 时
-  一起提交本区块和 D-63 3. meshlink 精简 AGENTS.md（D-38） 4. 新电脑步骤、Codex 审查的讨论（留到最后）
-- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推工作分支和标签（D-48）；不动 dev 分支（存档，D-63）；
+- Next: 1. 新会话里试 /adopt（空文件夹、已有笔记的文件夹各一次）和 /private 2. 在浏览器里看 GitHub 上 README 的
+  中英切换 3. meshlink AGENTS.md 其余的精简（D-38） 4. 新电脑步骤、Codex 审查的讨论
+- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推工作分支和标签（D-48）；不动 dev 分支（D-63）；
   不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；@ 导入和精简旧决策
-  暂不做（D-49）；不再提 profile、容器编号和按需建文件（D-62），不再提其他命令改点选（D-60）
+  暂不做（D-49）；不再提 profile、容器编号、按需建文件（D-62）、materials 约定（D-64）和其他命令改点选（D-60）
 
 ## 待办
 
