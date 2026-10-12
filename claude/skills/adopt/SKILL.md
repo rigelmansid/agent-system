@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # /adopt：接入 agent-system
 
-接入就是建好下面四个文件；有了 `docs/project-notes.md` 就算接入（RULE.md 开头，D-62）。全程遵守
+接入就是建好下面四个文件；有了 `docs/project-notes.md` 就算接入（RULE.md 开头，agent-system D-62）。全程遵守
 RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或替换用户文件前先问。不提交。
 
 | 文件 | 用途 | 空白时 |
@@ -42,14 +42,14 @@ RULE.md 第 4 节：不碰未提交的修改，不覆盖已有文件，删除或
 - 真实地址、用户名、账号 → private-notes，原处换成 `<host>`、`<user>` 这类占位符；令牌和密钥
   不抄过去，提醒用户更换
 - 其他内容（架构说明、使用指南等）留在原处，project-notes 里写一句指向它
-- 原文件默认保留；整份并入时，git 仓库里先用 `git mv` 改名再改内容（D-21）；要删原文件先问
+- 原文件默认保留；整份并入时，git 仓库里先用 `git mv` 改名再改内容（agent-system D-21）；要删原文件先问
 
 用户同意后：按方案建文件、迁移内容，再做第四节；检查改过的文件没有 U+FFFD、相对链接有效；在
 `docs/decisions.md` 记一条接入决策。汇报迁了哪些、哪些留在原处。
 
 ## 四、git 项目的本机部分
 
-不是 git 仓库就跳过。这几样不随 clone 走，换电脑后在项目里输入 `/adopt` 补上（D-51、D-54）：
+不是 git 仓库就跳过。这几样不随 clone 走，换电脑后在项目里输入 `/adopt` 补上（agent-system D-51、D-54）：
 
 1. `.gitignore` 没有 `private-notes.md` 时加上一行（没有 `.gitignore` 就建）。
 2. `$(git rev-parse --git-path hooks)/pre-commit` 不存在时，链接到 `~/agent-system/git-hooks/pre-commit`；

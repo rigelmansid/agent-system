@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # /private：检查改过的文件里有没有误写进隐私内容
 
-先只读检查、汇报，停下；用户同意后才脱敏（RULE.md 第 6 节，D-62）。不提交。
+先只读检查、汇报，停下；用户同意后才脱敏（RULE.md 第 6 节，agent-system D-62）。不提交。
 
 ## 一、查哪些文件
 
