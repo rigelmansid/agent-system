@@ -85,8 +85,6 @@
 15 行以内；字段（Updated、Task、Stopped at、Decisions、Waiting on user、Next、Don't repeat）
 和写法见 `/wrap`（agent-system D-49）。
 
-旧项目里标题是「进行中」、字段是中文的区块照样读；下次 `/wrap` 重写时改成新格式（agent-system D-42）。
-
 不另建交接文件。项目没有 project-notes 时，把这个区块写在项目约定的状态文件里。
 
 项目状态（Handoff、决策、待办）只写在仓库文档里。agent 自带的记忆（如 Claude Code 的

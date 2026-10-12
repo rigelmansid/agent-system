@@ -428,7 +428,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：bin/new-project、bin/setup、profiles/code/setup 与 PROFILE.md、RULE.md、三个技能、
   tests/run.sh、README。
 
-### D-42 「进行中」区块改名 Handoff，字段改成英文（2026-10-07，用户决定）
+### D-42 「进行中」区块改名 Handoff，字段改成英文（2026-10-07，用户决定）（旧格式的兼容已被 D-70 取消）
 
 - 选择：标题 `## Handoff`；字段 Updated、Task、Stopped at、Decisions、Waiting on user、Next、
   Don't repeat，内容可以用中文。旧项目里的「进行中」区块（中文字段）/pickup 和 /wrap 照样读，
@@ -730,3 +730,13 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 理由：用户决定按审视里的修法改。编号 B 丢掉查原因的线索；C 要 agent 记住约定，对话里说“按 D-49”时用户仍分不清；
   坑 B 要改两个项目的旧条目。
 - 影响：RULE.md 第 2 节和其中的引用；adopt、pickup、private、update、wrap 里的引用，wrap 第 1 轮检索坑的命令。影响现有项目：否（项目文件不用改）。
+
+### D-70 去掉「进行中」旧格式的兼容，CodaPace 的区块改成 Handoff（2026-10-12，用户决定）
+
+- 背景：D-42 改名 Handoff 时保留了旧格式的兼容，等各项目下次 /wrap 时再改格式。2026-10-11 审视时本机只剩 CodaPace
+  还是「进行中」，兼容因此一直留在每个会话都载入的 RULE.md 和三个命令里。
+- 选项：A 保留兼容，等 CodaPace 下次 /wrap / B 现在改掉 CodaPace 的区块，删掉兼容
+- 选择：B。CodaPace 的区块只换标题和字段名，内容和 Updated 时间不变；RULE.md 第 3 节、pickup、wrap、adopt 里的
+  旧格式说明删掉。
+- 理由：用户决定。本机其他项目都没有旧格式的区块，留着兼容只占上下文。
+- 影响：替代 D-42 的兼容部分；RULE.md 第 3 节、claude/skills 的 pickup、wrap、adopt。影响现有项目：是（CodaPace 的 docs/project-notes.md 已改，要在 CodaPace 里提交）。

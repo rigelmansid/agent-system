@@ -15,16 +15,15 @@ disable-model-invocation: true
 
 0. 项目没有接入（没有 `docs/project-notes.md`，agent-system D-62）时，只做只读报告，不建任何文件（agent-system D-43）：
    是 git 仓库就报告 git 状态和最近 5 个提交；项目的 AGENTS.md 指向了自己的笔记文件、里面有
-   Handoff（或「进行中」）区块时只读这个区块；对话进行到一半时列出本会话的进展。按下面的写法
+   Handoff 区块时只读这个区块；对话进行到一半时列出本会话的进展。按下面的写法
    输出 **Git**（状态、最近 5 个提交各一行）、**Handoff**、**New this session** 三项，最后一句
    说明本项目没有接入：想接着以前的对话用 `/resume`，要持久记录状态用 `/adopt`（agent-system D-62）。然后停下。
-1. 读 `docs/project-notes.md` 的 Handoff 区块与待办这两节（旧项目里这个区块叫「进行中」，字段
-   是中文，照样读，agent-system D-42）。
+1. 读 `docs/project-notes.md` 的 Handoff 区块与待办这两节。
 2. 项目用 git 时，运行 `git status --short` 和 `git log --oneline -5`。最近的提交只用来判断
    过时和矛盾，不单独列出。
 3. Handoff 引用的决策编号，到 `docs/decisions.md` 只读这几条的标题和选择。
 4. 对话进行到一半时，对照本会话做过的事，列出还没写进 Handoff 的进展。
-5. 项目用 git 时，检查 Handoff 是否过时（agent-system D-19）：取它的 Updated 时间 T（旧格式是「更新：」），
+5. 项目用 git 时，检查 Handoff 是否过时（agent-system D-19）：取它的 Updated 时间 T，
    `git rev-list --count --since="T" HEAD` 减去
    `git rev-list --count --since="T" HEAD -- docs/project-notes.md`，大于 0 说明之后有没更新它
    的提交。它与 git 状态矛盾时也指出。

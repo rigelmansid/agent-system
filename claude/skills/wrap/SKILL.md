@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 0. 项目没有接入（没有 `docs/project-notes.md`，agent-system D-62）时（agent-system D-43）：只在对话里给出四段汇报和
    本次的决定，不建 `docs/decisions.md`、project-notes 等文件；项目的 AGENTS.md 指向了自己的
-   笔记文件、里面有 Handoff（或「进行中」）区块时，问用户要不要更新它，同意后按第 3 步的格式
+   笔记文件、里面有 Handoff 区块时，问用户要不要更新它，同意后按第 3 步的格式
    写进去。然后停下。
 1. **整理本次**：列出改动的文件（用 git 的项目对照 `git status`）、运行过的验证及结果、
    用户的决定、你做的不显而易见的选择。
@@ -35,8 +35,7 @@ disable-model-invocation: true
    - Don't repeat: 已做过、不该再做的操作
    ```
 
-   Next 具体到新会话能直接执行；Don't repeat 写再做会出问题或浪费时间的事。旧的「进行中」
-   区块（中文字段）改成这个格式（agent-system D-42）。
+   Next 具体到新会话能直接执行；Don't repeat 写再做会出问题或浪费时间的事。
 4. **其余记录**：project-notes 的待办（完成的删掉，新发现的加上，没解决的坑写一行“解决 坑 n”）
    和其他要更新的节（如当前状态）；项目 `AGENTS.md` 另有要求的照做。
 5. **检查**：按 RULE.md 第 6、7 节检查改过的文件（U+FFFD、相对链接、没有写入
