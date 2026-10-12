@@ -98,6 +98,10 @@ done
 
 fffd=$'\xef\xbf\xbd'
 try_commit "host 192.168"".1.20"; check "private IP blocked" block "$result"
+# 100.64/10 is private too; its neighbors are not (D-71).
+try_commit "peer 100.101"".2.3"; check "100.64/10 address blocked" block "$result"
+try_commit "peer 100.63"".2.3"; check "below 100.64/10 passes" pass "$result"
+try_commit "peer 100.128"".2.3"; check "above 100.64/10 passes" pass "$result"
 try_commit "/Users""/someone/x"; check "home path blocked" block "$result"
 try_commit "bad $fffd char"; check "U+FFFD blocked" block "$result"
 try_commit "/Users/<user>/x"; check "placeholder path passes" pass "$result"
@@ -109,6 +113,10 @@ printf -- '-dash-host\n' > "$patterns"
 try_commit "to -dash-host"; check "pattern starting with -" block "$result"
 printf 'myhost\n\n   \n# note\nother\n' > "$patterns"
 try_commit "hello"; check "blank lines do not match all" pass "$result"
+# The bounded form /private writes for a word (D-71): Li must not block Linux.
+printf '%s\n' '(^|[^A-Za-z0-9_])Li([^A-Za-z0-9_]|$)' > "$patterns"
+try_commit "runs on Linux"; check "bounded pattern: longer word passes" pass "$result"
+try_commit "ask Li first"; check "bounded pattern: the word blocks" block "$result"
 for bad in 'foo(' 'foo[' 'abc\'; do
     printf '# c\n\n%s\n' "$bad" > "$patterns"
     try_commit "unrelated"

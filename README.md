@@ -68,10 +68,10 @@ rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private
 
 | Command | What it does |
 |---|---|
-| `/adopt` | Brings a project in: creates the four files, or moves existing notes into them. In git projects it also installs the pre-commit hook and asks which words to block. After moving to a new machine, run it again in each project to restore what clone does not bring |
+| `/adopt` | Brings a project in: creates the four files, or moves existing notes into them |
 | `/pickup` | Reads the handoff block, the to-do list and the related decisions and shows them; read-only |
-| `/wrap` | Wraps up: records missing decisions and pitfalls, rewrites the handoff block, updates the to-do list, gives a four-part report |
-| `/private` | Checks changed files for private details written by mistake; reports listed hits by location without repeating the values, lists suspected values by number for you to pick, and replaces them with placeholders once you agree; picked values are added to `.git/privacy-patterns` |
+| `/wrap` | Wraps up: records missing decisions and pitfalls and rewrites the handoff block |
+| `/private` | Finds private details written into changed files and replaces them with placeholders once you agree |
 | `/update` | Updates agent-system from GitHub |
 
 The commands run only when you type them. In a project that has not been adopted, `/pickup` and
@@ -146,7 +146,9 @@ This section applies only to the maintainer's own machine. GitHub has only main;
   approval.
 - This repository's `.git/privacy-patterns` does not come with clone; recreate it on a new machine
   (D-12).
-- Keep the two READMEs (`README.md` in English, `README.zh-CN.md` in Chinese) in sync.
+- Keep the two READMEs (`README.md` in English, `README.zh-CN.md` in Chinese) in sync. The command table
+  says only what each command is for; how it works lives only in its `SKILL.md`, so changing a command
+  rarely touches the READMEs (D-71).
 - Record rule decisions in [docs/decisions.md](docs/decisions.md) when they are made and pitfalls in
   [docs/pitfalls.md](docs/pitfalls.md); commit bodies cite `Why: D-n`. End the impact item of a new
   decision with "影响现有项目：是/否（原因）" on one line; `bin/release` uses it to mark those decisions.

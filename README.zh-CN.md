@@ -59,10 +59,10 @@ rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private
 
 | 命令 | 作用 |
 |---|---|
-| `/adopt` | 接入项目：建四个文件，或者把已有笔记迁过来。用 git 的项目还会装 pre-commit、问要拦哪些敏感词。换电脑后在项目里再输入一次，补上不随 clone 走的部分 |
+| `/adopt` | 接入项目：建四个文件，或者把已有笔记迁过来 |
 | `/pickup` | 读交接区块、待办和相关决策并显示出来，只读不动手 |
-| `/wrap` | 收尾：补记决策和坑，重写交接区块，更新待办，四段汇报 |
-| `/private` | 查改过的文件里有没有误写进隐私内容：名单上的只报位置、不复述原值，名单外的疑似值编号列出让你选；你同意了再换成占位符，选中的值加进 `.git/privacy-patterns` |
+| `/wrap` | 收尾：补记决策和坑，重写交接区块 |
+| `/private` | 找出改过的文件里误写进的隐私内容，你同意了再换成占位符 |
 | `/update` | 从 GitHub 更新 agent-system |
 
 这些命令都只在你输入时才运行。没接入的项目里也能用 `/pickup`、`/wrap`，只是只在对话里汇报，不建文件。
@@ -125,7 +125,8 @@ rm ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.claude/skills/{adopt,pickup,private
   标 `!`），再运行 `bin/install`。出了问题运行 `bin/release --rollback`，每次退回一个发布。
 - 推送只推 main，工作分支和发布标签留在本地（D-48）；每次推送都要明确同意。
 - 本仓库的 `.git/privacy-patterns` 不随 clone 过来，换电脑后自己重建（D-12）。
-- 两份 README（`README.md` 英文、`README.zh-CN.md` 中文）同步改。
+- 两份 README（`README.md` 英文、`README.zh-CN.md` 中文）同步改。命令表只写每个命令的作用，做法只写在
+  命令的 `SKILL.md` 里，改命令时一般不用改 README（D-71）。
 - 规则的取舍当场记进 [docs/decisions.md](docs/decisions.md)，踩到的坑记进
   [docs/pitfalls.md](docs/pitfalls.md)，提交正文写 `Why: D-n`。新决策在「影响」一项末尾写
   “影响现有项目：是/否（原因）”，不要跨行，`bin/release` 靠它把这类决策标出来。

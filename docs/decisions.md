@@ -740,3 +740,13 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   旧格式说明删掉。
 - 理由：用户决定。本机其他项目都没有旧格式的区块，留着兼容只占上下文。
 - 影响：替代 D-42 的兼容部分；RULE.md 第 3 节、claude/skills 的 pickup、wrap、adopt。影响现有项目：是（CodaPace 的 docs/project-notes.md 已改，要在 CodaPace 里提交）。
+
+### D-71 pre-commit 加拦 100.64/10；敏感词加词边界；README 只写命令的作用（2026-10-12，用户决定）
+
+- 背景：2026-10-11 审视第 6 条的三处小问题：/private 查 100.64–100.127 和 `C:\Users\<名字>\`，pre-commit 不查；/private 写进
+  敏感词文件的值没有边界，`Li` 会拦下 `Linux`；README 写了命令的做法，改一个命令要同步 4 处。
+- 选项：Windows 用户目录 A 也加进 pre-commit / B 只在 /private 里当作疑似值，由用户判断
+- 选择：pre-commit 加拦 100.64–100.127；Windows 用户目录选 B；敏感词开头和结尾都是字母或数字时写成
+  `(^|[^A-Za-z0-9_])值([^A-Za-z0-9_]|$)`，/adopt 改为引用 /private 的写法；两份 README 的命令表只写一句作用。
+- 理由：用户决定修第 6 条。pre-commit 查整份文件，meshlink 的测试样例里有 `C:\Users\Public` 和假用户名，A 会拦下改这些文件的提交。
+- 影响：git-hooks/pre-commit、tests/run.sh、claude/skills 的 private 和 adopt、README.md、README.zh-CN.md。影响现有项目：是（pre-commit 在所有项目里开始拦 100.64–100.127；2026-10-12 查过各项目的入库文件，没有命中）。
