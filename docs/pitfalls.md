@@ -38,3 +38,10 @@
 - 原因：`bin/release` 一次做完测试、快进 main、打标签和 `bin/install`，中断后从对话里看不到进度。
 - 修法：先查正式版的 HEAD、最新的 release 标签和工作区是否干净；确认已发布后只补跑 `bin/install`（可反复运行），没有重跑发布。
 - 启示：命令中断后先查状态再决定，不直接重跑会打标签的命令。
+
+### 坑 6 推送报 Invalid username or token：钥匙串里的 GitHub 凭据失效（2026-10-12，已解决 2026-10-12）
+
+- 现象：`git push origin main` 报 `Invalid username or token. Password authentication is not supported`；前一天同样的推送成功。
+- 原因：git 用系统 gitconfig 里的 osxkeychain，钥匙串里保存的 GitHub 凭据失效了；gh 的登录仍然有效，有 `repo` 权限。
+- 修法：这次用 `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin main` 单次改用 gh 的凭据，没改 git 配置。之后用户运行了 `gh auth setup-git`，git 推送 GitHub 改用 gh 的登录（写在 `~/.gitconfig`），`push --dry-run` 认证通过。
+- 启示：推送认证失败先查 `gh auth status`，用单次 `-c` 推送；改全局 git 配置要先问用户。
