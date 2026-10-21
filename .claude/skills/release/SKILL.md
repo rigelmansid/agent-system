@@ -15,8 +15,7 @@ disable-model-invocation: true
 2. **参数是 `rollback` 时**：运行 `bin/release --rollback`，汇报正式版退回到哪个发布，提醒在
    dev 里修好后再 `/release`。然后停下。
 3. **未提交的改动**：`git status --short` 有输出时列出来，问用户要不要先提交，停下等回答；不自己
-   提交（RULE.md 1.2）。用户同意后，按决策分开提交：英文祈使句主题，空一行，正文分条，最后
-   `Why: D-n`。
+   提交（RULE.md 1.2）。用户同意后，按决策分开提交，提交信息的写法见 RULE.md 第 2 节。
 4. **发布**：运行 `bin/release`。失败就贴出输出（测试失败时什么都没发布），然后停下。
 5. **推送**：问用户要不要推送 main。只有用户在这次对话里明确同意，才运行
    `git -C ~/agent-system push origin main`；工作分支和标签不推（D-48）。

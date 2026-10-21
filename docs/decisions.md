@@ -750,3 +750,12 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   `(^|[^A-Za-z0-9_])值([^A-Za-z0-9_]|$)`，/adopt 改为引用 /private 的写法；两份 README 的命令表只写一句作用。
 - 理由：用户决定修第 6 条。pre-commit 查整份文件，meshlink 的测试样例里有 `C:\Users\Public` 和假用户名，A 会拦下改这些文件的提交。
 - 影响：git-hooks/pre-commit、tests/run.sh、claude/skills 的 private 和 adopt、README.md、README.zh-CN.md。影响现有项目：是（pre-commit 在所有项目里开始拦 100.64–100.127；2026-10-12 查过各项目的入库文件，没有命中）。
+
+### D-72 提交信息和发到 GitHub 的文字一律用英文（2026-10-21，用户决定）
+
+- 背景：英文提交信息的写法只写在 /release 里，只在 agent-system 生效；其他项目的 agent 可能按对话语言写中文提交。
+- 选项：A 维持现状，只在 agent-system 用英文 / B 写进 RULE.md，所有项目的提交、PR、issue、评论、Release 说明都用英文
+- 选择：B。写法（祈使句主题、正文分条、`Why: D-n`）并入 RULE.md 第 2 节，/release 改为引用；中文专有名词原样引用加反引号；
+  仓库里的文档和代码注释不受影响；已有的中文提交不改写。
+- 理由：用户决定。GitHub 的读者以英文为主，英文主题在 git 工具里显示最稳；写法只在一处维护。
+- 影响：RULE.md 第 2 节、.claude/skills/release。影响现有项目：是（以后各项目的提交信息、PR 等改用英文；项目 AGENTS.md 可另行规定）。

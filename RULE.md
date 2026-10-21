@@ -67,7 +67,9 @@
 - 规则文件和代码注释引用决策时写编号，不复述原因。引用别的项目的决策时，编号前写项目名，
   如 `agent-system D-49`；RULE.md 和 agent-system 的命令在每个项目里都会用到，引用
   agent-system 的决策一律这样写。
-- 用 git 的项目，提交信息正文写 `Why: D-n`（有对应决策时）。
+- 用 git 的项目，提交信息用英文：祈使句主题，空一行，正文分条，有对应决策时最后写 `Why: D-n`。
+  PR、issue、评论、Release 说明等发到 GitHub 的文字也用英文。中文的文件名、标题、术语原样
+  引用，加反引号。仓库里的文档和代码注释仍用项目原来的语言（agent-system D-72）。
 - 项目还没有 `decisions.md` 或 `pitfalls.md` 时，第一次需要记录时创建它。
 - 一个项目只由一个会话写 decisions.md、pitfalls.md 和 Handoff 区块；其他会话只读。
 
