@@ -2,7 +2,3 @@
 
 # This repository's own private notes; never committed (RULE.md section 6)
 private-notes.md
-
-# profiles/ was removed (D-62); machines that ran release 8 or earlier may still
-# hold user-made profiles or their .trash there
-/profiles/
