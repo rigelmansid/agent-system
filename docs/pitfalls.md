@@ -45,3 +45,10 @@
 - 原因：git 用系统 gitconfig 里的 osxkeychain，钥匙串里保存的 GitHub 凭据失效了；gh 的登录仍然有效，有 `repo` 权限。
 - 修法：这次用 `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin main` 单次改用 gh 的凭据，没改 git 配置。之后用户运行了 `gh auth setup-git`，git 推送 GitHub 改用 gh 的登录（写在 `~/.gitconfig`），`push --dry-run` 认证通过。
 - 启示：推送认证失败先查 `gh auth status`，用单次 `-c` 推送；改全局 git 配置要先问用户。
+
+### 坑 7 正式版 ~/agent-system 被切到旧分支，全局规则退回旧版（2026-10-21，已解决 2026-10-21）
+
+- 现象：发布 release-17 后，`~/agent-system` 停在 dev（release-8）；`~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md` 链接到它的 RULE.md，所有项目加载的是旧规则，和 main 差 48 行。
+- 原因：正式版的 reflog 显示 10:42–10:43 在 main 和 dev 之间手动切了三次，不是 bin/release 做的；推测是在编辑器的分支选择器里切的，未确认。
+- 修法：确认正式版没有本地改动后 `git -C ~/agent-system checkout main`，之后按 D-73 删除了 dev。
+- 启示：正式版的分支只由 bin/release 改动（D-45），编辑器里只在 `~/agent-system-dev` 切分支；全局规则内容不对时先查 `git worktree list`。

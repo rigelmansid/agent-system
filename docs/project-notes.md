@@ -5,18 +5,17 @@
 
 ## Handoff
 
-Updated: 2026-10-12 09:52
-- Task: 无，上一个工作单元：全面审视（2026-10-11）后修了四处规则和现实对不上的地方：决策编号带 agent-system
-  （D-69）、坑沿用文件已有写法（D-69）、去掉「进行中」兼容（D-70）、隐私检查小问题和 README 命令表（D-71）；
-  /private 疑似值编号列出（D-68）
-- Stopped at: release-16 已发布并推送 main（6609a18）；本区块和坑 6 未提交；CodaPace 已提交 ccb1d79，比 origin 多 4 个提交
-- Decisions: D-68 至 D-71
-- Waiting on user: CodaPace 要不要推送
+Updated: 2026-10-21 11:04
+- Task: 无，上一个工作单元：D-72（提交信息和 GitHub 文字用英文）发布为 release-17 并推送 main（f3628a7）；
+  之后按用户要求删除 dev 分支（D-73），把被切到 dev 的正式版切回 main（坑 7）
+- Stopped at: 正式版在 main、origin/main 已同步；D-73、坑 7、本区块已提交到 core（未发布）；CodaPace 已推送 ccb1d79
+- Decisions: D-72、D-73
+- Waiting on user: 无
 - Next: 1. 观察期：在 meshlink、CodaPace 里正常用，只在待办里记摩擦，不改规则 2. 新会话里试 /private（疑似值编号）
   和 /wrap 在编号列表式 pitfalls 里的检索 3. 观察期后一次评估：决策记录方式、plugin 分发、开源定位
-- Don't repeat: 不在 ~/agent-system 里直接改（D-45）；不推工作分支和标签（D-48）；不动 dev 分支（D-63）；
-  不加回 hook（D-39）；不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；用户本机的工作文件
-  不进成品（不写 .gitignore、不记决策）；推送 GitHub 已改用 gh 的登录（坑 6）
+- Don't repeat: 不在 ~/agent-system 里直接改或切分支（D-45、坑 7）；不推工作分支和标签（D-48）；不加回 hook（D-39）；
+  不给 Codex 装 hook 或技能（D-27）；不改写已推送的历史（D-12）；用户本机的工作文件不进成品（不写 .gitignore、
+  不记决策）；推送 GitHub 已改用 gh 的登录（坑 6）
 
 ## 待办
 

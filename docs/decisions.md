@@ -665,7 +665,7 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
 - 影响：替代 D-16、D-18、D-34、D-40、D-41、D-44、D-47、D-55 至 D-59 和其他条目里的相应部分；RULE.md、
   四个命令、README、tests、.gitignore。影响现有项目：是（CodaPace、meshlink 的 profile 声明不再起作用，code profile 的规则不再加载）。
 
-### D-63 dev 分支留作 release-8 的存档，以后在 core 上开发（2026-10-09，用户决定）
+### D-63 dev 分支留作 release-8 的存档，以后在 core 上开发（2026-10-09，用户决定）（已被 D-73 替代）
 
 - 背景：D-62 在 core 分支上做，已发布为 release-9；dev 停在 release-8（4e8c073），是删除 profile 之前的最后状态。
 - 选项：A 把 dev 快进到 core，继续在 dev 上开发 / B dev 留作存档，以后在 core 上开发
@@ -759,3 +759,11 @@ agent-system 本身的规则取舍。做出决策时当场追加，编号递增�
   仓库里的文档和代码注释不受影响；已有的中文提交不改写。
 - 理由：用户决定。GitHub 的读者以英文为主，英文主题在 git 工具里显示最稳；写法只在一处维护。
 - 影响：RULE.md 第 2 节、.claude/skills/release。影响现有项目：是（以后各项目的提交信息、PR 等改用英文；项目 AGENTS.md 可另行规定）。
+
+### D-73 删除 dev 分支，release-8 的存档由标签 release-8 承担（2026-10-21，用户决定）
+
+- 背景：D-63 把 dev 留作 release-8 的存档；用户在编辑器的分支列表里看到这个不再更新的分支，要求删掉。dev 和标签 release-8 指向同一提交 4e8c073。
+- 选项：A 保留 dev（D-63）/ B 删除 dev，存档由标签 release-8 承担
+- 选择：B。`git branch -d dev`；工作副本 `~/agent-system-dev` 仍在 core，正式版在 main，其余同 D-63。要恢复：`git branch dev release-8`。
+- 理由：用户决定；标签保留了同一状态，分支多余。
+- 影响：替代 D-63；Handoff 去掉“不动 dev 分支”。影响现有项目：否。
